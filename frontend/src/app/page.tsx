@@ -27,6 +27,12 @@ export default function Home() {
           >
             プロフィール
           </Link>
+          <Link
+            className="rounded-md border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50"
+            href="/vocabularies"
+          >
+            語彙
+          </Link>
         </div>
       </div>
     </div>
