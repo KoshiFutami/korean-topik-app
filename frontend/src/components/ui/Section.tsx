@@ -6,19 +6,27 @@ export function Section({
   right,
   children,
   className = "",
+  headerClassName = "",
+  titleClassName = "",
+  descriptionClassName = "",
 }: {
   title: string;
   description?: string;
   right?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
+  headerClassName?: string;
+  titleClassName?: string;
+  descriptionClassName?: string;
 }) {
   return (
     <section className={`space-y-3 ${className}`}>
-      <div className="flex items-end justify-between gap-4">
+      <div className={`flex items-end justify-between gap-4 ${headerClassName}`}>
         <div>
-          <h2 className="text-lg font-semibold text-zinc-900">{title}</h2>
-          {description ? <p className="mt-1 text-sm text-zinc-600">{description}</p> : null}
+          <h2 className={`text-lg font-semibold text-zinc-900 ${titleClassName}`}>{title}</h2>
+          {description ? (
+            <p className={`mt-1 text-sm text-zinc-600 ${descriptionClassName}`}>{description}</p>
+          ) : null}
         </div>
         {right ? <div className="shrink-0">{right}</div> : null}
       </div>

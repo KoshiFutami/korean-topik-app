@@ -92,16 +92,21 @@ export default function VocabulariesPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-violet-700 via-fuchsia-600 to-orange-500 px-4 py-8 text-white">
+    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
       <div className="mx-auto w-full max-w-5xl space-y-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">語彙</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-sm sm:text-4xl">
+            語彙
+          </h1>
           <p className="text-sm text-white/80">公開中の語彙のみ表示します。</p>
         </div>
 
         <Section
           title="絞り込み"
           description="タップで絞り込み。もう一度タップで解除できます。"
+          headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
+          titleClassName="text-white drop-shadow-sm"
+          descriptionClassName="text-white/80"
           right={
             <Button
               variant="secondary"
@@ -178,6 +183,9 @@ export default function VocabulariesPage() {
           title="語彙一覧"
           description={loading ? "読み込み中..." : `件数: ${items?.length ?? 0}`}
           right={error ? <div className="text-sm font-medium text-red-200">{error}</div> : null}
+          headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
+          titleClassName="text-white drop-shadow-sm"
+          descriptionClassName="text-white/80"
         >
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {loading

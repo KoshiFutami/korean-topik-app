@@ -55,7 +55,7 @@ export default function VocabularyDetailPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-violet-700 via-fuchsia-600 to-orange-500 px-4 py-8 text-white">
+    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
       <div className="mx-auto w-full max-w-3xl space-y-6">
         <div className="flex items-center justify-between">
           <Link
@@ -78,7 +78,7 @@ export default function VocabularyDetailPage() {
                   </>
                 ) : (
                   <>
-                    <h1 className="truncate text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+                    <h1 className="truncate text-4xl font-extrabold tracking-tight text-white drop-shadow-sm sm:text-5xl">
                       {item?.term ?? "語彙"}
                     </h1>
                     <p className="mt-2 text-lg font-semibold text-white/90">{item?.meaning_ja ?? ""}</p>
@@ -113,7 +113,12 @@ export default function VocabularyDetailPage() {
           </div>
         </Card>
 
-        <Section title="例文">
+        <Section
+          title="例文"
+          headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
+          titleClassName="text-white drop-shadow-sm"
+          descriptionClassName="text-white/80"
+        >
           <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
             <div className="grid gap-4 text-sm">
               {item?.example_sentence ? (
