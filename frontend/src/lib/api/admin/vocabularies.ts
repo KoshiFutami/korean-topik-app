@@ -14,6 +14,7 @@ export type AdminVocabulary = {
   example_translation_ja?: string | null;
   audio_url?: string | null;
   status?: string;
+  status_label_ja?: string;
   created_at?: string;
 };
 

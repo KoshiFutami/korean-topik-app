@@ -89,7 +89,7 @@ export default function AdminVocabularyDetailPage() {
               <p className="mt-1 text-sm text-zinc-600">{item?.meaning_ja ?? ""}</p>
             </div>
             <div className="shrink-0 text-right text-xs text-zinc-500">
-              <div>{item?.status ?? ""}</div>
+              <div>{item?.status_label_ja ?? item?.status ?? ""}</div>
               <div className="mt-1">{item?.created_at ?? ""}</div>
             </div>
           </div>
@@ -97,11 +97,22 @@ export default function AdminVocabularyDetailPage() {
           {error ? <div className="mt-4 text-sm text-red-600">{error}</div> : null}
 
           <div className="mt-6 space-y-4">
-            <Row label="TOPIK" value={item ? `${item.level}級` : ""} />
-            <Row label="種別" value={item?.entry_type ?? ""} />
-            <Row label="品詞" value={item?.pos ?? ""} />
-            <Row label="ステータス" value={item?.status ?? ""} />
-            <Row label="音声URL" value={item?.audio_url ? <a className="underline" href={item.audio_url}>{item.audio_url}</a> : <span className="text-zinc-500">なし</span>} />
+            <Row label="TOPIK" value={item?.level_label_ja ?? (item ? `${item.level}級` : "")} />
+            <Row label="種別" value={item?.entry_type_label_ja ?? item?.entry_type ?? ""} />
+            <Row label="品詞" value={item?.pos_label_ja ?? item?.pos ?? ""} />
+            <Row label="ステータス" value={item?.status_label_ja ?? item?.status ?? ""} />
+            <Row
+              label="音声URL"
+              value={
+                item?.audio_url ? (
+                  <a className="underline" href={item.audio_url}>
+                    {item.audio_url}
+                  </a>
+                ) : (
+                  <span className="text-zinc-500">なし</span>
+                )
+              }
+            />
           </div>
 
           <div className="my-6 h-px bg-zinc-200" />
