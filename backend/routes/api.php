@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\Auth\AdminAuthController;
+use App\Http\Controllers\Api\V1\Admin\Vocabulary\VocabularyController;
 use App\Http\Controllers\Api\V1\Auth\UserAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,10 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/logout', [AdminAuthController::class, 'logout']);
             Route::get('/me', [AdminAuthController::class, 'me']);
         });
+    });
+
+    Route::prefix('admin')->middleware('auth:admin')->group(function (): void {
+        Route::apiResource('vocabularies', VocabularyController::class);
     });
 });
 
