@@ -36,6 +36,11 @@ function NavLink({
 
 export function AppHeader() {
   const { state, logout } = useAuth();
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <header className="border-b border-zinc-200 bg-white">
