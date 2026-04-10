@@ -16,4 +16,3 @@ interface AdminRepositoryInterface
 
     public function existsByEmail(Email $email): bool;
 }
-

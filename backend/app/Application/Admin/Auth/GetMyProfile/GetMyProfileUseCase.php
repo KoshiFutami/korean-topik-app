@@ -17,7 +17,7 @@ final class GetMyProfileUseCase
         $admin = $this->admins->findById(new AdminId($input->adminId));
 
         if ($admin === null) {
-            throw new AdminNotFoundException();
+            throw new AdminNotFoundException;
         }
 
         return new GetMyProfileOutput(
@@ -28,4 +28,3 @@ final class GetMyProfileUseCase
         );
     }
 }
-

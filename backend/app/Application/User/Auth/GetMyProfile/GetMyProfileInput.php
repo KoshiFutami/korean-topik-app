@@ -8,4 +8,3 @@ final class GetMyProfileInput
 {
     public function __construct(public readonly string $userId) {}
 }
-

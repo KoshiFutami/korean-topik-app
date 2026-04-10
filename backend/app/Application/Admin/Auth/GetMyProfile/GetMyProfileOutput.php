@@ -15,4 +15,3 @@ final class GetMyProfileOutput
         public readonly DateTimeImmutable $createdAt,
     ) {}
 }
-

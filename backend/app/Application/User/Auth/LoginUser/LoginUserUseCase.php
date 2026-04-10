@@ -23,11 +23,11 @@ final class LoginUserUseCase
         $user = $this->users->findByEmail(new Email($input->email));
 
         if ($user === null) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException;
         }
 
         if (! $this->hasher->verify($input->password, $user->password())) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException;
         }
 
         $token = $this->tokens->createToken($user->id()->value(), 'user');
@@ -40,4 +40,3 @@ final class LoginUserUseCase
         );
     }
 }
-

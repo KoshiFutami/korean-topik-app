@@ -31,4 +31,3 @@ final class AdminId
         return $this->value === $other->value;
     }
 }
-

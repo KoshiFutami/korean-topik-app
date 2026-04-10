@@ -8,4 +8,3 @@ final class LogoutAdminInput
 {
     public function __construct(public readonly string $adminId) {}
 }
-

@@ -10,4 +10,3 @@ interface TokenServiceInterface
 
     public function revokeCurrentToken(): void;
 }
-

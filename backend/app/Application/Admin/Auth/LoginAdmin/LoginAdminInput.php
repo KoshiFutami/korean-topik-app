@@ -11,4 +11,3 @@ final class LoginAdminInput
         public readonly string $password,
     ) {}
 }
-

@@ -90,4 +90,3 @@ class AdminAuthController extends Controller
         }
     }
 }
-

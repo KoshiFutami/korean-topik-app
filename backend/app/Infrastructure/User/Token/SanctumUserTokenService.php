@@ -35,4 +35,3 @@ final class SanctumUserTokenService implements TokenServiceInterface
         $user->tokens()->delete();
     }
 }
-

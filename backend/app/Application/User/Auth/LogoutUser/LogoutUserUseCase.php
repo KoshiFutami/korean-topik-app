@@ -15,4 +15,3 @@ final class LogoutUserUseCase
         $this->tokens->revokeCurrentToken();
     }
 }
-

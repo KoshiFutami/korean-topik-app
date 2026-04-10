@@ -12,4 +12,3 @@ final class RegisterUserInput
         public readonly string $password,
     ) {}
 }
-

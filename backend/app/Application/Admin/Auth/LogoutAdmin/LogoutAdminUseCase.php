@@ -15,4 +15,3 @@ final class LogoutAdminUseCase
         $this->tokens->revokeCurrentToken();
     }
 }
-

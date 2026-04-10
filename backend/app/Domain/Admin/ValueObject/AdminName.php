@@ -18,7 +18,7 @@ final class AdminName
 
         if ($length < self::MIN_LENGTH || $length > self::MAX_LENGTH) {
             throw new InvalidArgumentException(
-                "Admin name must be between ".self::MIN_LENGTH." and ".self::MAX_LENGTH." characters."
+                'Admin name must be between '.self::MIN_LENGTH.' and '.self::MAX_LENGTH.' characters.'
             );
         }
     }
@@ -33,4 +33,3 @@ final class AdminName
         return $this->value === $other->value;
     }
 }
-

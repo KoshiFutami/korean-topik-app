@@ -13,4 +13,3 @@ final class AdminNotFoundException extends RuntimeException
         parent::__construct('管理者が見つかりません。');
     }
 }
-
