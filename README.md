@@ -50,6 +50,10 @@ make bash-db         # MySQL shell
 | バックエンド | [Railway](https://railway.app) または [Render](https://render.com) |
 | データベース | Railway MySQL または [PlanetScale](https://planetscale.com) |
 
+### 手順
+
+- バックエンド（Railway）: `docs/deploy/railway-backend.md`
+
 ## AIエージェント向けドキュメント
 
 - `CLAUDE.md` — Claude Code 向けガイド
