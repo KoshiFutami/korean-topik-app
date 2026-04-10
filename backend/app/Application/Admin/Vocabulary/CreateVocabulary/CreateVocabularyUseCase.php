@@ -23,7 +23,7 @@ final class CreateVocabularyUseCase
         $meaningJa = new MeaningJa($input->meaningJa);
         $pos = new PartOfSpeech($input->pos);
         $level = new TopikLevel($input->level);
-        $status = $input->status !== null ? new VocabularyStatus($input->status) : VocabularyStatus::published();
+        $status = $input->status !== null ? VocabularyStatus::from($input->status) : VocabularyStatus::PUBLISHED;
 
         if ($this->vocabularies->existsByUniqueKey($term, $pos, $meaningJa)) {
             throw new VocabularyAlreadyExistsException();
@@ -51,7 +51,7 @@ final class CreateVocabularyUseCase
             exampleSentence: $vocabulary->exampleSentence(),
             exampleTranslationJa: $vocabulary->exampleTranslationJa(),
             audioUrl: $vocabulary->audioUrl(),
-            status: $vocabulary->status()->value(),
+            status: $vocabulary->status()->value,
             createdAt: $vocabulary->createdAt()->format(DATE_ATOM),
         );
     }

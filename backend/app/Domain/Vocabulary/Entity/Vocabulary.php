@@ -46,7 +46,7 @@ final class Vocabulary
             exampleSentence: $exampleSentence,
             exampleTranslationJa: $exampleTranslationJa,
             audioUrl: $audioUrl,
-            status: $status ?? VocabularyStatus::published(),
+            status: $status ?? VocabularyStatus::PUBLISHED,
             createdAt: new DateTimeImmutable,
         );
     }

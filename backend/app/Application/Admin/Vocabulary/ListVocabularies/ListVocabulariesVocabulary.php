@@ -32,7 +32,7 @@ final class ListVocabulariesVocabulary
             exampleSentence: $vocabulary->exampleSentence(),
             exampleTranslationJa: $vocabulary->exampleTranslationJa(),
             audioUrl: $vocabulary->audioUrl(),
-            status: $vocabulary->status()->value(),
+            status: $vocabulary->status()->value,
             createdAt: $vocabulary->createdAt()->format(DATE_ATOM),
         );
     }

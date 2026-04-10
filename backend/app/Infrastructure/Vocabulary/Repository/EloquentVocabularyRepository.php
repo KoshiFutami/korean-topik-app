@@ -43,7 +43,7 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
                 'example_sentence' => $vocabulary->exampleSentence(),
                 'example_translation_ja' => $vocabulary->exampleTranslationJa(),
                 'audio_url' => $vocabulary->audioUrl(),
-                'status' => $vocabulary->status()->value(),
+                'status' => $vocabulary->status()->value,
             ],
         );
     }
