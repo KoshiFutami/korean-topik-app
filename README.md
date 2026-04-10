@@ -1,6 +1,6 @@
 # Korean TOPIK App 🇰🇷
 
-韓国語能力試験 (TOPIK) 学習用 Web アプリケーション
+韓国語能力試験 (TOPIK) 学習用 Webアプリケーション
 
 ## スタック
 
