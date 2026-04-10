@@ -59,6 +59,10 @@ korean-topik-app/
 4. 実装 → `make lint-backend` → `make test`
 5. テストが通ったら `make push` → `make pr` で PR を作成
 
+### API 変更時のルール
+
+- **API を追加・変更したら Postman コレクションも必ず更新する**: `postman/korean-topik-app.postman_collection.json`
+
 ## ブランチ運用
 
 ### ブランチ構成
