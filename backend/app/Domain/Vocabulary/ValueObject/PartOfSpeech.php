@@ -15,5 +15,20 @@ enum PartOfSpeech: string
     case PRONOUN = 'pronoun';
     case INTERJECTION = 'interjection';
     case OTHER = 'other';
+
+    public function labelJa(): string
+    {
+        return match ($this) {
+            self::NOUN => '名詞',
+            self::VERB => '動詞',
+            self::ADJECTIVE => '形容詞',
+            self::ADVERB => '副詞',
+            self::PARTICLE => '助詞',
+            self::DETERMINER => '冠形詞',
+            self::PRONOUN => '代名詞',
+            self::INTERJECTION => '感動詞',
+            self::OTHER => 'その他',
+        };
+    }
 }
 
