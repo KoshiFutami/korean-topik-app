@@ -40,6 +40,7 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
                 'meaning_ja' => $vocabulary->meaningJa()->value(),
                 'pos' => $vocabulary->pos()->value,
                 'level' => $vocabulary->level()->value,
+                'entry_type' => $vocabulary->entryType()->value,
                 'example_sentence' => $vocabulary->exampleSentence(),
                 'example_translation_ja' => $vocabulary->exampleTranslationJa(),
                 'audio_url' => $vocabulary->audioUrl(),

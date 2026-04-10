@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Vocabulary\Repository;
 
 use App\Domain\Vocabulary\Entity\Vocabulary as DomainVocabulary;
+use App\Domain\Vocabulary\ValueObject\EntryType;
 use App\Domain\Vocabulary\ValueObject\MeaningJa;
 use App\Domain\Vocabulary\ValueObject\PartOfSpeech;
 use App\Domain\Vocabulary\ValueObject\Term;
@@ -24,6 +25,7 @@ final class VocabularyMapper
             meaningJa: new MeaningJa((string) $model->meaning_ja),
             pos: PartOfSpeech::from((string) $model->pos),
             level: TopikLevel::from((int) $model->level),
+            entryType: EntryType::from((string) $model->entry_type),
             exampleSentence: $model->example_sentence ? (string) $model->example_sentence : null,
             exampleTranslationJa: $model->example_translation_ja ? (string) $model->example_translation_ja : null,
             audioUrl: $model->audio_url ? (string) $model->audio_url : null,

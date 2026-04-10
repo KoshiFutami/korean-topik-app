@@ -25,6 +25,7 @@ final class GetVocabularyUseCase
             meaningJa: $vocabulary->meaningJa()->value(),
             pos: $vocabulary->pos()->value,
             level: $vocabulary->level()->value,
+            entryType: $vocabulary->entryType()->value,
             exampleSentence: $vocabulary->exampleSentence(),
             exampleTranslationJa: $vocabulary->exampleTranslationJa(),
             audioUrl: $vocabulary->audioUrl(),

@@ -29,13 +29,14 @@ class VocabularyCrudTest extends TestCase
             'meaning_ja' => '食べる',
             'pos' => 'verb',
             'level' => 1,
+            'entry_type' => 'word',
             'status' => 'published',
         ]);
 
         $res = $this->getJson('/api/v1/admin/vocabularies', $this->authHeader());
 
         $res->assertOk();
-        $res->assertJsonStructure(['vocabularies' => [['id', 'term', 'meaning_ja', 'pos', 'level', 'status', 'created_at']]]);
+        $res->assertJsonStructure(['vocabularies' => [['id', 'term', 'meaning_ja', 'pos', 'level', 'entry_type', 'status', 'created_at']]]);
     }
 
     public function test_store_creates_vocabulary(): void
@@ -45,13 +46,14 @@ class VocabularyCrudTest extends TestCase
             'meaning_ja' => '飲む',
             'pos' => 'verb',
             'level' => 1,
+            'entry_type' => 'word',
             'example_sentence' => '물을 마셔요.',
             'example_translation_ja' => '水を飲みます。',
             'status' => 'published',
         ], $this->authHeader());
 
         $res->assertCreated();
-        $res->assertJsonStructure(['vocabulary' => ['id', 'term', 'meaning_ja', 'pos', 'level', 'status', 'created_at']]);
+        $res->assertJsonStructure(['vocabulary' => ['id', 'term', 'meaning_ja', 'pos', 'level', 'entry_type', 'status', 'created_at']]);
     }
 
     public function test_show_returns_vocabulary(): void
@@ -61,13 +63,14 @@ class VocabularyCrudTest extends TestCase
             'meaning_ja' => '勉強する',
             'pos' => 'verb',
             'level' => 1,
+            'entry_type' => 'word',
             'status' => 'published',
         ]);
 
         $res = $this->getJson("/api/v1/admin/vocabularies/{$v->id}", $this->authHeader());
 
         $res->assertOk();
-        $res->assertJsonStructure(['vocabulary' => ['id', 'term', 'meaning_ja', 'pos', 'level', 'status', 'created_at']]);
+        $res->assertJsonStructure(['vocabulary' => ['id', 'term', 'meaning_ja', 'pos', 'level', 'entry_type', 'status', 'created_at']]);
     }
 
     public function test_update_updates_vocabulary(): void
@@ -77,6 +80,7 @@ class VocabularyCrudTest extends TestCase
             'meaning_ja' => '行く',
             'pos' => 'verb',
             'level' => 1,
+            'entry_type' => 'word',
             'status' => 'published',
         ]);
 
@@ -85,6 +89,7 @@ class VocabularyCrudTest extends TestCase
             'meaning_ja' => '行く（移動する）',
             'pos' => 'verb',
             'level' => 1,
+            'entry_type' => 'word',
             'status' => 'published',
         ], $this->authHeader());
 
@@ -99,6 +104,7 @@ class VocabularyCrudTest extends TestCase
             'meaning_ja' => '来る',
             'pos' => 'verb',
             'level' => 1,
+            'entry_type' => 'word',
             'status' => 'published',
         ]);
 

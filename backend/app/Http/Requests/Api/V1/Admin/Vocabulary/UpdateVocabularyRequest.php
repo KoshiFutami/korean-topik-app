@@ -18,6 +18,7 @@ class UpdateVocabularyRequest extends FormRequest
             'meaning_ja' => ['required', 'string', 'min:1', 'max:255'],
             'pos' => ['required', 'string', 'in:noun,verb,adj,adv,particle,determiner,pronoun,interjection,other'],
             'level' => ['required', 'integer', 'min:1', 'max:6'],
+            'entry_type' => ['nullable', 'string', 'in:word,phrase,idiom'],
             'example_sentence' => ['nullable', 'string'],
             'example_translation_ja' => ['nullable', 'string'],
             'audio_url' => ['nullable', 'string', 'max:2048'],

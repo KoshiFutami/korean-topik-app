@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
     'meaning_ja',
     'pos',
     'level',
+    'entry_type',
     'example_sentence',
     'example_translation_ja',
     'audio_url',

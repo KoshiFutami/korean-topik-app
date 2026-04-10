@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Vocabulary\Entity;
 
+use App\Domain\Vocabulary\ValueObject\EntryType;
 use App\Domain\Vocabulary\ValueObject\MeaningJa;
 use App\Domain\Vocabulary\ValueObject\PartOfSpeech;
 use App\Domain\Vocabulary\ValueObject\Term;
@@ -20,6 +21,7 @@ final class Vocabulary
         private MeaningJa $meaningJa,
         private PartOfSpeech $pos,
         private TopikLevel $level,
+        private EntryType $entryType,
         private ?string $exampleSentence,
         private ?string $exampleTranslationJa,
         private ?string $audioUrl,
@@ -32,6 +34,7 @@ final class Vocabulary
         MeaningJa $meaningJa,
         PartOfSpeech $pos,
         TopikLevel $level,
+        ?EntryType $entryType,
         ?string $exampleSentence,
         ?string $exampleTranslationJa,
         ?string $audioUrl,
@@ -43,6 +46,7 @@ final class Vocabulary
             meaningJa: $meaningJa,
             pos: $pos,
             level: $level,
+            entryType: $entryType ?? EntryType::WORD,
             exampleSentence: $exampleSentence,
             exampleTranslationJa: $exampleTranslationJa,
             audioUrl: $audioUrl,
@@ -57,6 +61,7 @@ final class Vocabulary
         MeaningJa $meaningJa,
         PartOfSpeech $pos,
         TopikLevel $level,
+        EntryType $entryType,
         ?string $exampleSentence,
         ?string $exampleTranslationJa,
         ?string $audioUrl,
@@ -69,6 +74,7 @@ final class Vocabulary
             meaningJa: $meaningJa,
             pos: $pos,
             level: $level,
+            entryType: $entryType,
             exampleSentence: $exampleSentence,
             exampleTranslationJa: $exampleTranslationJa,
             audioUrl: $audioUrl,
@@ -102,6 +108,11 @@ final class Vocabulary
         return $this->level;
     }
 
+    public function entryType(): EntryType
+    {
+        return $this->entryType;
+    }
+
     public function exampleSentence(): ?string
     {
         return $this->exampleSentence;
@@ -132,6 +143,7 @@ final class Vocabulary
         MeaningJa $meaningJa,
         PartOfSpeech $pos,
         TopikLevel $level,
+        EntryType $entryType,
         ?string $exampleSentence,
         ?string $exampleTranslationJa,
         ?string $audioUrl,
@@ -141,6 +153,7 @@ final class Vocabulary
         $this->meaningJa = $meaningJa;
         $this->pos = $pos;
         $this->level = $level;
+        $this->entryType = $entryType;
         $this->exampleSentence = $exampleSentence;
         $this->exampleTranslationJa = $exampleTranslationJa;
         $this->audioUrl = $audioUrl;

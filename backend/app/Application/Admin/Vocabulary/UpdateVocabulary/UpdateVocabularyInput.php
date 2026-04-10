@@ -12,6 +12,7 @@ final class UpdateVocabularyInput
         public readonly string $meaningJa,
         public readonly string $pos,
         public readonly int $level,
+        public readonly ?string $entryType,
         public readonly ?string $exampleSentence,
         public readonly ?string $exampleTranslationJa,
         public readonly ?string $audioUrl,
