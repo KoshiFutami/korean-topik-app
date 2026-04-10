@@ -27,7 +27,6 @@ export default function VocabularyDetailPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (state.status === "guest") return;
     if (state.status === "loading") {
       refreshMe().catch(() => undefined);
     }
@@ -35,12 +34,12 @@ export default function VocabularyDetailPage() {
 
   useEffect(() => {
     const run = async () => {
-      if (state.status !== "authed") return;
       if (!id) return;
       setLoading(true);
       setError(null);
       try {
-        const res = await getVocabulary(state.token, id);
+        const token = state.status === "authed" ? state.token : null;
+        const res = await getVocabulary(token, id);
         setItem(res.vocabulary);
       } catch (e) {
         if (e instanceof ApiError) setError(e.message);
@@ -51,23 +50,6 @@ export default function VocabularyDetailPage() {
     };
     run().catch(() => undefined);
   }, [id, state]);
-
-  if (state.status === "guest") {
-    return (
-      <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10">
-        <Card className="w-full max-w-md">
-          <h1 className="text-xl font-semibold text-zinc-900">語彙</h1>
-          <p className="mt-2 text-sm text-zinc-600">
-            閲覧するには{" "}
-            <Link className="font-medium underline" href="/login">
-              ログイン
-            </Link>
-            が必要です。
-          </p>
-        </Card>
-      </div>
-    );
-  }
 
   if (state.status === "loading") {
     return (
@@ -152,10 +134,10 @@ export default function VocabularyDetailPage() {
               type="button"
               disabled={loading}
               onClick={() => {
-                if (state.status !== "authed") return;
                 if (!id) return;
                 setLoading(true);
-                getVocabulary(state.token, id)
+                const token = state.status === "authed" ? state.token : null;
+                getVocabulary(token, id)
                   .then((res) => setItem(res.vocabulary))
                   .catch((e) => {
                     if (e instanceof ApiError) setError(e.message);
