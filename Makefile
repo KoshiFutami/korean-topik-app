@@ -32,7 +32,7 @@ init-backend: ## Laravel プロジェクトを初期化
 init-frontend: ## Next.js プロジェクトを初期化
 	@if [ ! -f frontend/package.json ]; then \
 		echo "Next.js を初期化しています..."; \
-		docker run --rm -it \
+		docker run --rm \
 			-v "$(PWD)/frontend:/app" \
 			-w /app \
 			node:20-alpine \
