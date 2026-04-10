@@ -17,10 +17,9 @@ final class DeleteVocabularyUseCase
         $id = new VocabularyId($input->id);
         $vocabulary = $this->vocabularies->findById($id);
         if ($vocabulary === null) {
-            throw new VocabularyNotFoundException();
+            throw new VocabularyNotFoundException;
         }
 
         $this->vocabularies->delete($id);
     }
 }
-

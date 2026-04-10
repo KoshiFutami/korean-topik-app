@@ -158,4 +158,3 @@ class VocabularyController extends Controller
         }
     }
 }
-

@@ -32,4 +32,3 @@ interface VocabularyRepositoryInterface
         MeaningJa $meaningJa,
     ): bool;
 }
-

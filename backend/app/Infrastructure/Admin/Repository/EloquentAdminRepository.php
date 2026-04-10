@@ -35,4 +35,3 @@ final class EloquentAdminRepository implements AdminRepositoryInterface
             ->exists();
     }
 }
-

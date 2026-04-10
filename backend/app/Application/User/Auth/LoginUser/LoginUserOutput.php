@@ -13,4 +13,3 @@ final class LoginUserOutput
         public readonly string $token,
     ) {}
 }
-

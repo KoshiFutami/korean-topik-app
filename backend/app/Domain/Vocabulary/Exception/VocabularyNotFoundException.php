@@ -13,4 +13,3 @@ final class VocabularyNotFoundException extends RuntimeException
         parent::__construct('単語が見つかりません。');
     }
 }
-

@@ -31,4 +31,3 @@ enum PartOfSpeech: string
         };
     }
 }
-

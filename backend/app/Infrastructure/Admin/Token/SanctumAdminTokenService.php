@@ -34,4 +34,3 @@ final class SanctumAdminTokenService implements TokenServiceInterface
         $admin->tokens()->delete();
     }
 }
-

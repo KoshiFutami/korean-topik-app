@@ -28,4 +28,3 @@ final class MeaningJa
         return $this->value;
     }
 }
-

@@ -13,4 +13,3 @@ final class InvalidCredentialsException extends RuntimeException
         parent::__construct('メールアドレスまたはパスワードが正しくありません。');
     }
 }
-

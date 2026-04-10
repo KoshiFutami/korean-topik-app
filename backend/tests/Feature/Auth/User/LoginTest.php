@@ -51,4 +51,3 @@ class LoginTest extends TestCase
         $res->assertStatus(422);
     }
 }
-

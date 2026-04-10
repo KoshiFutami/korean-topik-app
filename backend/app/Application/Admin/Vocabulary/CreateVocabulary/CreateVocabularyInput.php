@@ -18,4 +18,3 @@ final class CreateVocabularyInput
         public readonly ?string $status,
     ) {}
 }
-

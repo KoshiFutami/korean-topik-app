@@ -55,4 +55,3 @@ class RegisterTest extends TestCase
         $res->assertStatus(422);
     }
 }
-

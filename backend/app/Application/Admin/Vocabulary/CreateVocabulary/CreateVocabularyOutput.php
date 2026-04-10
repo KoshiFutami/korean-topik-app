@@ -20,4 +20,3 @@ final class CreateVocabularyOutput
         public readonly string $createdAt,
     ) {}
 }
-

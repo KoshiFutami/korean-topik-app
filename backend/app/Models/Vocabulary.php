@@ -29,4 +29,3 @@ class Vocabulary extends Model
 
     public $incrementing = false;
 }
-

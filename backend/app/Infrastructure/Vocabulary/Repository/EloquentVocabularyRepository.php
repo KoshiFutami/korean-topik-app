@@ -77,4 +77,3 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
             ->exists();
     }
 }
-

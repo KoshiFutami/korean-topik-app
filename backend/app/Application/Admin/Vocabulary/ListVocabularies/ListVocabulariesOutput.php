@@ -11,4 +11,3 @@ final class ListVocabulariesOutput
      */
     public function __construct(public readonly array $vocabularies) {}
 }
-

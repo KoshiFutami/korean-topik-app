@@ -26,4 +26,3 @@ class UpdateVocabularyRequest extends FormRequest
         ];
     }
 }
-

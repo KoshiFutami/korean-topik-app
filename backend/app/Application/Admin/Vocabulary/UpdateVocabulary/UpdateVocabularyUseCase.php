@@ -24,7 +24,7 @@ final class UpdateVocabularyUseCase
         $id = new VocabularyId($input->id);
         $vocabulary = $this->vocabularies->findById($id);
         if ($vocabulary === null) {
-            throw new VocabularyNotFoundException();
+            throw new VocabularyNotFoundException;
         }
 
         $term = new Term($input->term);
@@ -35,7 +35,7 @@ final class UpdateVocabularyUseCase
         $status = $input->status !== null ? VocabularyStatus::from($input->status) : VocabularyStatus::PUBLISHED;
 
         if ($this->vocabularies->existsByUniqueKeyExcludingId($id, $term, $pos, $meaningJa)) {
-            throw new VocabularyAlreadyExistsException();
+            throw new VocabularyAlreadyExistsException;
         }
 
         $vocabulary->update(
@@ -67,4 +67,3 @@ final class UpdateVocabularyUseCase
         );
     }
 }
-

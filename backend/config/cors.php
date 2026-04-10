@@ -32,4 +32,3 @@ return [
     // Bearer トークン方式なので基本は不要。Cookie 認証をやるなら true に。
     'supports_credentials' => false,
 ];
-

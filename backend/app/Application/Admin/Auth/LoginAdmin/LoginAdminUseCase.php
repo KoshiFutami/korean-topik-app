@@ -23,11 +23,11 @@ final class LoginAdminUseCase
         $admin = $this->admins->findByEmail(new Email($input->email));
 
         if ($admin === null) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException;
         }
 
         if (! $this->hasher->verify($input->password, $admin->password())) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException;
         }
 
         $token = $this->tokens->createToken($admin->id()->value(), 'admin');
@@ -40,4 +40,3 @@ final class LoginAdminUseCase
         );
     }
 }
-

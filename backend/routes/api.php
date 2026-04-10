@@ -29,4 +29,3 @@ Route::prefix('v1')->group(function (): void {
         Route::apiResource('vocabularies', VocabularyController::class);
     });
 });
-

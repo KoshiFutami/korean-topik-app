@@ -12,4 +12,3 @@ interface PasswordHasherInterface
 
     public function verify(string $plainPassword, HashedPassword $hashedPassword): bool;
 }
-

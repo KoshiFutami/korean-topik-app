@@ -8,4 +8,3 @@ final class DeleteVocabularyInput
 {
     public function __construct(public readonly string $id) {}
 }
-

@@ -17,7 +17,7 @@ final class GetMyProfileUseCase
         $user = $this->users->findById(new UserId($input->userId));
 
         if ($user === null) {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException;
         }
 
         return new GetMyProfileOutput(
@@ -28,4 +28,3 @@ final class GetMyProfileUseCase
         );
     }
 }
-

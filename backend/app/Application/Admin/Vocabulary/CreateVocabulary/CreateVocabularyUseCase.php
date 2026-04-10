@@ -28,7 +28,7 @@ final class CreateVocabularyUseCase
         $status = $input->status !== null ? VocabularyStatus::from($input->status) : VocabularyStatus::PUBLISHED;
 
         if ($this->vocabularies->existsByUniqueKey($term, $pos, $meaningJa)) {
-            throw new VocabularyAlreadyExistsException();
+            throw new VocabularyAlreadyExistsException;
         }
 
         $vocabulary = Vocabulary::create(
@@ -60,4 +60,3 @@ final class CreateVocabularyUseCase
         );
     }
 }
-

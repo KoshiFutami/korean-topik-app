@@ -119,4 +119,3 @@ class VocabularyCrudTest extends TestCase
         $res->assertStatus(401);
     }
 }
-

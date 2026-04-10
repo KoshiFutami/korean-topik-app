@@ -13,4 +13,3 @@ final class VocabularyAlreadyExistsException extends RuntimeException
         parent::__construct('同じ単語が既に登録されています。');
     }
 }
-

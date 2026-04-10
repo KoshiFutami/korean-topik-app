@@ -160,4 +160,3 @@ final class Vocabulary
         $this->status = $status;
     }
 }
-

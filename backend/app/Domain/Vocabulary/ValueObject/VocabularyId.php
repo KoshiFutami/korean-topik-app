@@ -31,4 +31,3 @@ final class VocabularyId
         return $this->value === $other->value;
     }
 }
-

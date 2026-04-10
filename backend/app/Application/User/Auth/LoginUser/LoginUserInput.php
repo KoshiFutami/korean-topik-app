@@ -11,4 +11,3 @@ final class LoginUserInput
         public readonly string $password,
     ) {}
 }
-

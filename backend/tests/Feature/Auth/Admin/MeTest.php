@@ -32,4 +32,3 @@ class MeTest extends TestCase
         $res->assertStatus(401);
     }
 }
-

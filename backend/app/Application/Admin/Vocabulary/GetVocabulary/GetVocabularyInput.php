@@ -8,4 +8,3 @@ final class GetVocabularyInput
 {
     public function __construct(public readonly string $id) {}
 }
-

@@ -7,10 +7,10 @@ namespace App\Application\User\Auth\RegisterUser;
 use App\Application\Shared\Port\PasswordHasherInterface;
 use App\Application\Shared\Port\TokenServiceInterface;
 use App\Domain\Shared\ValueObject\Email;
+use App\Domain\User\Entity\User;
 use App\Domain\User\Exception\UserAlreadyExistsException;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\ValueObject\UserName;
-use App\Domain\User\Entity\User;
 
 final class RegisterUserUseCase
 {
@@ -25,7 +25,7 @@ final class RegisterUserUseCase
         $email = new Email($input->email);
 
         if ($this->users->existsByEmail($email)) {
-            throw new UserAlreadyExistsException();
+            throw new UserAlreadyExistsException;
         }
 
         $user = User::create(
@@ -47,4 +47,3 @@ final class RegisterUserUseCase
         );
     }
 }
-

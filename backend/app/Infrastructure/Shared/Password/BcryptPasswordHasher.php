@@ -20,4 +20,3 @@ final class BcryptPasswordHasher implements PasswordHasherInterface
         return Hash::check($plainPassword, $hashedPassword->value());
     }
 }
-

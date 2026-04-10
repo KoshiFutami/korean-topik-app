@@ -16,4 +16,3 @@ final class RegisterUserOutput
         public readonly DateTimeImmutable $createdAt,
     ) {}
 }
-

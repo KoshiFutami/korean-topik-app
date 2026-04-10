@@ -54,4 +54,3 @@ class VocabularySeeder extends Seeder
         }
     }
 }
-

@@ -18,7 +18,7 @@ final class UserName
 
         if ($length < self::MIN_LENGTH || $length > self::MAX_LENGTH) {
             throw new InvalidArgumentException(
-                "User name must be between ".self::MIN_LENGTH." and ".self::MAX_LENGTH." characters."
+                'User name must be between '.self::MIN_LENGTH.' and '.self::MAX_LENGTH.' characters.'
             );
         }
     }

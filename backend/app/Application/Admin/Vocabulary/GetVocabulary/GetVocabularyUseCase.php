@@ -16,7 +16,7 @@ final class GetVocabularyUseCase
     {
         $vocabulary = $this->vocabularies->findById(new VocabularyId($input->id));
         if ($vocabulary === null) {
-            throw new VocabularyNotFoundException();
+            throw new VocabularyNotFoundException;
         }
 
         return new GetVocabularyOutput(
@@ -34,4 +34,3 @@ final class GetVocabularyUseCase
         );
     }
 }
-

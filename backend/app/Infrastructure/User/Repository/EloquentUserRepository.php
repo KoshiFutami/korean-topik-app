@@ -47,4 +47,3 @@ final class EloquentUserRepository implements UserRepositoryInterface
             ->exists();
     }
 }
-
