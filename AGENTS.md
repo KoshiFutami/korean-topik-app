@@ -54,9 +54,38 @@ korean-topik-app/
 ## 開発フロー
 
 1. `make up` でローカル環境を起動
-2. 変更前に ADR を確認（大きな変更は Plan Mode で設計）
-3. 実装 → `make lint-backend` → `make test`
-4. テストが通ったら完了
+2. **機能ごとにブランチを作成**してから作業を開始する（下記「ブランチ運用」参照）
+3. 変更前に ADR を確認（大きな変更は Plan Mode で設計）
+4. 実装 → `make lint-backend` → `make test`
+5. テストが通ったら `make push` → `make pr` で PR を作成
+
+## ブランチ運用
+
+- **`main` ブランチには直接コミットしない**
+- 機能・修正・作業ごとに必ずブランチを切ってから実装を始める
+
+### ブランチ命名規則
+
+| 種類 | パターン | 例 |
+|------|---------|-----|
+| 機能追加 | `feat/<内容>` | `feat/vocabulary-api` |
+| バグ修正 | `fix/<内容>` | `fix/auth-token-expiry` |
+| リファクタ | `refactor/<内容>` | `refactor/vocabulary-service` |
+| ドキュメント | `docs/<内容>` | `docs/api-readme` |
+| 雑務・設定 | `chore/<内容>` | `chore/update-dependencies` |
+
+### ブランチ作成コマンド
+
+```bash
+git switch -c feat/<ブランチ名>
+```
+
+作業完了後:
+
+```bash
+make push    # git push -u origin HEAD
+make pr      # gh pr create --fill
+```
 
 ## API 設計規約
 
