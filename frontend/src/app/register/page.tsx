@@ -38,13 +38,16 @@ export default function RegisterPage() {
   }, [submitting, state.status]);
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10">
-      <Card className="w-full max-w-md">
+    <div className="flex flex-1 items-center justify-center bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-10 text-white">
+      <Card className="w-full max-w-md border-white/10 bg-white/10 text-white backdrop-blur">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold text-zinc-900">新規登録</h1>
-          <p className="text-sm text-zinc-600">
+          <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">
+            新規登録
+            <span className="ml-2 align-baseline text-lg font-semibold text-white/85">가입</span>
+          </h1>
+          <p className="text-sm text-white/80">
             すでにアカウントをお持ちの場合は{" "}
-            <Link className="font-medium underline" href="/login">
+            <Link className="font-semibold underline" href="/login">
               ログイン
             </Link>
             へ。
@@ -75,6 +78,8 @@ export default function RegisterPage() {
         >
           <Input
             label="名前"
+            labelSuffix="이름"
+            tone="dark"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -82,6 +87,8 @@ export default function RegisterPage() {
           />
           <Input
             label="メールアドレス"
+            labelSuffix="이메일"
+            tone="dark"
             type="email"
             autoComplete="email"
             value={email}
@@ -91,6 +98,8 @@ export default function RegisterPage() {
           />
           <Input
             label="パスワード"
+            labelSuffix="비밀번호"
+            tone="dark"
             type="password"
             autoComplete="new-password"
             value={password}
@@ -100,6 +109,8 @@ export default function RegisterPage() {
           />
           <Input
             label="パスワード（確認）"
+            labelSuffix="확인"
+            tone="dark"
             type="password"
             autoComplete="new-password"
             value={passwordConfirmation}
@@ -107,7 +118,7 @@ export default function RegisterPage() {
             required
           />
 
-          {error ? <div className="text-sm text-red-600">{error}</div> : null}
+          {error ? <div className="text-sm font-medium text-red-200">{error}</div> : null}
 
           <Button type="submit" disabled={!canSubmit}>
             {submitting ? "送信中..." : "登録"}
