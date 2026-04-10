@@ -8,7 +8,9 @@ use InvalidArgumentException;
 
 final class Email
 {
-    public function __construct(private readonly string $value)
+    private readonly string $value;
+
+    public function __construct(string $value)
     {
         $normalized = strtolower(trim($value));
 
