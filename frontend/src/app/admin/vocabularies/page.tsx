@@ -102,7 +102,11 @@ export default function AdminVocabulariesPage() {
 
           <div className="mt-4 divide-y divide-zinc-200">
             {(items ?? []).map((v) => (
-              <div key={v.id} className="py-3 -mx-6 px-6">
+              <Link
+                key={v.id}
+                href={`/admin/vocabularies/${v.id}`}
+                className="block py-3 hover:bg-zinc-50 -mx-6 px-6"
+              >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <div className="truncate text-base font-medium text-zinc-900">{v.term}</div>
@@ -115,7 +119,7 @@ export default function AdminVocabulariesPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
 
             {!loading && items && items.length === 0 ? (

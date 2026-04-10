@@ -14,11 +14,22 @@ export type AdminVocabulary = {
   example_translation_ja?: string | null;
   audio_url?: string | null;
   status?: string;
+  created_at?: string;
 };
 
 export async function listAdminVocabularies(
   token: string
 ): Promise<{ vocabularies: AdminVocabulary[] }> {
   return apiFetch("/api/v1/admin/vocabularies", { method: "GET", token });
+}
+
+export async function getAdminVocabulary(
+  token: string,
+  id: string
+): Promise<{ vocabulary: AdminVocabulary }> {
+  return apiFetch(`/api/v1/admin/vocabularies/${encodeURIComponent(id)}`, {
+    method: "GET",
+    token,
+  });
 }
 
