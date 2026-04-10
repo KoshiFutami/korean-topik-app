@@ -17,10 +17,9 @@ Route::prefix('v1')->group(function (): void {
         });
     });
 
-    Route::middleware('auth:sanctum')->group(function (): void {
-        Route::get('/vocabularies', [UserVocabularyController::class, 'index']);
-        Route::get('/vocabularies/{id}', [UserVocabularyController::class, 'show']);
-    });
+    // Public: allow guest to browse published vocabularies.
+    Route::get('/vocabularies', [UserVocabularyController::class, 'index']);
+    Route::get('/vocabularies/{id}', [UserVocabularyController::class, 'show']);
 
     Route::prefix('admin/auth')->group(function (): void {
         Route::post('/login', [AdminAuthController::class, 'login']);

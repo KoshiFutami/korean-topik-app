@@ -42,7 +42,7 @@ class VocabularyApiTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $res = $this->getJson('/api/v1/vocabularies', $this->authHeader());
+        $res = $this->getJson('/api/v1/vocabularies', ['Accept' => 'application/json']);
 
         $res->assertOk();
         $this->assertCount(1, $res->json('vocabularies'));
@@ -83,7 +83,7 @@ class VocabularyApiTest extends TestCase
             'status' => 'published',
         ]);
 
-        $res = $this->getJson('/api/v1/vocabularies?level=5&entry_type=idiom&pos=adj', $this->authHeader());
+        $res = $this->getJson('/api/v1/vocabularies?level=5&entry_type=idiom&pos=adj', ['Accept' => 'application/json']);
 
         $res->assertOk();
         $this->assertCount(1, $res->json('vocabularies'));
@@ -101,13 +101,22 @@ class VocabularyApiTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $res = $this->getJson("/api/v1/vocabularies/{$v->id}", $this->authHeader());
+        $res = $this->getJson("/api/v1/vocabularies/{$v->id}", ['Accept' => 'application/json']);
         $res->assertNotFound();
     }
 
-    public function test_unauthenticated_returns_401(): void
+    public function test_index_allows_guest_access(): void
     {
+        Vocabulary::query()->create([
+            'term' => '먹다',
+            'meaning_ja' => '食べる',
+            'pos' => 'verb',
+            'level' => 1,
+            'entry_type' => 'word',
+            'status' => 'published',
+        ]);
+
         $res = $this->getJson('/api/v1/vocabularies', ['Accept' => 'application/json']);
-        $res->assertStatus(401);
+        $res->assertOk();
     }
 }

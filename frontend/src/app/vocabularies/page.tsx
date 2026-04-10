@@ -52,7 +52,6 @@ export default function VocabulariesPage() {
   }, [filters]);
 
   useEffect(() => {
-    if (state.status === "guest") return;
     if (state.status === "loading") {
       refreshMe().catch(() => undefined);
     }
@@ -60,11 +59,11 @@ export default function VocabulariesPage() {
 
   useEffect(() => {
     const run = async () => {
-      if (state.status !== "authed") return;
       setLoading(true);
       setError(null);
       try {
-        const res = await listVocabularies(state.token, query);
+        const token = state.status === "authed" ? state.token : null;
+        const res = await listVocabularies(token, query);
         setItems(res.vocabularies);
       } catch (e) {
         if (e instanceof ApiError) setError(e.message);
@@ -75,23 +74,6 @@ export default function VocabulariesPage() {
     };
     run().catch(() => undefined);
   }, [query, state]);
-
-  if (state.status === "guest") {
-    return (
-      <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10">
-        <Card className="w-full max-w-md">
-          <h1 className="text-xl font-semibold text-zinc-900">語彙</h1>
-          <p className="mt-2 text-sm text-zinc-600">
-            閲覧するには{" "}
-            <Link className="font-medium underline" href="/login">
-              ログイン
-            </Link>
-            が必要です。
-          </p>
-        </Card>
-      </div>
-    );
-  }
 
   if (state.status === "loading") {
     return (

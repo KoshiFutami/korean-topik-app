@@ -19,7 +19,7 @@ export type UserVocabularyDetail = UserVocabulary & {
 };
 
 export async function listVocabularies(
-  token: string,
+  token: string | null,
   input: { level?: number; entry_type?: string; pos?: string } = {}
 ): Promise<{ vocabularies: UserVocabulary[] }> {
   const qs = new URLSearchParams();
@@ -32,7 +32,7 @@ export async function listVocabularies(
 }
 
 export async function getVocabulary(
-  token: string,
+  token: string | null,
   id: string
 ): Promise<{ vocabulary: UserVocabularyDetail }> {
   return apiFetch(`/api/v1/vocabularies/${encodeURIComponent(id)}`, { method: "GET", token });

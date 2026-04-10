@@ -241,10 +241,6 @@
             "method": "GET",
             "header": [
               {
-                "key": "Authorization",
-                "value": "Bearer {{userToken}}"
-              },
-              {
                 "key": "Accept",
                 "value": "application/json"
               }
@@ -267,10 +263,6 @@
           "request": {
             "method": "GET",
             "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{userToken}}"
-              },
               {
                 "key": "Accept",
                 "value": "application/json"
@@ -308,10 +300,6 @@
           "request": {
             "method": "GET",
             "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{userToken}}"
-              },
               {
                 "key": "Accept",
                 "value": "application/json"
