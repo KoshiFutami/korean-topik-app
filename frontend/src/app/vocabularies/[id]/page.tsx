@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -9,8 +10,10 @@ import { Card } from "@/components/ui/Card";
 import { ApiError } from "@/lib/api/http";
 import { getVocabulary, type UserVocabularyDetail } from "@/lib/api/vocabularies";
 
-export default function VocabularyDetailPage({ params }: { params: { id: string } }) {
+export default function VocabularyDetailPage() {
   const { state, refreshMe } = useAuth();
+  const params = useParams<{ id?: string }>();
+  const id = typeof params?.id === "string" ? params.id : "";
   const [item, setItem] = useState<UserVocabularyDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -25,10 +28,11 @@ export default function VocabularyDetailPage({ params }: { params: { id: string 
   useEffect(() => {
     const run = async () => {
       if (state.status !== "authed") return;
+      if (!id) return;
       setLoading(true);
       setError(null);
       try {
-        const res = await getVocabulary(state.token, params.id);
+        const res = await getVocabulary(state.token, id);
         setItem(res.vocabulary);
       } catch (e) {
         if (e instanceof ApiError) setError(e.message);
@@ -38,7 +42,7 @@ export default function VocabularyDetailPage({ params }: { params: { id: string 
       }
     };
     run().catch(() => undefined);
-  }, [params.id, state]);
+  }, [id, state]);
 
   if (state.status === "guest") {
     return (
@@ -114,8 +118,9 @@ export default function VocabularyDetailPage({ params }: { params: { id: string 
               disabled={loading}
               onClick={() => {
                 if (state.status !== "authed") return;
+                if (!id) return;
                 setLoading(true);
-                getVocabulary(state.token, params.id)
+                getVocabulary(state.token, id)
                   .then((res) => setItem(res.vocabulary))
                   .catch((e) => {
                     if (e instanceof ApiError) setError(e.message);
