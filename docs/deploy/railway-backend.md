@@ -32,6 +32,8 @@ Railway の Backend サービス設定で、**Root Directory / Working Directory
 - `LOG_CHANNEL`: `stderr`
 - `DB_CONNECTION`: `mysql`
 - `FRONTEND_URL`: Vercel の URL（例: `https://xxxx.vercel.app`）
+- `CORS_ALLOWED_ORIGINS`: Vercel のオリジン（**カンマ区切りで複数可**）。例: `https://korean-topik-app.vercel.app,https://korean-topik-app-git-release-v01-koshifutamis-projects.vercel.app`  
+  フロントを Vercel に置くと、ブラウザから API を叩くとき **CORS が必須**です。未設定だと `localhost:3000` のみ許可されるため、本番では必ず設定する。
 
 #### DB 接続（MySQL サービス変数の参照）
 
