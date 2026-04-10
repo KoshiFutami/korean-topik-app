@@ -1,0 +1,28 @@
+FROM php:8.3-cli-alpine
+
+# システム依存パッケージ
+RUN apk add --no-cache \
+    git \
+    curl \
+    libpng-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    bash
+
+# PHP 拡張
+RUN docker-php-ext-install \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd
+
+# Composer インストール
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+EXPOSE 8000

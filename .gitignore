@@ -1,0 +1,28 @@
+# Laravel
+backend/.env
+backend/.env.*
+!backend/.env.example
+backend/vendor/
+backend/node_modules/
+backend/storage/logs/*.log
+backend/storage/app/
+backend/bootstrap/cache/
+backend/.phpunit.cache/
+
+# Next.js
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker
+*.log

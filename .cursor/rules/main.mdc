@@ -1,0 +1,64 @@
+---
+description: Korean TOPIK App — Cursor エージェント開発ルール
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Korean TOPIK App 開発ルール
+
+## スタック
+
+- **フロントエンド**: Next.js 14+ (App Router, TypeScript, Tailwind CSS) — `frontend/`
+- **バックエンド**: Laravel 13 (PHP 8.3) — `backend/`
+- **データベース**: MySQL 8.0
+
+## 必須ルール
+
+1. **linter をバイパスしない** — `--no-verify` や設定の弱体化は禁止
+2. **変更後は必ずテスト** — `make test` が通るまで完了とみなさない
+3. **1 機能ずつ** — 1 エンドポイント/1 コンポーネントを完成させてから次へ
+4. **Plan first** — 複数ファイルにまたがる変更は先に設計を説明する
+
+## バックエンド (Laravel) 規約
+
+- コントローラは `app/Http/Controllers/Api/V1/` 以下に配置
+- ビジネスロジックはコントローラに書かず `app/Services/` に分離
+- API ルートは `routes/api.php` に `v1` プレフィックスで定義
+- 認証は Laravel Sanctum を使用
+- コードスタイルは Laravel Pint に準拠
+
+```php
+// ルートの例
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+    Route::apiResource('vocabulary', VocabularyController::class);
+});
+```
+
+## フロントエンド (Next.js) 規約
+
+- App Router を使用（`src/app/` 以下）
+- API クライアントは `src/lib/api/` にまとめる
+- 環境変数は `NEXT_PUBLIC_API_URL` 経由でバックエンドに接続
+- コンポーネントは `src/components/` に配置、関心ごとにサブディレクトリで整理
+
+```typescript
+// API クライアントの例
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+```
+
+## 保護ファイル（変更禁止）
+
+- `.claude/settings.json`
+- `.claude/hooks/`
+- `backend/pint.json`
+- `backend/phpunit.xml`
+- `.github/workflows/backend-pint.yml`
+
+## よく使うコマンド
+
+```bash
+make up              # 環境起動
+make test            # テスト実行
+make lint-backend    # PHP lint チェック
+make migrate         # マイグレーション実行
+```

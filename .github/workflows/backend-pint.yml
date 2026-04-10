@@ -1,0 +1,66 @@
+name: Backend PHP Lint (Pint)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**/*.php'
+  pull_request:
+    paths:
+      - 'backend/**/*.php'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: backend/vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Run Pint (lint check)
+        id: pint
+        run: ./vendor/bin/pint --test 2>&1 | tee pint-output.txt
+        continue-on-error: true
+
+      - name: Post Pint results to PR
+        if: github.event_name == 'pull_request' && steps.pint.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('backend/pint-output.txt', 'utf8');
+            const lines = output.split('\n').slice(0, 100).join('\n');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Laravel Pint チェック失敗\n\n\`\`\`\n${lines}\n\`\`\`\n\n修正するには: \`make lint-backend-fix\` を実行してください。`
+            });
+
+      - name: Fail if Pint errors
+        if: steps.pint.outcome == 'failure'
+        run: exit 1
