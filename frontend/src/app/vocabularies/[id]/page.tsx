@@ -7,16 +7,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Chip } from "@/components/ui/Chip";
+import { Section } from "@/components/ui/Section";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { ApiError } from "@/lib/api/http";
 import { getVocabulary, type UserVocabularyDetail } from "@/lib/api/vocabularies";
-
-function Tag({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex items-center rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700">
-      {children}
-    </span>
-  );
-}
 
 export default function VocabularyDetailPage() {
   const { state, refreshMe } = useAuth();
@@ -60,11 +55,11 @@ export default function VocabularyDetailPage() {
   }
 
   return (
-    <div className="flex flex-1 justify-center bg-zinc-50 px-4 py-10">
-      <div className="w-full max-w-2xl space-y-4">
+    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-rose-50 via-white to-white px-4 py-8">
+      <div className="mx-auto w-full max-w-3xl space-y-6">
         <div className="flex items-center justify-between">
           <Link
-            className="inline-flex items-center gap-2 rounded-full bg-zinc-100 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-200"
+            className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium text-zinc-700 ring-1 ring-zinc-200 hover:bg-white"
             href="/vocabularies"
           >
             <span aria-hidden="true">←</span>
@@ -72,84 +67,99 @@ export default function VocabularyDetailPage() {
           </Link>
         </div>
 
-        <Card>
+        <Card className="bg-white/70 backdrop-blur">
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <h1 className="truncate text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-                  {item?.term ?? "語彙"}
-                </h1>
-                <p className="mt-2 text-lg font-semibold text-zinc-900">{item?.meaning_ja ?? ""}</p>
+                {loading && !item ? (
+                  <>
+                    <Skeleton className="h-10 w-48" />
+                    <Skeleton className="mt-3 h-6 w-64" />
+                  </>
+                ) : (
+                  <>
+                    <h1 className="truncate text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl">
+                      {item?.term ?? "語彙"}
+                    </h1>
+                    <p className="mt-2 text-lg font-semibold text-zinc-900">{item?.meaning_ja ?? ""}</p>
+                  </>
+                )}
               </div>
-              <div className="shrink-0 text-right text-xs text-zinc-500">
+              <div className="shrink-0 text-right text-xs text-zinc-600">
                 <div className="font-medium">{item?.level_label_ja ?? ""}</div>
                 <div className="mt-1">{item?.pos_label_ja ?? ""}</div>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {item?.level_label_ja ? <Tag>{item.level_label_ja}</Tag> : null}
-              {item?.entry_type_label_ja ? <Tag>{item.entry_type_label_ja}</Tag> : null}
-              {item?.pos_label_ja ? <Tag>{item.pos_label_ja}</Tag> : null}
+              {item?.level_label_ja ? (
+                <Chip type="button" selected disabled>
+                  {item.level_label_ja}
+                </Chip>
+              ) : null}
+              {item?.entry_type_label_ja ? (
+                <Chip type="button" selected disabled>
+                  {item.entry_type_label_ja}
+                </Chip>
+              ) : null}
+              {item?.pos_label_ja ? (
+                <Chip type="button" selected disabled>
+                  {item.pos_label_ja}
+                </Chip>
+              ) : null}
             </div>
-          </div>
 
-          {error ? <div className="mt-4 text-sm text-red-600">{error}</div> : null}
-
-          <div className="my-6 h-px bg-zinc-200" />
-
-          <div className="grid gap-4 text-sm">
-            <div className="text-sm font-semibold text-zinc-900">例文</div>
-
-            {item?.example_sentence ? (
-              <div className="flex gap-2">
-                <div
-                  className="shrink-0 self-start text-base leading-none"
-                  aria-hidden="true"
-                >
-                  🇰🇷
-                </div>
-                <div className="text-zinc-900">{item.example_sentence}</div>
-              </div>
-            ) : (
-              <div className="text-zinc-500">例文は未登録です。</div>
-            )}
-
-            {item?.example_translation_ja ? (
-              <div className="flex gap-2">
-                <div
-                  className="shrink-0 self-start text-base leading-none"
-                  aria-hidden="true"
-                >
-                  🇯🇵
-                </div>
-                <div className="text-zinc-700">{item.example_translation_ja}</div>
-              </div>
-            ) : null}
-          </div>
-
-          <div className="mt-6 flex gap-3">
-            <Button
-              className="w-full sm:w-auto"
-              type="button"
-              disabled={loading}
-              onClick={() => {
-                if (!id) return;
-                setLoading(true);
-                const token = state.status === "authed" ? state.token : null;
-                getVocabulary(token, id)
-                  .then((res) => setItem(res.vocabulary))
-                  .catch((e) => {
-                    if (e instanceof ApiError) setError(e.message);
-                    else setError("語彙の取得に失敗しました。");
-                  })
-                  .finally(() => setLoading(false));
-              }}
-            >
-              {loading ? "更新中..." : "更新"}
-            </Button>
+            {error ? <div className="text-sm font-medium text-red-600">{error}</div> : null}
           </div>
         </Card>
+
+        <Section title="例文">
+          <Card className="bg-white/70 backdrop-blur">
+            <div className="grid gap-4 text-sm">
+              {item?.example_sentence ? (
+                <div className="flex gap-3">
+                  <div className="shrink-0 self-start text-base leading-none" aria-hidden="true">
+                    🇰🇷
+                  </div>
+                  <div className="text-zinc-900">{item.example_sentence}</div>
+                </div>
+              ) : (
+                <div className="text-zinc-500">例文は未登録です。</div>
+              )}
+
+              {item?.example_translation_ja ? (
+                <div className="flex gap-3">
+                  <div className="shrink-0 self-start text-base leading-none" aria-hidden="true">
+                    🇯🇵
+                  </div>
+                  <div className="text-zinc-700">{item.example_translation_ja}</div>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="mt-6">
+              <Button
+                className="w-full sm:w-auto"
+                type="button"
+                disabled={loading}
+                onClick={() => {
+                  if (!id) return;
+                  setLoading(true);
+                  const token = state.status === "authed" ? state.token : null;
+                  getVocabulary(token, id)
+                    .then((res) => setItem(res.vocabulary))
+                    .catch((e) => {
+                      if (e instanceof ApiError) setError(e.message);
+                      else setError("語彙の取得に失敗しました。");
+                    })
+                    .finally(() => setLoading(false));
+                }}
+              >
+                {loading ? "更新中..." : "更新"}
+              </Button>
+            </div>
+          </Card>
+        </Section>
       </div>
     </div>
   );
