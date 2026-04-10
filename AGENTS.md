@@ -61,31 +61,52 @@ korean-topik-app/
 
 ## ブランチ運用
 
-- **`main` ブランチには直接コミットしない**
-- 機能・修正・作業ごとに必ずブランチを切ってから実装を始める
+### ブランチ構成
+
+```
+main
+└── release/v<x.y>        # リリース単位の統合ブランチ
+    ├── feat/<内容>        # 機能追加
+    ├── fix/<内容>         # バグ修正
+    └── chore/<内容>       # 雑務・設定
+```
+
+- **`main`** — 本番リリース済みのコードのみ。直接コミット禁止
+- **`release/v<x.y>`** — リリース単位の統合ブランチ。feature ブランチの PR マージ先
+- **`feat/` 等** — 1 機能・1 修正ごとに `release/` から切る
+
+### 典型的な流れ
+
+```bash
+# 1. リリースブランチを作成（まだなければ）
+git switch main
+git switch -c release/v0.1
+
+# 2. feature ブランチをリリースブランチから切る
+git switch -c feat/vocabulary-api
+
+# 3. 実装 → lint → test
+make lint-backend
+make test
+
+# 4. PR を release/v0.1 向けに作成
+make push
+gh pr create --base release/v0.1 --fill
+
+# 5. リリース時: release → main の PR を作成
+gh pr create --base main --head release/v0.1 --title "release: v0.1"
+```
 
 ### ブランチ命名規則
 
 | 種類 | パターン | 例 |
 |------|---------|-----|
+| リリース | `release/v<x.y>` | `release/v0.1` |
 | 機能追加 | `feat/<内容>` | `feat/vocabulary-api` |
 | バグ修正 | `fix/<内容>` | `fix/auth-token-expiry` |
 | リファクタ | `refactor/<内容>` | `refactor/vocabulary-service` |
 | ドキュメント | `docs/<内容>` | `docs/api-readme` |
 | 雑務・設定 | `chore/<内容>` | `chore/update-dependencies` |
-
-### ブランチ作成コマンド
-
-```bash
-git switch -c feat/<ブランチ名>
-```
-
-作業完了後:
-
-```bash
-make push    # git push -u origin HEAD
-make pr      # gh pr create --fill
-```
 
 ## API 設計規約
 
