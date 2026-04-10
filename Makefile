@@ -61,11 +61,15 @@ logs: ## ログを表示（Ctrl+C で終了）
 
 # ── テスト ───────────────────────────────────────────────────────────────────
 
+TEST_APP_KEY ?= base64:nF12noq1nxW3cMMh1fRH85ip/046y/Y4myDfwj0XNyk=
+
 test: ## 全テストを実行
-	docker compose exec backend php artisan test
+	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
+	docker compose exec -e APP_ENV=testing -e APP_KEY=$(TEST_APP_KEY) backend php artisan test
 
 test-filter: ## 特定のテストを実行 (例: make test-filter FILTER=UserTest)
-	docker compose exec backend php artisan test --filter=$(FILTER)
+	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
+	docker compose exec -e APP_ENV=testing -e APP_KEY=$(TEST_APP_KEY) backend php artisan test --filter=$(FILTER)
 
 # ── コード品質 ────────────────────────────────────────────────────────────────
 
