@@ -55,11 +55,11 @@ export default function VocabularyDetailPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-rose-50 via-white to-white px-4 py-8">
+    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-violet-700 via-fuchsia-600 to-orange-500 px-4 py-8 text-white">
       <div className="mx-auto w-full max-w-3xl space-y-6">
         <div className="flex items-center justify-between">
           <Link
-            className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium text-zinc-700 ring-1 ring-zinc-200 hover:bg-white"
+            className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 hover:bg-white/15"
             href="/vocabularies"
           >
             <span aria-hidden="true">←</span>
@@ -67,7 +67,7 @@ export default function VocabularyDetailPage() {
           </Link>
         </div>
 
-        <Card className="bg-white/70 backdrop-blur">
+        <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
@@ -78,15 +78,15 @@ export default function VocabularyDetailPage() {
                   </>
                 ) : (
                   <>
-                    <h1 className="truncate text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl">
+                    <h1 className="truncate text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
                       {item?.term ?? "語彙"}
                     </h1>
-                    <p className="mt-2 text-lg font-semibold text-zinc-900">{item?.meaning_ja ?? ""}</p>
+                    <p className="mt-2 text-lg font-semibold text-white/90">{item?.meaning_ja ?? ""}</p>
                   </>
                 )}
               </div>
-              <div className="shrink-0 text-right text-xs text-zinc-600">
-                <div className="font-medium">{item?.level_label_ja ?? ""}</div>
+              <div className="shrink-0 text-right text-xs text-white/80">
+                <div className="font-semibold">{item?.level_label_ja ?? ""}</div>
                 <div className="mt-1">{item?.pos_label_ja ?? ""}</div>
               </div>
             </div>
@@ -109,22 +109,22 @@ export default function VocabularyDetailPage() {
               ) : null}
             </div>
 
-            {error ? <div className="text-sm font-medium text-red-600">{error}</div> : null}
+            {error ? <div className="text-sm font-medium text-red-200">{error}</div> : null}
           </div>
         </Card>
 
         <Section title="例文">
-          <Card className="bg-white/70 backdrop-blur">
+          <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
             <div className="grid gap-4 text-sm">
               {item?.example_sentence ? (
                 <div className="flex gap-3">
                   <div className="shrink-0 self-start text-base leading-none" aria-hidden="true">
                     🇰🇷
                   </div>
-                  <div className="text-zinc-900">{item.example_sentence}</div>
+                  <div className="text-white/90">{item.example_sentence}</div>
                 </div>
               ) : (
-                <div className="text-zinc-500">例文は未登録です。</div>
+                <div className="text-white/70">例文は未登録です。</div>
               )}
 
               {item?.example_translation_ja ? (
@@ -132,7 +132,7 @@ export default function VocabularyDetailPage() {
                   <div className="shrink-0 self-start text-base leading-none" aria-hidden="true">
                     🇯🇵
                   </div>
-                  <div className="text-zinc-700">{item.example_translation_ja}</div>
+                  <div className="text-white/80">{item.example_translation_ja}</div>
                 </div>
               ) : null}
             </div>

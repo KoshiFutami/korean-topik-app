@@ -92,11 +92,11 @@ export default function VocabulariesPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-50 via-white to-white px-4 py-8">
+    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-violet-700 via-fuchsia-600 to-orange-500 px-4 py-8 text-white">
       <div className="mx-auto w-full max-w-5xl space-y-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">語彙</h1>
-          <p className="text-sm text-zinc-600">公開中の語彙のみ表示します。</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">語彙</h1>
+          <p className="text-sm text-white/80">公開中の語彙のみ表示します。</p>
         </div>
 
         <Section
@@ -112,10 +112,10 @@ export default function VocabulariesPage() {
             </Button>
           }
         >
-          <Card className="bg-white/70 backdrop-blur">
+          <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
             <div className="space-y-4">
               <div>
-                <div className="text-sm font-semibold text-zinc-900">TOPIK</div>
+                <div className="text-sm font-semibold text-white">TOPIK</div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {LEVEL_OPTIONS.map((o) => (
                     <Chip
@@ -133,7 +133,7 @@ export default function VocabulariesPage() {
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-zinc-900">種別</div>
+                <div className="text-sm font-semibold text-white">種別</div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {ENTRY_TYPE_OPTIONS.map((o) => (
                     <Chip
@@ -154,7 +154,7 @@ export default function VocabulariesPage() {
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-zinc-900">品詞</div>
+                <div className="text-sm font-semibold text-white">品詞</div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {POS_OPTIONS.map((o) => (
                     <Chip
@@ -177,12 +177,12 @@ export default function VocabulariesPage() {
         <Section
           title="語彙一覧"
           description={loading ? "読み込み中..." : `件数: ${items?.length ?? 0}`}
-          right={error ? <div className="text-sm font-medium text-red-600">{error}</div> : null}
+          right={error ? <div className="text-sm font-medium text-red-200">{error}</div> : null}
         >
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {loading
               ? Array.from({ length: 9 }).map((_, i) => (
-                  <Card key={i} className="p-5">
+                  <Card key={i} className="border-white/10 bg-white/10 p-5 text-white backdrop-blur">
                     <Skeleton className="h-6 w-2/3" />
                     <Skeleton className="mt-3 h-4 w-5/6" />
                     <div className="mt-4 flex gap-2">
@@ -197,29 +197,30 @@ export default function VocabulariesPage() {
                       className={[
                         "p-5 transition-transform group-hover:-translate-y-0.5 group-hover:shadow-md",
                         "bg-gradient-to-br",
-                        idx % 3 === 0 ? "from-rose-50 to-white" : "",
-                        idx % 3 === 1 ? "from-sky-50 to-white" : "",
-                        idx % 3 === 2 ? "from-emerald-50 to-white" : "",
+                        idx % 3 === 0 ? "from-violet-700/60 via-fuchsia-600/40 to-orange-500/50" : "",
+                        idx % 3 === 1 ? "from-sky-500/60 via-emerald-500/40 to-lime-400/40" : "",
+                        idx % 3 === 2 ? "from-orange-500/70 via-rose-500/40 to-violet-700/50" : "",
+                        "border-white/10 text-white backdrop-blur",
                       ].join(" ")}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <div className="truncate text-lg font-bold text-zinc-900">{v.term}</div>
-                          <div className="mt-1 line-clamp-2 text-sm text-zinc-700">
+                          <div className="truncate text-lg font-extrabold text-white">{v.term}</div>
+                          <div className="mt-1 line-clamp-2 text-sm text-white/85">
                             {v.meaning_ja}
                           </div>
                         </div>
-                        <div className="shrink-0 text-right text-xs text-zinc-600">
-                          <div className="font-medium">{v.level_label_ja}</div>
+                        <div className="shrink-0 text-right text-xs text-white/80">
+                          <div className="font-semibold">{v.level_label_ja}</div>
                           <div className="mt-1">{v.pos_label_ja}</div>
                         </div>
                       </div>
 
                       <div className="mt-4 flex flex-wrap gap-2">
-                        <span className="inline-flex items-center rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-zinc-700 ring-1 ring-zinc-200">
+                        <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white ring-1 ring-white/25">
                           {v.entry_type_label_ja}
                         </span>
-                        <span className="inline-flex items-center rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-zinc-700 ring-1 ring-zinc-200">
+                        <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white ring-1 ring-white/25">
                           {v.pos_label_ja}
                         </span>
                       </div>
@@ -229,9 +230,9 @@ export default function VocabulariesPage() {
           </div>
 
           {!loading && items && items.length === 0 ? (
-            <Card className="text-center">
-              <div className="text-sm font-medium text-zinc-900">該当する語彙がありません</div>
-              <div className="mt-1 text-sm text-zinc-600">絞り込みをリセットしてみてください。</div>
+            <Card className="border-white/10 bg-white/10 text-center text-white backdrop-blur">
+              <div className="text-sm font-semibold text-white">該当する語彙がありません</div>
+              <div className="mt-1 text-sm text-white/80">絞り込みをリセットしてみてください。</div>
             </Card>
           ) : null}
         </Section>
