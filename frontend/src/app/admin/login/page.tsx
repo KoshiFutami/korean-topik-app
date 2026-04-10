@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -12,6 +12,29 @@ import { loginAdmin } from "@/lib/api/admin/auth";
 const ADMIN_TOKEN_KEY = "topik.admin.token";
 
 export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<AdminLoginSkeleton />}>
+      <AdminLoginInner />
+    </Suspense>
+  );
+}
+
+function AdminLoginSkeleton() {
+  return (
+    <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10">
+      <Card className="w-full max-w-md">
+        <div className="h-6 w-36 rounded bg-zinc-200" />
+        <div className="mt-6 space-y-4">
+          <div className="h-16 rounded bg-zinc-100" />
+          <div className="h-16 rounded bg-zinc-100" />
+          <div className="h-10 rounded bg-zinc-200" />
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function AdminLoginInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = useMemo(() => searchParams.get("next") || "/admin/vocabularies", [searchParams]);
