@@ -38,8 +38,8 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
             [
                 'term' => $vocabulary->term()->value(),
                 'meaning_ja' => $vocabulary->meaningJa()->value(),
-                'pos' => $vocabulary->pos()->value(),
-                'level' => $vocabulary->level()->value(),
+                'pos' => $vocabulary->pos()->value,
+                'level' => $vocabulary->level()->value,
                 'example_sentence' => $vocabulary->exampleSentence(),
                 'example_translation_ja' => $vocabulary->exampleTranslationJa(),
                 'audio_url' => $vocabulary->audioUrl(),
@@ -57,7 +57,7 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
     {
         return EloquentVocabulary::query()
             ->where('term', $term->value())
-            ->where('pos', $pos->value())
+            ->where('pos', $pos->value)
             ->where('meaning_ja', $meaningJa->value())
             ->exists();
     }
@@ -71,7 +71,7 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
         return EloquentVocabulary::query()
             ->where('id', '!=', $excludeId->value())
             ->where('term', $term->value())
-            ->where('pos', $pos->value())
+            ->where('pos', $pos->value)
             ->where('meaning_ja', $meaningJa->value())
             ->exists();
     }

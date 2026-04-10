@@ -4,20 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Vocabulary\ValueObject;
 
-use InvalidArgumentException;
-
-final class TopikLevel
+enum TopikLevel: int
 {
-    public function __construct(private readonly int $value)
-    {
-        if ($value < 1 || $value > 6) {
-            throw new InvalidArgumentException('TOPIKレベルは1〜6で指定してください。');
-        }
-    }
-
-    public function value(): int
-    {
-        return $this->value;
-    }
+    case LEVEL_1 = 1;
+    case LEVEL_2 = 2;
+    case LEVEL_3 = 3;
+    case LEVEL_4 = 4;
+    case LEVEL_5 = 5;
+    case LEVEL_6 = 6;
 }
 

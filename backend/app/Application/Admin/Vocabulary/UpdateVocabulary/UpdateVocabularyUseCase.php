@@ -28,8 +28,8 @@ final class UpdateVocabularyUseCase
 
         $term = new Term($input->term);
         $meaningJa = new MeaningJa($input->meaningJa);
-        $pos = new PartOfSpeech($input->pos);
-        $level = new TopikLevel($input->level);
+        $pos = PartOfSpeech::from($input->pos);
+        $level = TopikLevel::from($input->level);
         $status = $input->status !== null ? VocabularyStatus::from($input->status) : VocabularyStatus::PUBLISHED;
 
         if ($this->vocabularies->existsByUniqueKeyExcludingId($id, $term, $pos, $meaningJa)) {
@@ -53,8 +53,8 @@ final class UpdateVocabularyUseCase
             id: $vocabulary->id()->value(),
             term: $vocabulary->term()->value(),
             meaningJa: $vocabulary->meaningJa()->value(),
-            pos: $vocabulary->pos()->value(),
-            level: $vocabulary->level()->value(),
+            pos: $vocabulary->pos()->value,
+            level: $vocabulary->level()->value,
             exampleSentence: $vocabulary->exampleSentence(),
             exampleTranslationJa: $vocabulary->exampleTranslationJa(),
             audioUrl: $vocabulary->audioUrl(),
