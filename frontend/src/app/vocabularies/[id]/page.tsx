@@ -13,6 +13,42 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { ApiError } from "@/lib/api/http";
 import { getVocabulary, type UserVocabularyDetail } from "@/lib/api/vocabularies";
 
+function posKo(pos: string): string {
+  switch (pos) {
+    case "noun":
+      return "명사";
+    case "verb":
+      return "동사";
+    case "adj":
+      return "형용사";
+    case "adv":
+      return "부사";
+    case "particle":
+      return "조사";
+    case "determiner":
+      return "관형사";
+    case "pronoun":
+      return "대명사";
+    case "interjection":
+      return "감탄사";
+    default:
+      return "기타";
+  }
+}
+
+function entryTypeKo(t: string): string {
+  switch (t) {
+    case "word":
+      return "단어";
+    case "phrase":
+      return "숙어";
+    case "idiom":
+      return "관용구";
+    default:
+      return "";
+  }
+}
+
 export default function VocabularyDetailPage() {
   const { state, refreshMe } = useAuth();
   const params = useParams<{ id?: string }>();
@@ -95,16 +131,25 @@ export default function VocabularyDetailPage() {
               {item?.level_label_ja ? (
                 <Chip type="button" selected disabled>
                   {item.level_label_ja}
+                  <span className="ml-1 text-[11px] font-semibold opacity-80">
+                    {typeof item.level === "number" ? `${item.level}급` : ""}
+                  </span>
                 </Chip>
               ) : null}
               {item?.entry_type_label_ja ? (
                 <Chip type="button" selected disabled>
                   {item.entry_type_label_ja}
+                  <span className="ml-1 text-[11px] font-semibold opacity-80">
+                    {item.entry_type ? entryTypeKo(item.entry_type) : ""}
+                  </span>
                 </Chip>
               ) : null}
               {item?.pos_label_ja ? (
                 <Chip type="button" selected disabled>
                   {item.pos_label_ja}
+                  <span className="ml-1 text-[11px] font-semibold opacity-80">
+                    {item.pos ? posKo(item.pos) : ""}
+                  </span>
                 </Chip>
               ) : null}
             </div>
@@ -115,6 +160,7 @@ export default function VocabularyDetailPage() {
 
         <Section
           title="例文"
+          subtitle="예문"
           headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
           titleClassName="text-white drop-shadow-sm"
           descriptionClassName="text-white/80"

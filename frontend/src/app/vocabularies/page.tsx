@@ -43,6 +43,42 @@ const LEVEL_OPTIONS: Array<{ value: string; label: string }> = [
   ...[1, 2, 3, 4, 5, 6].map((n) => ({ value: String(n), label: `${n}級` })),
 ];
 
+function posKo(pos: string): string {
+  switch (pos) {
+    case "noun":
+      return "명사";
+    case "verb":
+      return "동사";
+    case "adj":
+      return "형용사";
+    case "adv":
+      return "부사";
+    case "particle":
+      return "조사";
+    case "determiner":
+      return "관형사";
+    case "pronoun":
+      return "대명사";
+    case "interjection":
+      return "감탄사";
+    default:
+      return "기타";
+  }
+}
+
+function entryTypeKo(t: string): string {
+  switch (t) {
+    case "word":
+      return "단어";
+    case "phrase":
+      return "숙어";
+    case "idiom":
+      return "관용구";
+    default:
+      return "";
+  }
+}
+
 export default function VocabulariesPage() {
   const { state, refreshMe } = useAuth();
   const [filters, setFilters] = useState<Filters>({ level: "", entry_type: "", pos: "" });
@@ -97,12 +133,14 @@ export default function VocabulariesPage() {
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-sm sm:text-4xl">
             語彙
+            <span className="ml-2 align-baseline text-lg font-semibold text-white/85">단어</span>
           </h1>
           <p className="text-sm text-white/80">公開中の語彙のみ表示します。</p>
         </div>
 
         <Section
           title="絞り込み"
+          subtitle="필터"
           description="タップで絞り込み。もう一度タップで解除できます。"
           headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
           titleClassName="text-white drop-shadow-sm"
@@ -120,7 +158,9 @@ export default function VocabulariesPage() {
           <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
             <div className="space-y-4">
               <div>
-                <div className="text-sm font-semibold text-white">TOPIK</div>
+                <div className="text-sm font-semibold text-white">
+                  TOPIK <span className="ml-1 font-semibold text-white/80">토픽</span>
+                </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {LEVEL_OPTIONS.map((o) => (
                     <Chip
@@ -138,7 +178,9 @@ export default function VocabulariesPage() {
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-white">種別</div>
+                <div className="text-sm font-semibold text-white">
+                  種別 <span className="ml-1 font-semibold text-white/80">유형</span>
+                </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {ENTRY_TYPE_OPTIONS.map((o) => (
                     <Chip
@@ -159,7 +201,9 @@ export default function VocabulariesPage() {
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-white">品詞</div>
+                <div className="text-sm font-semibold text-white">
+                  品詞 <span className="ml-1 font-semibold text-white/80">품사</span>
+                </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {POS_OPTIONS.map((o) => (
                     <Chip
@@ -181,6 +225,7 @@ export default function VocabulariesPage() {
 
         <Section
           title="語彙一覧"
+          subtitle="단어 목록"
           description={loading ? "読み込み中..." : `件数: ${items?.length ?? 0}`}
           right={error ? <div className="text-sm font-medium text-red-200">{error}</div> : null}
           headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
@@ -227,9 +272,15 @@ export default function VocabulariesPage() {
                       <div className="mt-4 flex flex-wrap gap-2">
                         <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white ring-1 ring-white/25">
                           {v.entry_type_label_ja}
+                          <span className="ml-1 text-[11px] font-semibold text-white/80">
+                            {entryTypeKo(v.entry_type)}
+                          </span>
                         </span>
                         <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white ring-1 ring-white/25">
                           {v.pos_label_ja}
+                          <span className="ml-1 text-[11px] font-semibold text-white/80">
+                            {posKo(v.pos)}
+                          </span>
                         </span>
                       </div>
                     </Card>
