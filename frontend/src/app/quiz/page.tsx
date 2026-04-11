@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { HighlightedExampleText } from "@/components/vocabulary/HighlightedExampleText";
+import { VocabularyInlineAudio } from "@/components/vocabulary/VocabularyInlineAudio";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
@@ -378,6 +379,11 @@ export default function QuizPage() {
                   <div className="relative text-4xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-5xl">
                     {question}
                   </div>
+                  {card.audio_url ? (
+                    <div className="relative w-full max-w-xs px-2" onClick={(e) => e.stopPropagation()}>
+                      <VocabularyInlineAudio src={card.audio_url} className="[&_audio]:h-8 [&_audio]:opacity-90" />
+                    </div>
+                  ) : null}
                   <div className="relative text-sm text-white/65">
                     タップでめくる
                     <span className="mt-1 block text-xs text-white/45">탭하여 뒤집기</span>

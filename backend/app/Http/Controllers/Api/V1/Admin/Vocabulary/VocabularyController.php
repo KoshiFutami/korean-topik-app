@@ -20,6 +20,7 @@ use App\Domain\Vocabulary\ValueObject\VocabularyStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Admin\Vocabulary\StoreVocabularyRequest;
 use App\Http\Requests\Api\V1\Admin\Vocabulary\UpdateVocabularyRequest;
+use App\Support\VocabularyAudioUrl;
 use Illuminate\Http\JsonResponse;
 
 class VocabularyController extends Controller
@@ -49,7 +50,7 @@ class VocabularyController extends Controller
                 'entry_type_label_ja' => EntryType::from($v->entryType)->labelJa(),
                 'example_sentence' => $v->exampleSentence,
                 'example_translation_ja' => $v->exampleTranslationJa,
-                'audio_url' => $v->audioUrl,
+                'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
                 'status' => $v->status,
                 'status_label_ja' => VocabularyStatus::from($v->status)->labelJa(),
                 'created_at' => $v->createdAt,
@@ -75,7 +76,7 @@ class VocabularyController extends Controller
                     'entry_type_label_ja' => EntryType::from($v->entryType)->labelJa(),
                     'example_sentence' => $v->exampleSentence,
                     'example_translation_ja' => $v->exampleTranslationJa,
-                    'audio_url' => $v->audioUrl,
+                    'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
                     'status' => $v->status,
                     'status_label_ja' => VocabularyStatus::from($v->status)->labelJa(),
                     'created_at' => $v->createdAt,
@@ -114,7 +115,7 @@ class VocabularyController extends Controller
                     'entry_type_label_ja' => EntryType::from($v->entryType)->labelJa(),
                     'example_sentence' => $v->exampleSentence,
                     'example_translation_ja' => $v->exampleTranslationJa,
-                    'audio_url' => $v->audioUrl,
+                    'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
                     'status' => $v->status,
                     'status_label_ja' => VocabularyStatus::from($v->status)->labelJa(),
                     'created_at' => $v->createdAt,
@@ -154,7 +155,7 @@ class VocabularyController extends Controller
                     'entry_type_label_ja' => EntryType::from($v->entryType)->labelJa(),
                     'example_sentence' => $v->exampleSentence,
                     'example_translation_ja' => $v->exampleTranslationJa,
-                    'audio_url' => $v->audioUrl,
+                    'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
                     'status' => $v->status,
                     'status_label_ja' => VocabularyStatus::from($v->status)->labelJa(),
                     'created_at' => $v->createdAt,

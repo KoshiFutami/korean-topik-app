@@ -12,6 +12,7 @@ export type BookmarkVocabulary = {
   entry_type_label_ja: string;
   example_sentence?: string | null;
   example_translation_ja?: string | null;
+  audio_url?: string | null;
   bookmarked_at: string;
 };
 

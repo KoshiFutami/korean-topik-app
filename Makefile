@@ -1,5 +1,5 @@
 .PHONY: help init init-backend init-frontend up down logs test \
-        lint-backend lint-backend-fix migrate fresh-migrate seed-vocabulary \
+        lint-backend lint-backend-fix migrate fresh-migrate seed-vocabulary synthesize-vocabulary-audio \
         bash-backend bash-frontend bash-db \
         commit push pr pr-web pr-draft review approve
 
@@ -90,6 +90,10 @@ fresh-migrate: ## DB を空にしてマイグレーション＋全シード（CS
 seed-vocabulary: ## 語彙だけ vocabulary_bulk.csv と同期（VocabularyBulkSeeder のみ・他テーブルはそのまま）
 	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
 	docker compose exec backend php artisan db:seed --class=VocabularyBulkSeeder
+
+synthesize-vocabulary-audio: ## Google TTS で語彙 MP3 を生成（GOOGLE_APPLICATION_CREDENTIALS 必須・OPTS で artisan 引数）
+	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
+	docker compose exec backend php artisan vocabulary:synthesize-audio $(OPTS)
 
 # ── シェル ───────────────────────────────────────────────────────────────────
 

@@ -21,6 +21,7 @@ final class ListBookmarksVocabulary
         public readonly string $entryTypeLabelJa,
         public readonly ?string $exampleSentence,
         public readonly ?string $exampleTranslationJa,
+        public readonly ?string $audioUrl,
         public readonly string $bookmarkedAt,
     ) {}
 
@@ -38,6 +39,7 @@ final class ListBookmarksVocabulary
             entryTypeLabelJa: $vocabulary->entryType()->labelJa(),
             exampleSentence: $vocabulary->exampleSentence(),
             exampleTranslationJa: $vocabulary->exampleTranslationJa(),
+            audioUrl: $vocabulary->audioUrl(),
             bookmarkedAt: $bookmark->createdAt()->format('Y-m-d\TH:i:s\Z'),
         );
     }

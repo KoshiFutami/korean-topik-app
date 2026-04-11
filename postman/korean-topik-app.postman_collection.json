@@ -2,6 +2,7 @@
   "info": {
     "_postman_id": "2fbb7b1e-8b4e-4d7b-9f43-9bd5b2a6c6b1",
     "name": "korean-topik-app API",
+    "description": "語彙レスポンスの `audio_url` は、バックエンドで `php artisan vocabulary:synthesize-audio`（Google Cloud Text-to-Speech）を実行して MP3 を `storage/app/public` に置いたときに返る絶対 URL（未生成時は null）。",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

@@ -24,6 +24,9 @@ use App\Infrastructure\Shared\Password\BcryptPasswordHasher;
 use App\Infrastructure\User\Repository\EloquentUserRepository;
 use App\Infrastructure\User\Token\SanctumUserTokenService;
 use App\Infrastructure\Vocabulary\Repository\EloquentVocabularyRepository;
+use App\Services\Vocabulary\Contracts\VocabularySpeechSynthesizerInterface;
+use App\Services\Vocabulary\GoogleCloudVocabularySpeechSynthesizer;
+use Google\Cloud\TextToSpeech\V1\Client\TextToSpeechClient;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -39,6 +42,20 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BookmarkRepositoryInterface::class, EloquentBookmarkRepository::class);
         $this->app->bind(PlannedFeatureRepositoryInterface::class, EloquentPlannedFeatureRepository::class);
         $this->app->bind(PasswordHasherInterface::class, BcryptPasswordHasher::class);
+
+        $this->app->singleton(TextToSpeechClient::class, function (): TextToSpeechClient {
+            return new TextToSpeechClient([
+                'transport' => 'rest',
+            ]);
+        });
+
+        $this->app->singleton(VocabularySpeechSynthesizerInterface::class, function ($app): GoogleCloudVocabularySpeechSynthesizer {
+            return new GoogleCloudVocabularySpeechSynthesizer(
+                $app->make(TextToSpeechClient::class),
+                (string) config('services.google.text_to_speech.language_code'),
+                (string) config('services.google.text_to_speech.voice'),
+            );
+        });
 
         $this->app->when([
             RegisterUserUseCase::class,

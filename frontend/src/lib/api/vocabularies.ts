@@ -12,6 +12,8 @@ export type UserVocabulary = {
   entry_type_label_ja: string;
   example_sentence?: string | null;
   example_translation_ja?: string | null;
+  /** 公開ストレージの MP3 など（未生成のときは null） */
+  audio_url?: string | null;
 };
 
 export type UserVocabularyDetail = UserVocabulary & {

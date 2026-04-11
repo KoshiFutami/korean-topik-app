@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { HighlightedExampleText } from "@/components/vocabulary/HighlightedExampleText";
+import { VocabularyInlineAudio } from "@/components/vocabulary/VocabularyInlineAudio";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Section } from "@/components/ui/Section";
@@ -205,6 +206,7 @@ export default function VocabularyDetailPage() {
                       {item?.term ?? "語彙"}
                     </h1>
                     <p className="mt-2 text-lg font-semibold text-white/90">{item?.meaning_ja ?? ""}</p>
+                    {item?.audio_url ? <VocabularyInlineAudio className="mt-4" src={item.audio_url} /> : null}
                   </>
                 )}
               </div>
