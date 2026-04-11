@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
+import { HighlightedExampleText } from "@/components/vocabulary/HighlightedExampleText";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
@@ -405,9 +406,25 @@ export default function QuizPage() {
                   </div>
                   {card.example_sentence ? (
                     <div className="relative mt-1 max-w-xs space-y-1 text-sm text-white/75">
-                      <div>🇰🇷 {card.example_sentence}</div>
+                      <div className="flex gap-1.5">
+                        <span aria-hidden>🇰🇷</span>
+                        <span>
+                          <HighlightedExampleText
+                            text={card.example_sentence}
+                            markClassName="rounded bg-amber-300/35 px-1 font-semibold text-white ring-1 ring-amber-200/45"
+                          />
+                        </span>
+                      </div>
                       {card.example_translation_ja ? (
-                        <div>🇯🇵 {card.example_translation_ja}</div>
+                        <div className="flex gap-1.5">
+                          <span aria-hidden>🇯🇵</span>
+                          <span>
+                            <HighlightedExampleText
+                              text={card.example_translation_ja}
+                              markClassName="rounded bg-sky-400/30 px-1 font-semibold text-white ring-1 ring-sky-200/40"
+                            />
+                          </span>
+                        </div>
                       ) : null}
                     </div>
                   ) : null}

@@ -6,6 +6,10 @@ use App\Models\Vocabulary;
 use Illuminate\Database\Seeder;
 use RuntimeException;
 
+/**
+ * vocabulary_bulk.csv（UTF-8）を投入する。
+ * example_sentence / example_translation_ja では «…»（U+2039, U+203A）で囲んだ部分をフロントで強調表示する。
+ */
 class VocabularyBulkSeeder extends Seeder
 {
     public function run(): void

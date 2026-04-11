@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { HighlightedExampleText } from "@/components/vocabulary/HighlightedExampleText";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ApiError } from "@/lib/api/http";
@@ -121,13 +122,23 @@ export default function AdminVocabularyDetailPage() {
             <div className="text-sm font-semibold text-zinc-900">例文</div>
 
             {item?.example_sentence ? (
-              <div className="text-zinc-900 whitespace-pre-wrap">{item.example_sentence}</div>
+              <div className="text-zinc-900 whitespace-pre-wrap">
+                <HighlightedExampleText
+                  text={item.example_sentence}
+                  markClassName="rounded-md bg-amber-100 px-1 py-0.5 font-semibold text-zinc-950 ring-1 ring-amber-300/70"
+                />
+              </div>
             ) : (
               <div className="text-zinc-500">例文は未登録です。</div>
             )}
 
             {item?.example_translation_ja ? (
-              <div className="text-zinc-700 whitespace-pre-wrap">{item.example_translation_ja}</div>
+              <div className="text-zinc-700 whitespace-pre-wrap">
+                <HighlightedExampleText
+                  text={item.example_translation_ja}
+                  markClassName="rounded-md bg-sky-100 px-1 py-0.5 font-semibold text-zinc-900 ring-1 ring-sky-300/70"
+                />
+              </div>
             ) : null}
           </div>
 

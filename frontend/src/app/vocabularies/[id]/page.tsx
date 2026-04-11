@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
+import { HighlightedExampleText } from "@/components/vocabulary/HighlightedExampleText";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Section } from "@/components/ui/Section";
@@ -258,7 +259,12 @@ export default function VocabularyDetailPage() {
                   <div className="shrink-0 self-start text-base leading-none" aria-hidden="true">
                     🇰🇷
                   </div>
-                  <div className="text-white/90">{item.example_sentence}</div>
+                  <div className="text-white/90">
+                    <HighlightedExampleText
+                      text={item.example_sentence}
+                      markClassName="rounded-md bg-amber-300/35 px-1 py-0.5 font-semibold text-white ring-1 ring-amber-200/40"
+                    />
+                  </div>
                 </div>
               ) : (
                 <div className="text-white/70">例文は未登録です。</div>
@@ -269,7 +275,12 @@ export default function VocabularyDetailPage() {
                   <div className="shrink-0 self-start text-base leading-none" aria-hidden="true">
                     🇯🇵
                   </div>
-                  <div className="text-white/80">{item.example_translation_ja}</div>
+                  <div className="text-white/80">
+                    <HighlightedExampleText
+                      text={item.example_translation_ja}
+                      markClassName="rounded-md bg-sky-400/30 px-1 py-0.5 font-semibold text-white ring-1 ring-sky-200/35"
+                    />
+                  </div>
                 </div>
               ) : null}
             </div>
