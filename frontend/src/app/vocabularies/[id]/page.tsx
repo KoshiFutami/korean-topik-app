@@ -130,7 +130,20 @@ export default function VocabularyDetailPage() {
             <span aria-hidden="true">←</span>
             一覧に戻る
           </Link>
-          {state.status === "authed" && bookmarked !== null ? (
+          {state.status === "guest" ? (
+            <button
+              type="button"
+              disabled
+              aria-disabled="true"
+              title="会員登録が必要です"
+              className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white/60 ring-1 ring-white/20"
+            >
+              <span aria-hidden="true" className="text-base leading-none">
+                🏷️
+              </span>
+              ブックマーク
+            </button>
+          ) : state.status === "authed" && bookmarked !== null ? (
             <button
               type="button"
               disabled={bookmarkBusy || loading}
@@ -154,6 +167,28 @@ export default function VocabularyDetailPage() {
             </button>
           ) : null}
         </div>
+
+        {state.status === "guest" ? (
+          <Card className="border-amber-300/30 bg-amber-500/15 text-white ring-1 ring-amber-200/25 backdrop-blur">
+            <p className="text-sm font-semibold text-amber-50">ブックマークは会員の方のみご利用いただけます</p>
+            <p className="mt-2 text-sm leading-relaxed text-white/85">
+              語彙をブックマークに保存するには、
+              <strong className="text-white">無料の会員登録</strong>
+              が必要です。アカウントをお持ちの方はログインしてください。
+            </p>
+            <p className="mt-3 flex flex-wrap gap-x-3 gap-y-2 text-sm font-semibold">
+              <Link className="rounded-md bg-white px-3 py-1.5 text-zinc-900 hover:bg-white/90" href="/register">
+                無料で会員登録
+              </Link>
+              <Link
+                className="rounded-md border border-white/40 px-3 py-1.5 text-white hover:bg-white/10"
+                href="/login"
+              >
+                ログイン
+              </Link>
+            </p>
+          </Card>
+        ) : null}
 
         <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
           <div className="flex flex-col gap-4">

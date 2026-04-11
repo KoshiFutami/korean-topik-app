@@ -108,20 +108,37 @@ export default function BookmarksPage() {
   if (state.status === "guest") {
     return (
       <div className="flex flex-1 items-center justify-center bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-10 text-white">
-        <Card className="w-full max-w-md border-white/10 bg-white/10 text-white backdrop-blur">
-          <h1 className="text-2xl font-extrabold tracking-tight text-white drop-shadow-sm">
-            未ログイン
-            <span className="ml-2 align-baseline text-base font-semibold text-white/85">
-              로그인 필요
-            </span>
-          </h1>
-          <p className="mt-2 text-sm text-white/80">
-            続けるには{" "}
-            <Link className="font-semibold underline" href="/login">
+        <Card className="w-full max-w-md space-y-4 border-white/10 bg-white/10 text-white backdrop-blur">
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-tight text-white drop-shadow-sm">
+              ブックマークは会員の方のみ
+              <span className="mt-1 block text-base font-semibold text-white/85">
+                북마크는 회원 전용이에요
+              </span>
+            </h1>
+            <p className="mt-3 text-sm leading-relaxed text-white/85">
+              ブックマークに語彙を保存したり、一覧で復習したりするには
+              <strong className="text-white">無料の会員登録（アカウント作成）</strong>
+              が必要です。登録後はいつでもログインしてご利用いただけます。
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-white/80">
+              まずはアカウントを作成して、自分だけの単語リストを作ってみましょう。
+            </p>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+            <Link
+              href="/register"
+              className="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2.5 text-center text-sm font-semibold text-zinc-900 hover:bg-white/90"
+            >
+              無料で会員登録
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center rounded-lg border border-white/40 bg-white/10 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-white/15"
+            >
               ログイン
             </Link>
-            してください。
-          </p>
+          </div>
         </Card>
       </div>
     );

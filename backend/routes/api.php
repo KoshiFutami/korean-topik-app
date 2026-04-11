@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Admin\Auth\AdminAuthController;
 use App\Http\Controllers\Api\V1\Admin\Vocabulary\VocabularyController;
 use App\Http\Controllers\Api\V1\Auth\UserAuthController;
+use App\Http\Controllers\Api\V1\PlannedFeature\PlannedFeatureController;
 use App\Http\Controllers\Api\V1\User\BookmarkController;
 use App\Http\Controllers\Api\V1\Vocabulary\VocabularyController as UserVocabularyController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,8 @@ Route::prefix('v1')->group(function (): void {
     // Public: allow guest to browse published vocabularies.
     Route::get('/vocabularies', [UserVocabularyController::class, 'index']);
     Route::get('/vocabularies/{id}', [UserVocabularyController::class, 'show']);
+
+    Route::get('/planned-features', [PlannedFeatureController::class, 'index']);
 
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/bookmarks', [BookmarkController::class, 'index']);
