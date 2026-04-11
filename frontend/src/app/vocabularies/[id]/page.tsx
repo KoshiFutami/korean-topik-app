@@ -5,7 +5,6 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Section } from "@/components/ui/Section";
@@ -273,28 +272,6 @@ export default function VocabularyDetailPage() {
                   <div className="text-white/80">{item.example_translation_ja}</div>
                 </div>
               ) : null}
-            </div>
-
-            <div className="mt-6">
-              <Button
-                className="w-full sm:w-auto"
-                type="button"
-                disabled={loading}
-                onClick={() => {
-                  if (!id) return;
-                  setLoading(true);
-                  const token = state.status === "authed" ? state.token : null;
-                  getVocabulary(token, id)
-                    .then((res) => setItem(res.vocabulary))
-                    .catch((e) => {
-                      if (e instanceof ApiError) setError(e.message);
-                      else setError("語彙の取得に失敗しました。");
-                    })
-                    .finally(() => setLoading(false));
-                }}
-              >
-                {loading ? "更新中..." : "更新"}
-              </Button>
             </div>
           </Card>
         </Section>
