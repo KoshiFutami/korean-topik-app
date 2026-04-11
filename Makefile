@@ -1,5 +1,5 @@
 .PHONY: help init init-backend init-frontend up down logs test \
-        lint-backend lint-backend-fix migrate fresh-migrate \
+        lint-backend lint-backend-fix migrate fresh-migrate seed-vocabulary \
         bash-backend bash-frontend bash-db \
         commit push pr pr-web pr-draft review approve
 
@@ -84,8 +84,12 @@ lint-backend-fix: ## PHP スタイルを自動修正
 migrate: ## マイグレーションを実行
 	docker compose exec backend php artisan migrate
 
-fresh-migrate: ## DB をリセットしてマイグレーション＋シード
+fresh-migrate: ## DB を空にしてマイグレーション＋全シード（CSV 含めきれいに揃える）
 	docker compose exec backend php artisan migrate:fresh --seed
+
+seed-vocabulary: ## 語彙だけ vocabulary_bulk.csv と同期（VocabularyBulkSeeder のみ・他テーブルはそのまま）
+	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
+	docker compose exec backend php artisan db:seed --class=VocabularyBulkSeeder
 
 # ── シェル ───────────────────────────────────────────────────────────────────
 
