@@ -33,19 +33,22 @@ class VocabularyBulkSeeder extends Seeder
             }
 
             [$term, $meaningJa, $pos, $level, $entryType] = $parts;
+            $exampleSentence = $parts[5] ?? '';
+            $exampleTranslationJa = $parts[6] ?? '';
+
             $item = [
                 'term' => $term,
                 'meaning_ja' => $meaningJa,
                 'pos' => $pos,
                 'level' => (int) $level,
                 'entry_type' => $entryType !== '' ? $entryType : 'word',
-                'example_sentence' => null,
-                'example_translation_ja' => null,
+                'example_sentence' => $exampleSentence !== '' ? $exampleSentence : null,
+                'example_translation_ja' => $exampleTranslationJa !== '' ? $exampleTranslationJa : null,
                 'audio_url' => null,
                 'status' => 'published',
             ];
 
-            Vocabulary::query()->firstOrCreate(
+            Vocabulary::query()->updateOrCreate(
                 [
                     'term' => $item['term'],
                     'pos' => $item['pos'],
