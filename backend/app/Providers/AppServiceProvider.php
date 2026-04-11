@@ -12,10 +12,12 @@ use App\Application\User\Auth\LoginUser\LoginUserUseCase;
 use App\Application\User\Auth\LogoutUser\LogoutUserUseCase;
 use App\Application\User\Auth\RegisterUser\RegisterUserUseCase;
 use App\Domain\Admin\Repository\AdminRepositoryInterface;
+use App\Domain\Bookmark\Repository\BookmarkRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\Vocabulary\Repository\VocabularyRepositoryInterface;
 use App\Infrastructure\Admin\Repository\EloquentAdminRepository;
 use App\Infrastructure\Admin\Token\SanctumAdminTokenService;
+use App\Infrastructure\Bookmark\Repository\EloquentBookmarkRepository;
 use App\Infrastructure\Shared\Password\BcryptPasswordHasher;
 use App\Infrastructure\User\Repository\EloquentUserRepository;
 use App\Infrastructure\User\Token\SanctumUserTokenService;
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
         $this->app->bind(AdminRepositoryInterface::class, EloquentAdminRepository::class);
         $this->app->bind(VocabularyRepositoryInterface::class, EloquentVocabularyRepository::class);
+        $this->app->bind(BookmarkRepositoryInterface::class, EloquentBookmarkRepository::class);
         $this->app->bind(PasswordHasherInterface::class, BcryptPasswordHasher::class);
 
         $this->app->when([
