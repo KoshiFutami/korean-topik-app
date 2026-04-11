@@ -233,6 +233,28 @@
       ]
     },
     {
+      "name": "Planned features (public)",
+      "item": [
+        {
+          "name": "List planned features (Coming soon)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/planned-features",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "planned-features"]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "User Vocabularies",
       "item": [
         {
