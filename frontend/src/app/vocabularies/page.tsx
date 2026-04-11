@@ -135,7 +135,9 @@ export default function VocabulariesPage() {
             語彙
             <span className="ml-2 align-baseline text-lg font-semibold text-white/85">단어</span>
           </h1>
-          <p className="text-sm text-white/80">公開中の語彙のみ表示します。</p>
+          <p className="text-sm text-white/80">
+            目的の語を、レベルや品詞からさっと探して意味や例文を確認できます。
+          </p>
         </div>
 
         <Section
