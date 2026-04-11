@@ -51,6 +51,8 @@ export default function QuizPage() {
   // ── quiz state ───────────────────────────────────────────
   const [phase, setPhase] = useState<Phase>("setup");
   const [cards, setCards] = useState<UserVocabulary[]>([]);
+  /** スタート／「もう一度（全問）」時のデッキ。「わからなかっただけ」後も上書きしない */
+  const [fullRoundDeck, setFullRoundDeck] = useState<UserVocabulary[]>([]);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [results, setResults] = useState<{ card: UserVocabulary; correct: boolean }[]>([]);
@@ -88,7 +90,9 @@ export default function QuizPage() {
       }
 
       const picked = count > 0 ? shuffle(pool).slice(0, count) : shuffle(pool);
-      setCards(picked);
+      const deck = [...picked];
+      setFullRoundDeck(deck);
+      setCards(deck);
       setIndex(0);
       setFlipped(false);
       setResults([]);
@@ -115,14 +119,18 @@ export default function QuizPage() {
 
   const retry = useCallback(
     (wrongOnly: boolean) => {
-      const pool = wrongOnly ? results.filter((r) => !r.correct).map((r) => r.card) : cards;
+      const pool = wrongOnly
+        ? results.filter((r) => !r.correct).map((r) => r.card)
+        : fullRoundDeck.length > 0
+          ? fullRoundDeck
+          : cards;
       setCards(shuffle(pool));
       setIndex(0);
       setFlipped(false);
       setResults([]);
       setPhase("playing");
     },
-    [cards, results],
+    [cards, fullRoundDeck, results],
   );
 
   const correctCount = useMemo(() => results.filter((r) => r.correct).length, [results]);
