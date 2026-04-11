@@ -253,10 +253,10 @@ export default function VocabularyDetailPage() {
           descriptionClassName="text-white/80"
         >
           <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
-            <div className="grid gap-4 text-sm">
+            <div className="grid gap-4 text-base leading-relaxed">
               {item?.example_sentence ? (
                 <div className="flex gap-3">
-                  <div className="shrink-0 self-start text-base leading-none" aria-hidden="true">
+                  <div className="shrink-0 self-start text-lg leading-none" aria-hidden="true">
                     🇰🇷
                   </div>
                   <div className="text-white/90">
@@ -267,12 +267,12 @@ export default function VocabularyDetailPage() {
                   </div>
                 </div>
               ) : (
-                <div className="text-white/70">例文は未登録です。</div>
+                <div className="text-base text-white/70">例文は未登録です。</div>
               )}
 
               {item?.example_translation_ja ? (
                 <div className="flex gap-3">
-                  <div className="shrink-0 self-start text-base leading-none" aria-hidden="true">
+                  <div className="shrink-0 self-start text-lg leading-none" aria-hidden="true">
                     🇯🇵
                   </div>
                   <div className="text-white/80">

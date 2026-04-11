@@ -405,7 +405,7 @@ export default function QuizPage() {
                     {answer1}
                   </div>
                   {card.example_sentence ? (
-                    <div className="relative mt-1 max-w-xs space-y-1 text-sm text-white/75">
+                    <div className="relative mt-1 max-w-xs space-y-1.5 text-base leading-snug text-white/80">
                       <div className="flex gap-1.5">
                         <span aria-hidden>🇰🇷</span>
                         <span>

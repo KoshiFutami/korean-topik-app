@@ -118,7 +118,7 @@ export default function AdminVocabularyDetailPage() {
 
           <div className="my-6 h-px bg-zinc-200" />
 
-          <div className="space-y-4 text-sm">
+          <div className="space-y-4 text-base leading-relaxed">
             <div className="text-sm font-semibold text-zinc-900">例文</div>
 
             {item?.example_sentence ? (
