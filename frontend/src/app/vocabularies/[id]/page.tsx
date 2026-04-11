@@ -143,19 +143,9 @@ export default function VocabularyDetailPage() {
                 bookmarkBusy ? "opacity-60" : "",
               ].join(" ")}
             >
-              <svg
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                className="h-4 w-4 shrink-0"
-                fill={bookmarked ? "currentColor" : "none"}
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-              </svg>
+              <span aria-hidden="true" className="text-base leading-none">
+                {bookmarked ? "🔖" : "🏷️"}
+              </span>
               {bookmarkBusy
                 ? "저장 중..."
                 : bookmarked
