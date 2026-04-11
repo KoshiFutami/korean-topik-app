@@ -10,7 +10,7 @@ class VocabularyBulkSeeder extends Seeder
 {
     public function run(): void
     {
-        $path = database_path('data/vocabulary_bulk.tsv');
+        $path = database_path('data/vocabulary_bulk.csv');
 
         if (! is_file($path)) {
             throw new RuntimeException("Missing vocabulary data file: {$path}");
@@ -22,13 +22,20 @@ class VocabularyBulkSeeder extends Seeder
         }
 
         foreach ($raw as $line) {
+            if (str_starts_with($line, "\xEF\xBB\xBF")) {
+                $line = substr($line, 3);
+            }
             $line = trim($line);
             if ($line === '' || str_starts_with($line, '#')) {
                 continue;
             }
 
-            $parts = explode("\t", $line);
+            $parts = str_getcsv($line);
             if (count($parts) < 5) {
+                continue;
+            }
+
+            if (($parts[0] ?? '') === 'term') {
                 continue;
             }
 
