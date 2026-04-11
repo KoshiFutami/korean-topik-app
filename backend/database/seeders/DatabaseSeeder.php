@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(AdminSeeder::class);
         $this->call(VocabularySeeder::class);
+        $this->call(VocabularyBulkSeeder::class);
         $this->call(PlannedFeatureSeeder::class);
 
         User::query()->firstOrCreate(
