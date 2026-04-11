@@ -411,7 +411,7 @@ export default function QuizPage() {
                         <span>
                           <HighlightedExampleText
                             text={card.example_sentence}
-                            markClassName="rounded bg-amber-300/35 px-1 font-semibold text-white ring-1 ring-amber-200/45"
+                            markClassName="font-semibold text-white underline decoration-amber-200/90 decoration-2 underline-offset-[0.2em]"
                           />
                         </span>
                       </div>
@@ -421,7 +421,7 @@ export default function QuizPage() {
                           <span>
                             <HighlightedExampleText
                               text={card.example_translation_ja}
-                              markClassName="rounded bg-sky-400/30 px-1 font-semibold text-white ring-1 ring-sky-200/40"
+                              markClassName="font-semibold text-white/95 underline decoration-emerald-200/85 decoration-2 underline-offset-[0.2em]"
                             />
                           </span>
                         </div>

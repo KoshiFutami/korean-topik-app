@@ -47,7 +47,7 @@ export type HighlightedExampleTextProps = {
 };
 
 const defaultMarkClass =
-  "rounded-md bg-amber-400/25 px-1 py-0.5 font-semibold text-inherit ring-1 ring-amber-400/35";
+  "font-semibold underline decoration-amber-600/50 decoration-2 underline-offset-[0.2em] text-inherit";
 
 export function HighlightedExampleText({
   text,

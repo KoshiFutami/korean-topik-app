@@ -125,7 +125,7 @@ export default function AdminVocabularyDetailPage() {
               <div className="text-zinc-900 whitespace-pre-wrap">
                 <HighlightedExampleText
                   text={item.example_sentence}
-                  markClassName="rounded-md bg-amber-100 px-1 py-0.5 font-semibold text-zinc-950 ring-1 ring-amber-300/70"
+                  markClassName="font-semibold text-zinc-900 underline decoration-amber-600/55 decoration-2 underline-offset-[0.2em]"
                 />
               </div>
             ) : (
@@ -136,7 +136,7 @@ export default function AdminVocabularyDetailPage() {
               <div className="text-zinc-700 whitespace-pre-wrap">
                 <HighlightedExampleText
                   text={item.example_translation_ja}
-                  markClassName="rounded-md bg-sky-100 px-1 py-0.5 font-semibold text-zinc-900 ring-1 ring-sky-300/70"
+                  markClassName="font-semibold text-zinc-800 underline decoration-sky-600/50 decoration-2 underline-offset-[0.2em]"
                 />
               </div>
             ) : null}
