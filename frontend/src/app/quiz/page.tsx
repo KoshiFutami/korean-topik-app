@@ -61,15 +61,18 @@ export default function QuizPage() {
     if (state.status === "loading") refreshMe().catch(() => undefined);
   }, [refreshMe, state.status]);
 
-  // ブックマークが選択されているのにゲストになったらリセット
-  useEffect(() => {
-    if (state.status === "guest" && source === "bookmarks") setSource("all");
-  }, [state.status, source]);
-
   const startQuiz = useCallback(async () => {
     setLoading(true);
     setLoadError(null);
     try {
+      if (source === "bookmarks" && state.status !== "authed") {
+        setLoadError(
+          "ブックマークのみの出題には会員登録が必要です。無料で登録すると、保存した語彙だけを練習できます。",
+        );
+        setLoading(false);
+        return;
+      }
+
       let pool: UserVocabulary[];
       const token = state.status === "authed" ? state.token : null;
 
@@ -199,20 +202,43 @@ export default function QuizPage() {
                   <Chip
                     type="button"
                     selected={source === "all"}
-                    onClick={() => setSource("all")}
+                    onClick={() => {
+                      setSource("all");
+                      setLoadError(null);
+                    }}
                   >
                     全語彙
                   </Chip>
-                  {state.status === "authed" ? (
-                    <Chip
-                      type="button"
-                      selected={source === "bookmarks"}
-                      onClick={() => setSource("bookmarks")}
-                    >
-                      🔖 ブックマークのみ
-                    </Chip>
-                  ) : null}
+                  <Chip
+                    type="button"
+                    selected={source === "bookmarks"}
+                    onClick={() => {
+                      setSource("bookmarks");
+                      setLoadError(null);
+                    }}
+                  >
+                    🔖 ブックマークのみ
+                  </Chip>
                 </div>
+                {state.status === "guest" && source === "bookmarks" ? (
+                  <div className="mt-3 rounded-xl border border-amber-300/35 bg-amber-500/15 px-3 py-3 text-sm leading-relaxed text-white/95 ring-1 ring-amber-200/20">
+                    <p className="font-semibold text-amber-50">会員登録でご利用いただけます</p>
+                    <p className="mt-1.5 text-white/85">
+                      ブックマークに保存した語彙だけを出題するには、
+                      <strong className="text-white">無料の会員登録</strong>
+                      が必要です。登録後はログインしてお楽しみください。
+                    </p>
+                    <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+                      <Link className="font-semibold text-white underline underline-offset-2" href="/register">
+                        会員登録（無料）
+                      </Link>
+                      <span className="text-white/50">|</span>
+                      <Link className="font-semibold text-white/90 underline underline-offset-2" href="/login">
+                        ログイン
+                      </Link>
+                    </p>
+                  </div>
+                ) : null}
               </div>
 
               {/* レベル絞り込み（全語彙のみ） */}
@@ -262,7 +288,7 @@ export default function QuizPage() {
               <Button
                 className="w-full"
                 type="button"
-                disabled={loading}
+                disabled={loading || (state.status === "guest" && source === "bookmarks")}
                 onClick={() => startQuiz()}
               >
                 {loading ? "読み込み中..." : "スタート 시작"}

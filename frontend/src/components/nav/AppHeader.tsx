@@ -49,6 +49,7 @@ export function AppHeader() {
   }
 
   const isLearnerGlass =
+    pathname === "/" ||
     pathname?.startsWith("/vocabularies") ||
     pathname?.startsWith("/bookmarks") ||
     pathname?.startsWith("/quiz") ||
@@ -85,9 +86,7 @@ export function AppHeader() {
           <nav className="hidden items-center gap-1 sm:flex">
             <NavLink href="/vocabularies" label="語彙" tone={tone} />
             <NavLink href="/quiz" label="クイズ" tone={tone} />
-            {state.status === "authed" ? (
-              <NavLink href="/bookmarks" label="ブックマーク" tone={tone} />
-            ) : null}
+            <NavLink href="/bookmarks" label="ブックマーク" tone={tone} />
             <NavLink href="/me" label="プロフィール" tone={tone} />
           </nav>
         </div>
@@ -139,9 +138,7 @@ export function AppHeader() {
         <nav className="flex items-center gap-1">
           <NavLink href="/vocabularies" label="語彙" tone={tone} />
           <NavLink href="/quiz" label="クイズ" tone={tone} />
-          {state.status === "authed" ? (
-            <NavLink href="/bookmarks" label="ブックマーク" tone={tone} />
-          ) : null}
+          <NavLink href="/bookmarks" label="ブックマーク" tone={tone} />
           <NavLink href="/me" label="プロフィール" tone={tone} />
         </nav>
       </div>
