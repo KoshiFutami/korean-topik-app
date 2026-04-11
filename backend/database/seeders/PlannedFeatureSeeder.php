@@ -20,6 +20,12 @@ class PlannedFeatureSeeder extends Seeder
                 'sort_order' => 10,
             ],
             [
+                'title_ja' => 'TOPIK 形式の練習問題',
+                'summary_ja' => '読解・聴解など本番に近い出題形式で力試し。正解と解説で苦手分野も把握できます。',
+                'subtitle_ko' => '실전 문제로 실력 점검',
+                'sort_order' => 12,
+            ],
+            [
                 'title_ja' => '語彙の発音・リスニング',
                 'summary_ja' => 'ネイティブ音声とシャドーイングで、目だけでなく耳からも TOPIK 語彙を定着。',
                 'subtitle_ko' => '듣고 따라 말하기',
