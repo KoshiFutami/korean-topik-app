@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Section } from "@/components/ui/Section";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { addBookmark, listBookmarks, removeBookmark } from "@/lib/api/bookmarks";
 import { ApiError } from "@/lib/api/http";
 import { getVocabulary, type UserVocabularyDetail } from "@/lib/api/vocabularies";
 
@@ -56,6 +57,8 @@ export default function VocabularyDetailPage() {
   const [item, setItem] = useState<UserVocabularyDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [bookmarked, setBookmarked] = useState<boolean | null>(null);
+  const [bookmarkBusy, setBookmarkBusy] = useState(false);
 
   useEffect(() => {
     if (state.status === "loading") {
@@ -72,6 +75,12 @@ export default function VocabularyDetailPage() {
         const token = state.status === "authed" ? state.token : null;
         const res = await getVocabulary(token, id);
         setItem(res.vocabulary);
+        if (state.status === "authed") {
+          const bRes = await listBookmarks(state.token);
+          setBookmarked(bRes.bookmarks.some((b) => b.id === id));
+        } else {
+          setBookmarked(null);
+        }
       } catch (e) {
         if (e instanceof ApiError) setError(e.message);
         else setError("語彙の取得に失敗しました。");
@@ -81,6 +90,26 @@ export default function VocabularyDetailPage() {
     };
     run().catch(() => undefined);
   }, [id, state]);
+
+  const handleBookmarkToggle = async () => {
+    if (state.status !== "authed" || !id || bookmarkBusy) return;
+    setBookmarkBusy(true);
+    setError(null);
+    try {
+      if (bookmarked) {
+        await removeBookmark(state.token, id);
+        setBookmarked(false);
+      } else {
+        await addBookmark(state.token, id);
+        setBookmarked(true);
+      }
+    } catch (e) {
+      if (e instanceof ApiError) setError(e.message);
+      else setError("ブックマークの操作に失敗しました。");
+    } finally {
+      setBookmarkBusy(false);
+    }
+  };
 
   if (state.status === "loading") {
     return (
@@ -101,6 +130,29 @@ export default function VocabularyDetailPage() {
             <span aria-hidden="true">←</span>
             一覧に戻る
           </Link>
+          {state.status === "authed" && bookmarked !== null ? (
+            <button
+              type="button"
+              disabled={bookmarkBusy || loading}
+              onClick={handleBookmarkToggle}
+              className={[
+                "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1 transition-colors",
+                bookmarked
+                  ? "bg-white/20 text-white ring-white/30 hover:bg-white/30"
+                  : "bg-white/10 text-white/80 ring-white/25 hover:bg-white/15",
+                bookmarkBusy ? "opacity-60" : "",
+              ].join(" ")}
+            >
+              <span aria-hidden="true" className="text-base leading-none">
+                {bookmarked ? "🔖" : "🏷️"}
+              </span>
+              {bookmarkBusy
+                ? "저장 중..."
+                : bookmarked
+                  ? "저장됨"
+                  : "북마크"}
+            </button>
+          ) : null}
         </div>
 
         <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
