@@ -25,6 +25,7 @@ final class Vocabulary
         private ?string $exampleSentence,
         private ?string $exampleTranslationJa,
         private ?string $audioUrl,
+        private ?string $exampleAudioUrl,
         private VocabularyStatus $status,
         private readonly DateTimeImmutable $createdAt,
     ) {}
@@ -38,6 +39,7 @@ final class Vocabulary
         ?string $exampleSentence,
         ?string $exampleTranslationJa,
         ?string $audioUrl,
+        ?string $exampleAudioUrl = null,
         ?VocabularyStatus $status = null,
     ): self {
         return new self(
@@ -50,6 +52,7 @@ final class Vocabulary
             exampleSentence: $exampleSentence,
             exampleTranslationJa: $exampleTranslationJa,
             audioUrl: $audioUrl,
+            exampleAudioUrl: $exampleAudioUrl,
             status: $status ?? VocabularyStatus::PUBLISHED,
             createdAt: new DateTimeImmutable,
         );
@@ -65,6 +68,7 @@ final class Vocabulary
         ?string $exampleSentence,
         ?string $exampleTranslationJa,
         ?string $audioUrl,
+        ?string $exampleAudioUrl,
         VocabularyStatus $status,
         DateTimeImmutable $createdAt,
     ): self {
@@ -78,6 +82,7 @@ final class Vocabulary
             exampleSentence: $exampleSentence,
             exampleTranslationJa: $exampleTranslationJa,
             audioUrl: $audioUrl,
+            exampleAudioUrl: $exampleAudioUrl,
             status: $status,
             createdAt: $createdAt,
         );
@@ -128,6 +133,11 @@ final class Vocabulary
         return $this->audioUrl;
     }
 
+    public function exampleAudioUrl(): ?string
+    {
+        return $this->exampleAudioUrl;
+    }
+
     public function status(): VocabularyStatus
     {
         return $this->status;
@@ -147,6 +157,7 @@ final class Vocabulary
         ?string $exampleSentence,
         ?string $exampleTranslationJa,
         ?string $audioUrl,
+        ?string $exampleAudioUrl,
         VocabularyStatus $status,
     ): void {
         $this->term = $term;
@@ -157,6 +168,7 @@ final class Vocabulary
         $this->exampleSentence = $exampleSentence;
         $this->exampleTranslationJa = $exampleTranslationJa;
         $this->audioUrl = $audioUrl;
+        $this->exampleAudioUrl = $exampleAudioUrl;
         $this->status = $status;
     }
 }

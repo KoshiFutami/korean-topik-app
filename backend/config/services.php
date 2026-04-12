@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'google' => [
+        'text_to_speech' => [
+            'credentials_path' => env('GOOGLE_APPLICATION_CREDENTIALS', ''),
+            'language_code' => env('GOOGLE_TTS_LANGUAGE_CODE', 'ko-KR'),
+            'voice' => env('GOOGLE_TTS_VOICE', 'ko-KR-Neural2-A'),
+        ],
+    ],
+
 ];

@@ -13,6 +13,7 @@ export type AdminVocabulary = {
   example_sentence?: string | null;
   example_translation_ja?: string | null;
   audio_url?: string | null;
+  example_audio_url?: string | null;
   status?: string;
   status_label_ja?: string;
   created_at?: string;
@@ -30,6 +31,26 @@ export async function getAdminVocabulary(
 ): Promise<{ vocabulary: AdminVocabulary }> {
   return apiFetch(`/api/v1/admin/vocabularies/${encodeURIComponent(id)}`, {
     method: "GET",
+    token,
+  });
+}
+
+export async function ensureAdminVocabularyAudio(
+  token: string,
+  vocabularyId: string
+): Promise<{ audio_url: string }> {
+  return apiFetch(`/api/v1/admin/vocabularies/${encodeURIComponent(vocabularyId)}/audio`, {
+    method: "POST",
+    token,
+  });
+}
+
+export async function ensureAdminVocabularyExampleAudio(
+  token: string,
+  vocabularyId: string
+): Promise<{ example_audio_url: string }> {
+  return apiFetch(`/api/v1/admin/vocabularies/${encodeURIComponent(vocabularyId)}/audio/example`, {
+    method: "POST",
     token,
   });
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ApiError } from "@/lib/api/http";
@@ -102,24 +103,31 @@ export default function AdminVocabulariesPage() {
 
           <div className="mt-4 divide-y divide-zinc-200">
             {(items ?? []).map((v) => (
-              <Link
+              <div
                 key={v.id}
-                href={`/admin/vocabularies/${v.id}`}
-                className="block py-3 hover:bg-zinc-50 -mx-6 px-6"
+                className="flex items-start justify-between gap-4 py-3 hover:bg-zinc-50 -mx-6 px-6"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <div className="truncate text-base font-medium text-zinc-900">{v.term}</div>
-                    <div className="mt-1 truncate text-sm text-zinc-600">{v.meaning_ja}</div>
+                <Link href={`/admin/vocabularies/${v.id}`} className="min-w-0 flex-1">
+                  <div className="truncate text-base font-medium text-zinc-900 hover:underline">
+                    {v.term}
                   </div>
-                  <div className="shrink-0 text-right text-xs text-zinc-500">
+                  <div className="mt-1 truncate text-sm text-zinc-600">{v.meaning_ja}</div>
+                </Link>
+                <div className="flex shrink-0 flex-col items-end gap-2">
+                  <div className="text-right text-xs text-zinc-500">
                     <div>{v.level_label_ja ?? `${v.level}級`}</div>
                     <div className="mt-1">
                       {(v.entry_type_label_ja ?? v.entry_type) + " / " + (v.pos_label_ja ?? v.pos)}
                     </div>
                   </div>
+                  <VocabularyAudioPlayButton
+                    vocabularyId={v.id}
+                    initialAudioUrl={v.audio_url}
+                    adminToken={token}
+                    tone="zinc"
+                  />
                 </div>
-              </Link>
+              </div>
             ))}
 
             {!loading && items && items.length === 0 ? (

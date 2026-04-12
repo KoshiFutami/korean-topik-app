@@ -16,6 +16,7 @@ final class GetVocabularyOutput
         public readonly ?string $exampleSentence,
         public readonly ?string $exampleTranslationJa,
         public readonly ?string $audioUrl,
+        public readonly ?string $exampleAudioUrl,
         public readonly string $status,
         public readonly string $createdAt,
     ) {}

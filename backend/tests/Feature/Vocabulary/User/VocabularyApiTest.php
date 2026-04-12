@@ -59,6 +59,8 @@ class VocabularyApiTest extends TestCase
                 'entry_type_label_ja',
                 'example_sentence',
                 'example_translation_ja',
+                'audio_url',
+                'example_audio_url',
             ]],
         ]);
     }

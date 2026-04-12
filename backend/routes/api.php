@@ -22,6 +22,10 @@ Route::prefix('v1')->group(function (): void {
     // Public: allow guest to browse published vocabularies.
     Route::get('/vocabularies', [UserVocabularyController::class, 'index']);
     Route::get('/vocabularies/{id}', [UserVocabularyController::class, 'show']);
+    Route::post('/vocabularies/{id}/audio', [UserVocabularyController::class, 'ensureAudio'])
+        ->middleware('throttle:30,1');
+    Route::post('/vocabularies/{id}/audio/example', [UserVocabularyController::class, 'ensureExampleAudio'])
+        ->middleware('throttle:30,1');
 
     Route::get('/planned-features', [PlannedFeatureController::class, 'index']);
 
@@ -41,6 +45,10 @@ Route::prefix('v1')->group(function (): void {
     });
 
     Route::prefix('admin')->middleware('auth:admin')->group(function (): void {
+        Route::post('vocabularies/{id}/audio', [VocabularyController::class, 'ensureAudio'])
+            ->middleware('throttle:60,1');
+        Route::post('vocabularies/{id}/audio/example', [VocabularyController::class, 'ensureExampleAudio'])
+            ->middleware('throttle:60,1');
         Route::apiResource('vocabularies', VocabularyController::class);
     });
 });

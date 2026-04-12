@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withCommands()
     ->withMiddleware(function (Middleware $middleware): void {
         // フロント（localhost:3000）から API を叩くために CORS を有効化
         $middleware->append(HandleCors::class);

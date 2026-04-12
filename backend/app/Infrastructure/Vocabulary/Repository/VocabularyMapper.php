@@ -29,6 +29,7 @@ final class VocabularyMapper
             exampleSentence: $model->example_sentence ? (string) $model->example_sentence : null,
             exampleTranslationJa: $model->example_translation_ja ? (string) $model->example_translation_ja : null,
             audioUrl: $model->audio_url ? (string) $model->audio_url : null,
+            exampleAudioUrl: $model->example_audio_url ? (string) $model->example_audio_url : null,
             status: VocabularyStatus::from((string) $model->status),
             createdAt: new DateTimeImmutable($model->created_at?->toISOString() ?? 'now'),
         );

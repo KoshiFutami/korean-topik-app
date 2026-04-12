@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { HighlightedExampleText } from "@/components/vocabulary/HighlightedExampleText";
+import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Section } from "@/components/ui/Section";
@@ -208,9 +209,14 @@ export default function VocabularyDetailPage() {
                   </>
                 )}
               </div>
-              <div className="shrink-0 text-right text-xs text-white/80">
-                <div className="font-semibold">{item?.level_label_ja ?? ""}</div>
-                <div className="mt-1">{item?.pos_label_ja ?? ""}</div>
+              <div className="flex shrink-0 flex-col items-end gap-2 text-right text-xs text-white/80">
+                <div>
+                  <div className="font-semibold">{item?.level_label_ja ?? ""}</div>
+                  <div className="mt-1">{item?.pos_label_ja ?? ""}</div>
+                </div>
+                {item?.id ? (
+                  <VocabularyAudioPlayButton vocabularyId={item.id} initialAudioUrl={item.audio_url} />
+                ) : null}
               </div>
             </div>
 
@@ -255,16 +261,25 @@ export default function VocabularyDetailPage() {
           <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
             <div className="grid gap-4 text-base leading-relaxed">
               {item?.example_sentence ? (
-                <div className="flex gap-3">
-                  <div className="shrink-0 self-start text-lg leading-none" aria-hidden="true">
-                    🇰🇷
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="flex min-w-0 flex-1 gap-3">
+                    <div className="shrink-0 self-start text-lg leading-none" aria-hidden="true">
+                      🇰🇷
+                    </div>
+                    <div className="min-w-0 text-white/90">
+                      <HighlightedExampleText
+                        text={item.example_sentence}
+                        markClassName="font-semibold text-white underline decoration-amber-200/90 decoration-2 underline-offset-[0.22em]"
+                      />
+                    </div>
                   </div>
-                  <div className="text-white/90">
-                    <HighlightedExampleText
-                      text={item.example_sentence}
-                      markClassName="font-semibold text-white underline decoration-amber-200/90 decoration-2 underline-offset-[0.22em]"
+                  {item.id ? (
+                    <VocabularyAudioPlayButton
+                      vocabularyId={item.id}
+                      scope="example"
+                      initialAudioUrl={item.example_audio_url}
                     />
-                  </div>
+                  ) : null}
                 </div>
               ) : (
                 <div className="text-base text-white/70">例文は未登録です。</div>
