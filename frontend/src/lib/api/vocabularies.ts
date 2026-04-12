@@ -12,6 +12,9 @@ export type UserVocabulary = {
   entry_type_label_ja: string;
   example_sentence?: string | null;
   example_translation_ja?: string | null;
+  /** 公開ストレージの MP3 など（未生成のときは null） */
+  audio_url?: string | null;
+  example_audio_url?: string | null;
 };
 
 export type UserVocabularyDetail = UserVocabulary & {
@@ -36,5 +39,29 @@ export async function getVocabulary(
   id: string
 ): Promise<{ vocabulary: UserVocabularyDetail }> {
   return apiFetch(`/api/v1/vocabularies/${encodeURIComponent(id)}`, { method: "GET", token });
+}
+
+export type EnsureVocabularyAudioResponse = {
+  audio_url: string;
+};
+
+/** 公開語彙の音声を生成またはキャッシュから返す（認証不要） */
+export async function ensureVocabularyAudio(vocabularyId: string): Promise<EnsureVocabularyAudioResponse> {
+  return apiFetch(`/api/v1/vocabularies/${encodeURIComponent(vocabularyId)}/audio`, {
+    method: "POST",
+  });
+}
+
+export type EnsureVocabularyExampleAudioResponse = {
+  example_audio_url: string;
+};
+
+/** 例文のみの音声を生成またはキャッシュから返す（認証不要） */
+export async function ensureVocabularyExampleAudio(
+  vocabularyId: string
+): Promise<EnsureVocabularyExampleAudioResponse> {
+  return apiFetch(`/api/v1/vocabularies/${encodeURIComponent(vocabularyId)}/audio/example`, {
+    method: "POST",
+  });
 }
 

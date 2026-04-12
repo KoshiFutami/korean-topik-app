@@ -11,6 +11,7 @@ use App\Application\Admin\Vocabulary\GetVocabulary\GetVocabularyUseCase;
 use App\Application\Admin\Vocabulary\ListVocabularies\ListVocabulariesUseCase;
 use App\Application\Admin\Vocabulary\UpdateVocabulary\UpdateVocabularyInput;
 use App\Application\Admin\Vocabulary\UpdateVocabulary\UpdateVocabularyUseCase;
+use App\Domain\Vocabulary\Exception\ExampleSentenceMissingForAudioException;
 use App\Domain\Vocabulary\Exception\VocabularyAlreadyExistsException;
 use App\Domain\Vocabulary\Exception\VocabularyNotFoundException;
 use App\Domain\Vocabulary\ValueObject\EntryType;
@@ -20,7 +21,10 @@ use App\Domain\Vocabulary\ValueObject\VocabularyStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Admin\Vocabulary\StoreVocabularyRequest;
 use App\Http\Requests\Api\V1\Admin\Vocabulary\UpdateVocabularyRequest;
+use App\Services\Vocabulary\EnsureVocabularyAudioService;
+use App\Support\VocabularyAudioUrl;
 use Illuminate\Http\JsonResponse;
+use Throwable;
 
 class VocabularyController extends Controller
 {
@@ -49,7 +53,8 @@ class VocabularyController extends Controller
                 'entry_type_label_ja' => EntryType::from($v->entryType)->labelJa(),
                 'example_sentence' => $v->exampleSentence,
                 'example_translation_ja' => $v->exampleTranslationJa,
-                'audio_url' => $v->audioUrl,
+                'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
+                'example_audio_url' => VocabularyAudioUrl::resolveForHttp($v->exampleAudioUrl),
                 'status' => $v->status,
                 'status_label_ja' => VocabularyStatus::from($v->status)->labelJa(),
                 'created_at' => $v->createdAt,
@@ -75,7 +80,8 @@ class VocabularyController extends Controller
                     'entry_type_label_ja' => EntryType::from($v->entryType)->labelJa(),
                     'example_sentence' => $v->exampleSentence,
                     'example_translation_ja' => $v->exampleTranslationJa,
-                    'audio_url' => $v->audioUrl,
+                    'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
+                    'example_audio_url' => VocabularyAudioUrl::resolveForHttp($v->exampleAudioUrl),
                     'status' => $v->status,
                     'status_label_ja' => VocabularyStatus::from($v->status)->labelJa(),
                     'created_at' => $v->createdAt,
@@ -114,7 +120,8 @@ class VocabularyController extends Controller
                     'entry_type_label_ja' => EntryType::from($v->entryType)->labelJa(),
                     'example_sentence' => $v->exampleSentence,
                     'example_translation_ja' => $v->exampleTranslationJa,
-                    'audio_url' => $v->audioUrl,
+                    'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
+                    'example_audio_url' => VocabularyAudioUrl::resolveForHttp($v->exampleAudioUrl),
                     'status' => $v->status,
                     'status_label_ja' => VocabularyStatus::from($v->status)->labelJa(),
                     'created_at' => $v->createdAt,
@@ -154,7 +161,8 @@ class VocabularyController extends Controller
                     'entry_type_label_ja' => EntryType::from($v->entryType)->labelJa(),
                     'example_sentence' => $v->exampleSentence,
                     'example_translation_ja' => $v->exampleTranslationJa,
-                    'audio_url' => $v->audioUrl,
+                    'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
+                    'example_audio_url' => VocabularyAudioUrl::resolveForHttp($v->exampleAudioUrl),
                     'status' => $v->status,
                     'status_label_ja' => VocabularyStatus::from($v->status)->labelJa(),
                     'created_at' => $v->createdAt,
@@ -164,6 +172,42 @@ class VocabularyController extends Controller
             return response()->json(['message' => $e->getMessage()], 404);
         } catch (VocabularyAlreadyExistsException $e) {
             return response()->json(['message' => $e->getMessage()], 409);
+        }
+    }
+
+    public function ensureAudio(string $id): JsonResponse
+    {
+        try {
+            $url = app(EnsureVocabularyAudioService::class)->ensureHttpUrlForId($id, onlyPublished: false);
+
+            return response()->json(['audio_url' => $url]);
+        } catch (VocabularyNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'message' => '音声の生成に失敗しました。設定やクォータを確認のうえ、しばらくしてから再度お試しください。',
+            ], 503);
+        }
+    }
+
+    public function ensureExampleAudio(string $id): JsonResponse
+    {
+        try {
+            $url = app(EnsureVocabularyAudioService::class)->ensureExampleHttpUrlForId($id, onlyPublished: false);
+
+            return response()->json(['example_audio_url' => $url]);
+        } catch (VocabularyNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        } catch (ExampleSentenceMissingForAudioException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'message' => '音声の生成に失敗しました。設定やクォータを確認のうえ、しばらくしてから再度お試しください。',
+            ], 503);
         }
     }
 

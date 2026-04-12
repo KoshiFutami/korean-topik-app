@@ -18,6 +18,7 @@ final class ListVocabulariesVocabulary
         public readonly ?string $exampleSentence,
         public readonly ?string $exampleTranslationJa,
         public readonly ?string $audioUrl,
+        public readonly ?string $exampleAudioUrl,
         public readonly string $status,
         public readonly string $createdAt,
     ) {}
@@ -34,6 +35,7 @@ final class ListVocabulariesVocabulary
             exampleSentence: $vocabulary->exampleSentence(),
             exampleTranslationJa: $vocabulary->exampleTranslationJa(),
             audioUrl: $vocabulary->audioUrl(),
+            exampleAudioUrl: $vocabulary->exampleAudioUrl(),
             status: $vocabulary->status()->value,
             createdAt: $vocabulary->createdAt()->format(DATE_ATOM),
         );

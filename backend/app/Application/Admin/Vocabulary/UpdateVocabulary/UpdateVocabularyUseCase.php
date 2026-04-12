@@ -38,6 +38,12 @@ final class UpdateVocabularyUseCase
             throw new VocabularyAlreadyExistsException;
         }
 
+        $exampleAudioUrl = $vocabulary->exampleAudioUrl();
+        $prevExample = $vocabulary->exampleSentence();
+        if ($prevExample !== $input->exampleSentence) {
+            $exampleAudioUrl = null;
+        }
+
         $vocabulary->update(
             term: $term,
             meaningJa: $meaningJa,
@@ -47,6 +53,7 @@ final class UpdateVocabularyUseCase
             exampleSentence: $input->exampleSentence,
             exampleTranslationJa: $input->exampleTranslationJa,
             audioUrl: $input->audioUrl,
+            exampleAudioUrl: $exampleAudioUrl,
             status: $status,
         );
 
@@ -62,6 +69,7 @@ final class UpdateVocabularyUseCase
             $vocabulary->exampleSentence(),
             $vocabulary->exampleTranslationJa(),
             $vocabulary->audioUrl(),
+            $vocabulary->exampleAudioUrl(),
             $vocabulary->status()->value,
             $vocabulary->createdAt()->format(DATE_ATOM),
         );

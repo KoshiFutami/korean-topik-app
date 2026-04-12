@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { HighlightedExampleText } from "@/components/vocabulary/HighlightedExampleText";
+import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
+import { VocabularyInlineAudio } from "@/components/vocabulary/VocabularyInlineAudio";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ApiError } from "@/lib/api/http";
@@ -114,12 +116,29 @@ export default function AdminVocabularyDetailPage() {
                 )
               }
             />
+            {item?.audio_url ? (
+              <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+                <div className="text-sm font-semibold text-zinc-800">再生プレビュー</div>
+                <VocabularyInlineAudio className="mt-2" src={item.audio_url} />
+              </div>
+            ) : null}
           </div>
 
           <div className="my-6 h-px bg-zinc-200" />
 
           <div className="space-y-4 text-base leading-relaxed">
-            <div className="text-sm font-semibold text-zinc-900">例文</div>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="text-sm font-semibold text-zinc-900">例文</div>
+              {item?.example_sentence && token && item?.id ? (
+                <VocabularyAudioPlayButton
+                  vocabularyId={item.id}
+                  scope="example"
+                  initialAudioUrl={item.example_audio_url}
+                  adminToken={token}
+                  tone="zinc"
+                />
+              ) : null}
+            </div>
 
             {item?.example_sentence ? (
               <div className="text-zinc-900 whitespace-pre-wrap">

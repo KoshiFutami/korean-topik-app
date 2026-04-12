@@ -97,6 +97,33 @@ class VocabularyCrudTest extends TestCase
         $this->assertSame('行く（移動する）', $res->json('vocabulary.meaning_ja'));
     }
 
+    public function test_update_clears_example_audio_url_when_example_sentence_changes(): void
+    {
+        $v = Vocabulary::query()->create([
+            'term' => '읽다',
+            'meaning_ja' => '読む',
+            'pos' => 'verb',
+            'level' => 1,
+            'entry_type' => 'word',
+            'status' => 'published',
+            'example_sentence' => '책을 읽어요.',
+            'example_audio_url' => null,
+        ]);
+        $v->forceFill(['example_audio_url' => 'vocabulary-audio/'.$v->id.'-example.mp3'])->save();
+
+        $this->putJson("/api/v1/admin/vocabularies/{$v->id}", [
+            'term' => '읽다',
+            'meaning_ja' => '読む',
+            'pos' => 'verb',
+            'level' => 1,
+            'entry_type' => 'word',
+            'example_sentence' => '신문을 읽어요.',
+            'status' => 'published',
+        ], $this->authHeader())->assertOk();
+
+        $this->assertNull($v->fresh()->example_audio_url);
+    }
+
     public function test_destroy_deletes_vocabulary(): void
     {
         $v = Vocabulary::query()->create([
