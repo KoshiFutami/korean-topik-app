@@ -19,6 +19,7 @@ final class ListVocabulariesUseCase
         $level = $input->level !== null ? TopikLevel::from($input->level) : null;
         $entryType = $input->entryType !== null ? EntryType::from($input->entryType) : null;
         $pos = $input->pos !== null ? PartOfSpeech::from($input->pos) : null;
+        $q = $input->q !== null && $input->q !== '' ? $input->q : null;
 
         if ($input->compactList) {
             $rows = $this->vocabularies->listCardsByStatus(
@@ -26,6 +27,7 @@ final class ListVocabulariesUseCase
                 level: $level,
                 entryType: $entryType,
                 pos: $pos,
+                q: $q,
             );
 
             return new ListVocabulariesOutput(
@@ -41,6 +43,7 @@ final class ListVocabulariesUseCase
             level: $level,
             entryType: $entryType,
             pos: $pos,
+            q: $q,
         );
 
         return new ListVocabulariesOutput(

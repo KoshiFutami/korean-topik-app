@@ -92,6 +92,104 @@ class VocabularyApiTest extends TestCase
         $this->assertSame('눈이 높다', $res->json('vocabularies.0.term'));
     }
 
+    public function test_index_search_by_term_returns_matching_vocabularies(): void
+    {
+        Vocabulary::query()->create([
+            'term' => '사랑',
+            'meaning_ja' => '愛',
+            'pos' => 'noun',
+            'level' => 1,
+            'entry_type' => 'word',
+            'status' => 'published',
+        ]);
+
+        Vocabulary::query()->create([
+            'term' => '먹다',
+            'meaning_ja' => '食べる',
+            'pos' => 'verb',
+            'level' => 1,
+            'entry_type' => 'word',
+            'status' => 'published',
+        ]);
+
+        $res = $this->getJson('/api/v1/vocabularies?q=사랑', ['Accept' => 'application/json']);
+
+        $res->assertOk();
+        $this->assertCount(1, $res->json('vocabularies'));
+        $this->assertSame('사랑', $res->json('vocabularies.0.term'));
+    }
+
+    public function test_index_search_by_meaning_ja_returns_matching_vocabularies(): void
+    {
+        Vocabulary::query()->create([
+            'term' => '사랑',
+            'meaning_ja' => '愛',
+            'pos' => 'noun',
+            'level' => 1,
+            'entry_type' => 'word',
+            'status' => 'published',
+        ]);
+
+        Vocabulary::query()->create([
+            'term' => '먹다',
+            'meaning_ja' => '食べる',
+            'pos' => 'verb',
+            'level' => 1,
+            'entry_type' => 'word',
+            'status' => 'published',
+        ]);
+
+        $res = $this->getJson('/api/v1/vocabularies?q=食べる', ['Accept' => 'application/json']);
+
+        $res->assertOk();
+        $this->assertCount(1, $res->json('vocabularies'));
+        $this->assertSame('먹다', $res->json('vocabularies.0.term'));
+    }
+
+    public function test_index_search_does_not_return_draft_vocabularies(): void
+    {
+        Vocabulary::query()->create([
+            'term' => '사랑',
+            'meaning_ja' => '愛',
+            'pos' => 'noun',
+            'level' => 1,
+            'entry_type' => 'word',
+            'status' => 'draft',
+        ]);
+
+        $res = $this->getJson('/api/v1/vocabularies?q=사랑', ['Accept' => 'application/json']);
+
+        $res->assertOk();
+        $this->assertCount(0, $res->json('vocabularies'));
+    }
+
+    public function test_index_compact_search_returns_matching_vocabularies(): void
+    {
+        Vocabulary::query()->create([
+            'term' => '사랑',
+            'meaning_ja' => '愛',
+            'pos' => 'noun',
+            'level' => 1,
+            'entry_type' => 'word',
+            'status' => 'published',
+        ]);
+
+        Vocabulary::query()->create([
+            'term' => '먹다',
+            'meaning_ja' => '食べる',
+            'pos' => 'verb',
+            'level' => 1,
+            'entry_type' => 'word',
+            'status' => 'published',
+        ]);
+
+        $res = $this->getJson('/api/v1/vocabularies?compact=1&q=愛', ['Accept' => 'application/json']);
+
+        $res->assertOk();
+        $this->assertCount(1, $res->json('vocabularies'));
+        $this->assertSame('사랑', $res->json('vocabularies.0.term'));
+    }
+
     public function test_show_returns_404_for_non_published(): void
     {
         $v = Vocabulary::query()->create([

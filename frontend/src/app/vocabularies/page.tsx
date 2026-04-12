@@ -6,6 +6,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
+import { Input } from "@/components/ui/Input";
 import { Section } from "@/components/ui/Section";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { VocabularyListVirtualGrid } from "@/components/vocabulary/VocabularyListVirtualGrid";
@@ -16,6 +17,7 @@ type Filters = {
   level: string;
   entry_type: string;
   pos: string;
+  q: string;
 };
 
 const POS_OPTIONS: Array<{ value: string; label: string }> = [
@@ -45,7 +47,7 @@ const LEVEL_OPTIONS: Array<{ value: string; label: string }> = [
 
 export default function VocabulariesPage() {
   const { state, refreshMe } = useAuth();
-  const [filters, setFilters] = useState<Filters>({ level: "", entry_type: "", pos: "" });
+  const [filters, setFilters] = useState<Filters>({ level: "", entry_type: "", pos: "", q: "" });
   const [items, setItems] = useState<UserVocabulary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -57,6 +59,7 @@ export default function VocabulariesPage() {
       entry_type: filters.entry_type || undefined,
       pos: filters.pos || undefined,
       compact: true,
+      q: filters.q.trim() || undefined,
     };
   }, [filters]);
 
@@ -116,7 +119,7 @@ export default function VocabulariesPage() {
             <Button
               variant="secondary"
               type="button"
-              onClick={() => setFilters({ level: "", entry_type: "", pos: "" })}
+              onClick={() => setFilters({ level: "", entry_type: "", pos: "", q: "" })}
             >
               リセット
             </Button>
@@ -124,6 +127,18 @@ export default function VocabulariesPage() {
         >
           <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
             <div className="space-y-4">
+              <div>
+                <Input
+                  label="キーワード"
+                  labelSuffix="검색어"
+                  tone="dark"
+                  type="search"
+                  placeholder="例: 안녕하세요 / こんにちは"
+                  value={filters.q}
+                  onChange={(e) => setFilters((p) => ({ ...p, q: e.target.value }))}
+                />
+              </div>
+
               <div>
                 <div className="text-sm font-semibold text-white">
                   TOPIK <span className="ml-1 font-semibold text-white/80">토픽</span>
