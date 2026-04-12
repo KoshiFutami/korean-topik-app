@@ -58,6 +58,10 @@ export default function QuizPage() {
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [results, setResults] = useState<{ card: UserVocabulary; correct: boolean }[]>([]);
+  /** カードインデックスごとの自己評価。前後ナビゲーション時も保持する */
+  const [cardAnswers, setCardAnswers] = useState<Record<number, boolean>>({});
+  /** めくり済みカードのインデックスセット。前後ナビ時に状態を復元するために使用 */
+  const [cardFlipped, setCardFlipped] = useState<Set<number>>(new Set());
 
   // ── bookmark state (results screen) ─────────────────────
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
@@ -119,6 +123,8 @@ export default function QuizPage() {
       setIndex(0);
       setFlipped(false);
       setResults([]);
+      setCardAnswers({});
+      setCardFlipped(new Set());
       setPhase("playing");
     } catch (e) {
       setLoadError(e instanceof ApiError ? e.message : "語彙の取得に失敗しました。");
@@ -129,15 +135,22 @@ export default function QuizPage() {
 
   const answer = useCallback(
     (correct: boolean) => {
-      setResults((prev) => [...prev, { card: cards[index], correct }]);
+      const newAnswers = { ...cardAnswers, [index]: correct };
+      setCardAnswers(newAnswers);
       if (index + 1 < cards.length) {
-        setIndex((i) => i + 1);
-        setFlipped(false);
+        const nextIndex = index + 1;
+        setIndex(nextIndex);
+        setFlipped(cardFlipped.has(nextIndex));
       } else {
+        const finalResults = cards.map((card, i) => ({
+          card,
+          correct: newAnswers[i] ?? false,
+        }));
+        setResults(finalResults);
         setPhase("finished");
       }
     },
-    [cards, index],
+    [cards, index, cardAnswers, cardFlipped],
   );
 
   const retry = useCallback(
@@ -151,10 +164,28 @@ export default function QuizPage() {
       setIndex(0);
       setFlipped(false);
       setResults([]);
+      setCardAnswers({});
+      setCardFlipped(new Set());
       setPhase("playing");
     },
     [cards, fullRoundDeck, results],
   );
+
+  const goBack = useCallback(() => {
+    if (index > 0) {
+      const prevIndex = index - 1;
+      setIndex(prevIndex);
+      setFlipped(cardFlipped.has(prevIndex));
+    }
+  }, [index, cardFlipped]);
+
+  const goForward = useCallback(() => {
+    if (index < cards.length - 1) {
+      const nextIndex = index + 1;
+      setIndex(nextIndex);
+      setFlipped(cardFlipped.has(nextIndex));
+    }
+  }, [index, cards.length, cardFlipped]);
 
   const handleBookmarkToggle = useCallback(
     async (vocabularyId: string) => {
@@ -394,7 +425,10 @@ export default function QuizPage() {
           <div className="[perspective:1100px]">
             <button
               type="button"
-              onClick={() => setFlipped(true)}
+              onClick={() => {
+                setFlipped(true);
+                setCardFlipped((prev) => new Set([...prev, index]));
+              }}
               disabled={flipped}
               aria-pressed={flipped}
               aria-label={flipped ? "答え表示済み" : "カードをめくって答えを表示"}
@@ -519,6 +553,36 @@ export default function QuizPage() {
           ) : (
             <div className="h-[88px]" />
           )}
+
+          {/* 前後ナビゲーション */}
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={goBack}
+              disabled={index === 0}
+              className={[
+                "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1 transition-colors",
+                index === 0
+                  ? "cursor-not-allowed bg-white/5 text-white/30 ring-white/10"
+                  : "bg-white/10 text-white ring-white/25 hover:bg-white/15",
+              ].join(" ")}
+            >
+              <span aria-hidden="true">←</span>
+              前の問題
+            </button>
+            {index < cards.length - 1 ? (
+              <button
+                type="button"
+                onClick={goForward}
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium ring-1 ring-white/25 transition-colors hover:bg-white/15"
+              >
+                次の問題
+                <span aria-hidden="true">→</span>
+              </button>
+            ) : (
+              <div />
+            )}
+          </div>
         </div>
       </div>
     );
