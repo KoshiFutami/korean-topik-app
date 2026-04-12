@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Section } from "@/components/ui/Section";
-import { listBookmarks } from "@/lib/api/bookmarks";
+import { addBookmark, listBookmarks, removeBookmark } from "@/lib/api/bookmarks";
 import { ApiError } from "@/lib/api/http";
 import { listVocabularies, type UserVocabulary } from "@/lib/api/vocabularies";
 
@@ -59,9 +59,27 @@ export default function QuizPage() {
   const [flipped, setFlipped] = useState(false);
   const [results, setResults] = useState<{ card: UserVocabulary; correct: boolean }[]>([]);
 
+  // ── bookmark state (results screen) ─────────────────────
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
+  const [bookmarkBusy, setBookmarkBusy] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     if (state.status === "loading") refreshMe().catch(() => undefined);
   }, [refreshMe, state.status]);
+
+  // 結果画面表示時にブックマーク済み語彙を取得する
+  useEffect(() => {
+    if (phase !== "finished" || state.status !== "authed") return;
+    const run = async () => {
+      try {
+        const res = await listBookmarks(state.token);
+        setBookmarkedIds(new Set(res.bookmarks.map((b) => b.id)));
+      } catch {
+        // ブックマーク状態の取得失敗は無視（ボタン表示には影響しない）
+      }
+    };
+    run().catch(() => undefined);
+  }, [phase, state]);
 
   const startQuiz = useCallback(async () => {
     setLoading(true);
@@ -136,6 +154,41 @@ export default function QuizPage() {
       setPhase("playing");
     },
     [cards, fullRoundDeck, results],
+  );
+
+  const handleBookmarkToggle = useCallback(
+    async (vocabularyId: string) => {
+      if (state.status !== "authed" || bookmarkBusy.has(vocabularyId)) return;
+      setBookmarkBusy((prev) => new Set([...prev, vocabularyId]));
+      const isBookmarked = bookmarkedIds.has(vocabularyId);
+      setBookmarkedIds((prev) => {
+        const next = new Set(prev);
+        if (isBookmarked) next.delete(vocabularyId);
+        else next.add(vocabularyId);
+        return next;
+      });
+      try {
+        if (isBookmarked) {
+          await removeBookmark(state.token, vocabularyId);
+        } else {
+          await addBookmark(state.token, vocabularyId);
+        }
+      } catch {
+        setBookmarkedIds((prev) => {
+          const next = new Set(prev);
+          if (isBookmarked) next.add(vocabularyId);
+          else next.delete(vocabularyId);
+          return next;
+        });
+      } finally {
+        setBookmarkBusy((prev) => {
+          const next = new Set(prev);
+          next.delete(vocabularyId);
+          return next;
+        });
+      }
+    },
+    [state, bookmarkedIds, bookmarkBusy],
   );
 
   const correctCount = useMemo(() => results.filter((r) => r.correct).length, [results]);
@@ -540,19 +593,53 @@ export default function QuizPage() {
           >
             <div className="space-y-2">
               {wrongCards.map(({ card }) => (
-                <Link key={card.id} href={`/vocabularies/${card.id}`}>
-                  <Card className="border-white/10 bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/15">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <div className="font-bold">{card.term}</div>
-                        <div className="text-sm text-white/70">{card.meaning_ja}</div>
-                      </div>
+                <Card key={card.id} className="border-white/10 bg-white/10 text-white backdrop-blur">
+                  <div className="flex items-center justify-between gap-3">
+                    <Link href={`/vocabularies/${card.id}`} className="min-w-0 flex-1">
+                      <div className="font-bold hover:underline">{card.term}</div>
+                      <div className="text-sm text-white/70">{card.meaning_ja}</div>
+                    </Link>
+                    <div className="flex shrink-0 items-center gap-2">
                       <div className="text-xs text-white/60">{card.level_label_ja}</div>
+                      {state.status === "authed" ? (
+                        <button
+                          type="button"
+                          disabled={bookmarkBusy.has(card.id)}
+                          onClick={() => handleBookmarkToggle(card.id)}
+                          title={bookmarkedIds.has(card.id) ? "ブックマーク解除" : "ブックマークに追加"}
+                          className={[
+                            "inline-flex items-center rounded-full px-2.5 py-1 text-sm ring-1 transition-colors",
+                            bookmarkedIds.has(card.id)
+                              ? "bg-white/20 ring-white/30 hover:bg-white/30"
+                              : "bg-white/10 ring-white/20 hover:bg-white/15",
+                            bookmarkBusy.has(card.id) ? "opacity-50" : "",
+                          ].join(" ")}
+                        >
+                          {bookmarkedIds.has(card.id) ? "🔖" : "🏷️"}
+                        </button>
+                      ) : state.status === "guest" ? (
+                        <button
+                          type="button"
+                          disabled
+                          title="会員登録が必要です"
+                          className="inline-flex cursor-not-allowed items-center rounded-full bg-white/10 px-2.5 py-1 text-sm text-white/40 ring-1 ring-white/15"
+                        >
+                          🏷️
+                        </button>
+                      ) : null}
                     </div>
-                  </Card>
-                </Link>
+                  </div>
+                </Card>
               ))}
             </div>
+            {state.status === "guest" ? (
+              <p className="mt-3 text-center text-xs text-white/65">
+                <Link href="/login" className="underline underline-offset-2 hover:text-white/90">
+                  ログイン
+                </Link>
+                するとブックマークに即時保存できます
+              </p>
+            ) : null}
           </Section>
         ) : (
           <Card className="border-white/10 bg-emerald-500/20 text-center text-white backdrop-blur ring-1 ring-emerald-400/30">
