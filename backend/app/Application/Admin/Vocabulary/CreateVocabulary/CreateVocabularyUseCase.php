@@ -55,6 +55,7 @@ final class CreateVocabularyUseCase
             $vocabulary->exampleSentence(),
             $vocabulary->exampleTranslationJa(),
             $vocabulary->audioUrl(),
+            $vocabulary->exampleAudioUrl(),
             $vocabulary->status()->value,
             $vocabulary->createdAt()->format(DATE_ATOM),
         );

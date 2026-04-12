@@ -60,6 +60,7 @@ class VocabularyApiTest extends TestCase
                 'example_sentence',
                 'example_translation_ja',
                 'audio_url',
+                'example_audio_url',
             ]],
         ]);
     }

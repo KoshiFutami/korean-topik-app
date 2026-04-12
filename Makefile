@@ -1,5 +1,5 @@
 .PHONY: help init init-backend init-frontend up down logs test \
-        lint-backend lint-backend-fix migrate fresh-migrate seed-vocabulary synthesize-vocabulary-audio \
+        lint-backend lint-backend-fix composer-backend migrate fresh-migrate seed-vocabulary synthesize-vocabulary-audio \
         bash-backend bash-frontend bash-db \
         commit push pr pr-web pr-draft review approve
 
@@ -78,6 +78,10 @@ lint-backend: ## PHP スタイルチェック（修正なし）
 
 lint-backend-fix: ## PHP スタイルを自動修正
 	docker compose exec backend ./vendor/bin/pint
+
+composer-backend: ## backend コンテナで composer install（vendor ボリュームを lock と同期・依存追加後に実行）
+	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
+	docker compose exec backend composer install --no-interaction
 
 # ── データベース ──────────────────────────────────────────────────────────────
 

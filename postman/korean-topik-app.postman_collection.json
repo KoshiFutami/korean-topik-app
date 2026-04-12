@@ -341,6 +341,40 @@
               ]
             }
           }
+        },
+        {
+          "name": "Ensure Vocabulary Audio (public)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vocabularies/{{vocabularyId}}/audio",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "vocabularies", "{{vocabularyId}}", "audio"]
+            }
+          }
+        },
+        {
+          "name": "Ensure Vocabulary Example Audio (public)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vocabularies/{{vocabularyId}}/audio/example",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "vocabularies", "{{vocabularyId}}", "audio", "example"]
+            }
+          }
         }
       ]
     },
@@ -365,6 +399,48 @@
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "admin", "vocabularies"]
+            }
+          }
+        },
+        {
+          "name": "Ensure Vocabulary Audio (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}/audio",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}", "audio"]
+            }
+          }
+        },
+        {
+          "name": "Ensure Vocabulary Example Audio (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}/audio/example",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}", "audio", "example"]
             }
           }
         },

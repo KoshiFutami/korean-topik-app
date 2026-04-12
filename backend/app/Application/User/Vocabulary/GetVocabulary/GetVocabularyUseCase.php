@@ -37,6 +37,7 @@ final class GetVocabularyUseCase
             exampleSentence: $vocabulary->exampleSentence(),
             exampleTranslationJa: $vocabulary->exampleTranslationJa(),
             audioUrl: $vocabulary->audioUrl(),
+            exampleAudioUrl: $vocabulary->exampleAudioUrl(),
         );
     }
 }

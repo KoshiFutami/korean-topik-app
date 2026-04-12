@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
     'example_sentence',
     'example_translation_ja',
     'audio_url',
+    'example_audio_url',
     'status',
 ])]
 class Vocabulary extends Model

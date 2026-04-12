@@ -35,4 +35,17 @@ final class VocabularyTtsSourceText
 
         return $term.'。 '.$example;
     }
+
+    /**
+     * 例文のみを合成用テキストとして返す（見出し語は含めない）。
+     */
+    public static function exampleOnly(Vocabulary $vocabulary): string
+    {
+        $raw = $vocabulary->example_sentence;
+        if ($raw === null || trim((string) $raw) === '') {
+            return '';
+        }
+
+        return VocabularyTtsTextSanitizer::forSpeech((string) $raw);
+    }
 }

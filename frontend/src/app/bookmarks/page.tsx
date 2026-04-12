@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Section } from "@/components/ui/Section";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import {
   listBookmarks,
   removeBookmark,
@@ -199,9 +200,12 @@ export default function BookmarksPage() {
                           {v.meaning_ja}
                         </div>
                       </Link>
-                      <div className="shrink-0 text-right text-xs text-white/80">
-                        <div className="font-semibold">{v.level_label_ja}</div>
-                        <div className="mt-1">{v.pos_label_ja}</div>
+                      <div className="flex shrink-0 flex-col items-end gap-2">
+                        <div className="text-right text-xs text-white/80">
+                          <div className="font-semibold">{v.level_label_ja}</div>
+                          <div className="mt-1">{v.pos_label_ja}</div>
+                        </div>
+                        <VocabularyAudioPlayButton vocabularyId={v.id} initialAudioUrl={v.audio_url} />
                       </div>
                     </div>
 

@@ -29,6 +29,7 @@ final class GetVocabularyUseCase
             exampleSentence: $vocabulary->exampleSentence(),
             exampleTranslationJa: $vocabulary->exampleTranslationJa(),
             audioUrl: $vocabulary->audioUrl(),
+            exampleAudioUrl: $vocabulary->exampleAudioUrl(),
             status: $vocabulary->status()->value,
             createdAt: $vocabulary->createdAt()->format(DATE_ATOM),
         );

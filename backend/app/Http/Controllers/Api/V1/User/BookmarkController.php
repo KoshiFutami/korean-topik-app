@@ -45,6 +45,7 @@ class BookmarkController extends Controller
                 'example_sentence' => $v->exampleSentence,
                 'example_translation_ja' => $v->exampleTranslationJa,
                 'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
+                'example_audio_url' => VocabularyAudioUrl::resolveForHttp($v->exampleAudioUrl),
                 'bookmarked_at' => $v->bookmarkedAt,
             ], $output->vocabularies),
         ]);

@@ -26,7 +26,8 @@ use App\Infrastructure\User\Token\SanctumUserTokenService;
 use App\Infrastructure\Vocabulary\Repository\EloquentVocabularyRepository;
 use App\Services\Vocabulary\Contracts\VocabularySpeechSynthesizerInterface;
 use App\Services\Vocabulary\GoogleCloudVocabularySpeechSynthesizer;
-use Google\Cloud\TextToSpeech\V1\Client\TextToSpeechClient;
+use App\Services\Vocabulary\StubMp3VocabularySpeechSynthesizer;
+use App\Services\Vocabulary\UnavailableGoogleSpeechSynthesizer;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -43,19 +44,35 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PlannedFeatureRepositoryInterface::class, EloquentPlannedFeatureRepository::class);
         $this->app->bind(PasswordHasherInterface::class, BcryptPasswordHasher::class);
 
-        $this->app->singleton(TextToSpeechClient::class, function (): TextToSpeechClient {
-            return new TextToSpeechClient([
-                'transport' => 'rest',
-            ]);
-        });
+        $ttsClientClass = 'Google\\Cloud\\TextToSpeech\\V1\\Client\\TextToSpeechClient';
 
-        $this->app->singleton(VocabularySpeechSynthesizerInterface::class, function ($app): GoogleCloudVocabularySpeechSynthesizer {
-            return new GoogleCloudVocabularySpeechSynthesizer(
-                $app->make(TextToSpeechClient::class),
-                (string) config('services.google.text_to_speech.language_code'),
-                (string) config('services.google.text_to_speech.voice'),
-            );
-        });
+        if ($this->app->environment('testing')) {
+            $this->app->singleton(VocabularySpeechSynthesizerInterface::class, UnavailableGoogleSpeechSynthesizer::class);
+        } elseif (class_exists($ttsClientClass) && $this->googleTextToSpeechCredentialsAreReadable()) {
+            $this->app->singleton($ttsClientClass, function () use ($ttsClientClass): object {
+                $credentials = $this->resolvedGoogleApplicationCredentialsPath();
+                if ($credentials === null) {
+                    throw new \LogicException('Google TTS 用クレデンシャルパスが解決できません。');
+                }
+
+                return new $ttsClientClass([
+                    'transport' => 'rest',
+                    'credentials' => $credentials,
+                ]);
+            });
+
+            $this->app->singleton(VocabularySpeechSynthesizerInterface::class, function ($app) use ($ttsClientClass): GoogleCloudVocabularySpeechSynthesizer {
+                return new GoogleCloudVocabularySpeechSynthesizer(
+                    $app->make($ttsClientClass),
+                    (string) config('services.google.text_to_speech.language_code'),
+                    (string) config('services.google.text_to_speech.voice'),
+                );
+            });
+        } elseif (class_exists($ttsClientClass)) {
+            $this->app->singleton(VocabularySpeechSynthesizerInterface::class, StubMp3VocabularySpeechSynthesizer::class);
+        } else {
+            $this->app->singleton(VocabularySpeechSynthesizerInterface::class, UnavailableGoogleSpeechSynthesizer::class);
+        }
 
         $this->app->when([
             RegisterUserUseCase::class,
@@ -77,5 +94,49 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+    }
+
+    private function googleTextToSpeechCredentialsAreReadable(): bool
+    {
+        return $this->resolvedGoogleApplicationCredentialsPath() !== null;
+    }
+
+    /**
+     * 読み取り可能なサービスアカウント JSON の絶対パス。未設定・不存在なら null。
+     * Docker ではホストのパスではなくコンテナ内パス（例: /var/www/html/storage/credentials/...）を指定する。
+     */
+    private function resolvedGoogleApplicationCredentialsPath(): ?string
+    {
+        $raw = trim((string) config('services.google.text_to_speech.credentials_path'));
+        if ($raw === '') {
+            $raw = trim((string) (getenv('GOOGLE_APPLICATION_CREDENTIALS') ?: ''));
+        }
+        if ($raw === '') {
+            return null;
+        }
+
+        $path = $this->absoluteCredentialsPath($raw);
+        if ($path === '' || ! is_file($path) || ! is_readable($path)) {
+            return null;
+        }
+
+        return $path;
+    }
+
+    /**
+     * php -S のカレントが public/ でも、相対パスは常にアプリルート（backend/）基準で解決する。
+     */
+    private function absoluteCredentialsPath(string $raw): string
+    {
+        $trimmed = trim($raw);
+        if ($trimmed === '') {
+            return '';
+        }
+
+        if (str_starts_with($trimmed, '/')) {
+            return $trimmed;
+        }
+
+        return base_path($trimmed);
     }
 }

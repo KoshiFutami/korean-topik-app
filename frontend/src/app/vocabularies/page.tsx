@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Section } from "@/components/ui/Section";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import { ApiError } from "@/lib/api/http";
 import { listVocabularies, type UserVocabulary } from "@/lib/api/vocabularies";
 
@@ -247,31 +248,38 @@ export default function VocabulariesPage() {
                   </Card>
                 ))
               : (items ?? []).map((v, idx) => (
-                  <Link key={v.id} href={`/vocabularies/${v.id}`} className="group">
-                    <Card
-                      className={[
-                        "p-5 transition-transform group-hover:-translate-y-0.5 group-hover:shadow-md",
-                        "bg-gradient-to-br",
-                        idx % 3 === 0 ? "from-violet-700/60 via-fuchsia-600/40 to-orange-500/50" : "",
-                        idx % 3 === 1 ? "from-sky-500/60 via-emerald-500/40 to-lime-400/40" : "",
-                        idx % 3 === 2 ? "from-orange-500/70 via-rose-500/40 to-violet-700/50" : "",
-                        "border-white/10 text-white backdrop-blur",
-                      ].join(" ")}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <div className="truncate text-lg font-extrabold text-white">{v.term}</div>
-                          <div className="mt-1 line-clamp-2 text-sm text-white/85">
-                            {v.meaning_ja}
-                          </div>
+                  <Card
+                    key={v.id}
+                    className={[
+                      "group p-5 transition-transform hover:-translate-y-0.5 hover:shadow-md",
+                      "bg-gradient-to-br",
+                      idx % 3 === 0 ? "from-violet-700/60 via-fuchsia-600/40 to-orange-500/50" : "",
+                      idx % 3 === 1 ? "from-sky-500/60 via-emerald-500/40 to-lime-400/40" : "",
+                      idx % 3 === 2 ? "from-orange-500/70 via-rose-500/40 to-violet-700/50" : "",
+                      "border-white/10 text-white backdrop-blur",
+                    ].join(" ")}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <Link href={`/vocabularies/${v.id}`} className="min-w-0 flex-1 outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent">
+                        <div className="truncate text-lg font-extrabold text-white group-hover:underline">
+                          {v.term}
                         </div>
-                        <div className="shrink-0 text-right text-xs text-white/80">
+                        <div className="mt-1 line-clamp-2 text-sm text-white/85">{v.meaning_ja}</div>
+                      </Link>
+                      <div className="flex shrink-0 flex-col items-end gap-2">
+                        <div className="text-right text-xs text-white/80">
                           <div className="font-semibold">{v.level_label_ja}</div>
                           <div className="mt-1">{v.pos_label_ja}</div>
                         </div>
+                        <VocabularyAudioPlayButton vocabularyId={v.id} initialAudioUrl={v.audio_url} />
                       </div>
+                    </div>
 
-                      <div className="mt-4 flex flex-wrap gap-2">
+                    <Link
+                      href={`/vocabularies/${v.id}`}
+                      className="mt-4 block outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                    >
+                      <div className="flex flex-wrap gap-2">
                         <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white ring-1 ring-white/25">
                           {v.entry_type_label_ja}
                           <span className="ml-1 text-[11px] font-semibold text-white/80">
@@ -285,8 +293,8 @@ export default function VocabulariesPage() {
                           </span>
                         </span>
                       </div>
-                    </Card>
-                  </Link>
+                    </Link>
+                  </Card>
                 ))}
           </div>
 
