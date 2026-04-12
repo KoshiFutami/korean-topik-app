@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Vocabulary\Repository;
 
 use App\Domain\Vocabulary\Entity\Vocabulary as DomainVocabulary;
+use App\Domain\Vocabulary\ReadModel\VocabularyListCardReadModel;
 use App\Domain\Vocabulary\Repository\VocabularyRepositoryInterface;
 use App\Domain\Vocabulary\ValueObject\EntryType;
 use App\Domain\Vocabulary\ValueObject\MeaningJa;
@@ -56,6 +57,49 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
             ->orderBy('term')
             ->get()
             ->map(static fn (EloquentVocabulary $m): DomainVocabulary => VocabularyMapper::toDomain($m))
+            ->all();
+    }
+
+    public function listCardsByStatus(
+        VocabularyStatus $status,
+        ?TopikLevel $level = null,
+        ?EntryType $entryType = null,
+        ?PartOfSpeech $pos = null,
+    ): array {
+        $q = EloquentVocabulary::query()
+            ->select([
+                'id',
+                'term',
+                'meaning_ja',
+                'pos',
+                'level',
+                'entry_type',
+                'audio_url',
+            ])
+            ->where('status', $status->value);
+
+        if ($level !== null) {
+            $q->where('level', $level->value);
+        }
+        if ($entryType !== null) {
+            $q->where('entry_type', $entryType->value);
+        }
+        if ($pos !== null) {
+            $q->where('pos', $pos->value);
+        }
+
+        return $q->orderBy('level')
+            ->orderBy('term')
+            ->get()
+            ->map(static fn (EloquentVocabulary $m): VocabularyListCardReadModel => new VocabularyListCardReadModel(
+                id: (string) $m->id,
+                term: (string) $m->term,
+                meaningJa: (string) $m->meaning_ja,
+                pos: (string) $m->pos,
+                level: (int) $m->level,
+                entryType: (string) $m->entry_type,
+                audioUrl: $m->audio_url !== null ? (string) $m->audio_url : null,
+            ))
             ->all();
     }
 

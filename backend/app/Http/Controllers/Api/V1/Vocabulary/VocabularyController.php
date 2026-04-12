@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\V1\Vocabulary;
 
 use App\Application\User\Vocabulary\GetVocabulary\GetVocabularyInput;
 use App\Application\User\Vocabulary\GetVocabulary\GetVocabularyUseCase;
+use App\Application\User\Vocabulary\ListVocabularies\ListVocabulariesCard;
 use App\Application\User\Vocabulary\ListVocabularies\ListVocabulariesInput;
 use App\Application\User\Vocabulary\ListVocabularies\ListVocabulariesUseCase;
+use App\Application\User\Vocabulary\ListVocabularies\ListVocabulariesVocabulary;
 use App\Domain\Vocabulary\Exception\ExampleSentenceMissingForAudioException;
 use App\Domain\Vocabulary\Exception\VocabularyNotFoundException;
 use App\Services\Vocabulary\EnsureVocabularyAudioService;
@@ -27,24 +29,43 @@ class VocabularyController
             level: $request->query('level') !== null ? (int) $request->query('level') : null,
             entryType: $request->query('entry_type'),
             pos: $request->query('pos'),
+            compactList: $request->boolean('compact'),
         ));
 
         return response()->json([
-            'vocabularies' => array_map(static fn ($v) => [
-                'id' => $v->id,
-                'term' => $v->term,
-                'meaning_ja' => $v->meaningJa,
-                'pos' => $v->pos,
-                'pos_label_ja' => $v->posLabelJa,
-                'level' => $v->level,
-                'level_label_ja' => $v->levelLabelJa,
-                'entry_type' => $v->entryType,
-                'entry_type_label_ja' => $v->entryTypeLabelJa,
-                'example_sentence' => $v->exampleSentence,
-                'example_translation_ja' => $v->exampleTranslationJa,
-                'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
-                'example_audio_url' => VocabularyAudioUrl::resolveForHttp($v->exampleAudioUrl),
-            ], $output->vocabularies),
+            'vocabularies' => array_map(static function ($v) {
+                if ($v instanceof ListVocabulariesCard) {
+                    return [
+                        'id' => $v->id,
+                        'term' => $v->term,
+                        'meaning_ja' => $v->meaningJa,
+                        'pos' => $v->pos,
+                        'pos_label_ja' => $v->posLabelJa,
+                        'level' => $v->level,
+                        'level_label_ja' => $v->levelLabelJa,
+                        'entry_type' => $v->entryType,
+                        'entry_type_label_ja' => $v->entryTypeLabelJa,
+                        'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
+                    ];
+                }
+
+                /** @var ListVocabulariesVocabulary $v */
+                return [
+                    'id' => $v->id,
+                    'term' => $v->term,
+                    'meaning_ja' => $v->meaningJa,
+                    'pos' => $v->pos,
+                    'pos_label_ja' => $v->posLabelJa,
+                    'level' => $v->level,
+                    'level_label_ja' => $v->levelLabelJa,
+                    'entry_type' => $v->entryType,
+                    'entry_type_label_ja' => $v->entryTypeLabelJa,
+                    'example_sentence' => $v->exampleSentence,
+                    'example_translation_ja' => $v->exampleTranslationJa,
+                    'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
+                    'example_audio_url' => VocabularyAudioUrl::resolveForHttp($v->exampleAudioUrl),
+                ];
+            }, $output->vocabularies),
         ]);
     }
 

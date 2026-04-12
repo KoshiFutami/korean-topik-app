@@ -7,7 +7,7 @@ namespace App\Application\User\Vocabulary\ListVocabularies;
 final class ListVocabulariesOutput
 {
     /**
-     * @param  array<int, ListVocabulariesVocabulary>  $vocabularies
+     * @param  array<int, ListVocabulariesVocabulary|ListVocabulariesCard>  $vocabularies
      */
     public function __construct(public readonly array $vocabularies) {}
 }
