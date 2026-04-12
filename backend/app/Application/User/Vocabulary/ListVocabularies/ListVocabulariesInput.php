@@ -10,5 +10,7 @@ final class ListVocabulariesInput
         public readonly ?int $level = null,
         public readonly ?string $entryType = null,
         public readonly ?string $pos = null,
+        /** 一覧カード向けの軽量レスポンス（例文・例文音声を省き、DB も必要列のみ読む） */
+        public readonly bool $compactList = false,
     ) {}
 }

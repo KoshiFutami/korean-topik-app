@@ -121,4 +121,40 @@ class VocabularyApiTest extends TestCase
         $res = $this->getJson('/api/v1/vocabularies', ['Accept' => 'application/json']);
         $res->assertOk();
     }
+
+    public function test_index_compact_skips_example_fields(): void
+    {
+        Vocabulary::query()->create([
+            'term' => '읽다',
+            'meaning_ja' => '読む',
+            'pos' => 'verb',
+            'level' => 2,
+            'entry_type' => 'word',
+            'status' => 'published',
+            'example_sentence' => '책을 읽어요.',
+            'example_translation_ja' => '本を読みます。',
+        ]);
+
+        $res = $this->getJson('/api/v1/vocabularies?compact=1', ['Accept' => 'application/json']);
+
+        $res->assertOk();
+        $this->assertCount(1, $res->json('vocabularies'));
+        $res->assertJsonStructure([
+            'vocabularies' => [[
+                'id',
+                'term',
+                'meaning_ja',
+                'pos',
+                'pos_label_ja',
+                'level',
+                'level_label_ja',
+                'entry_type',
+                'entry_type_label_ja',
+                'audio_url',
+            ]],
+        ]);
+        $this->assertArrayNotHasKey('example_sentence', $res->json('vocabularies.0'));
+        $this->assertArrayNotHasKey('example_translation_ja', $res->json('vocabularies.0'));
+        $this->assertArrayNotHasKey('example_audio_url', $res->json('vocabularies.0'));
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Vocabulary\Repository;
 
 use App\Domain\Vocabulary\Entity\Vocabulary;
+use App\Domain\Vocabulary\ReadModel\VocabularyListCardReadModel;
 use App\Domain\Vocabulary\ValueObject\EntryType;
 use App\Domain\Vocabulary\ValueObject\MeaningJa;
 use App\Domain\Vocabulary\ValueObject\PartOfSpeech;
@@ -26,6 +27,18 @@ interface VocabularyRepositoryInterface
      * @return array<int, Vocabulary>
      */
     public function listByStatus(
+        VocabularyStatus $status,
+        ?TopikLevel $level = null,
+        ?EntryType $entryType = null,
+        ?PartOfSpeech $pos = null,
+    ): array;
+
+    /**
+     * 一覧カード向けに必要列のみ取得する（例文・例文音声 URL は読まない）。
+     *
+     * @return array<int, VocabularyListCardReadModel>
+     */
+    public function listCardsByStatus(
         VocabularyStatus $status,
         ?TopikLevel $level = null,
         ?EntryType $entryType = null,

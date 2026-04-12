@@ -282,6 +282,29 @@
           }
         },
         {
+          "name": "List Vocabularies (compact=1, no example fields)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vocabularies?compact=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "vocabularies"],
+              "query": [
+                {
+                  "key": "compact",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
           "name": "List Vocabularies (filters: level/entry_type/pos)",
           "request": {
             "method": "GET",

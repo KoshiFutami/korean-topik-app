@@ -20,6 +20,22 @@ final class ListVocabulariesUseCase
         $entryType = $input->entryType !== null ? EntryType::from($input->entryType) : null;
         $pos = $input->pos !== null ? PartOfSpeech::from($input->pos) : null;
 
+        if ($input->compactList) {
+            $rows = $this->vocabularies->listCardsByStatus(
+                VocabularyStatus::PUBLISHED,
+                level: $level,
+                entryType: $entryType,
+                pos: $pos,
+            );
+
+            return new ListVocabulariesOutput(
+                vocabularies: array_map(
+                    static fn ($r) => ListVocabulariesCard::fromReadModel($r),
+                    $rows,
+                ),
+            );
+        }
+
         $items = $this->vocabularies->listByStatus(
             VocabularyStatus::PUBLISHED,
             level: $level,

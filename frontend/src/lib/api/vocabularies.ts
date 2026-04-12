@@ -23,12 +23,13 @@ export type UserVocabularyDetail = UserVocabulary & {
 
 export async function listVocabularies(
   token: string | null,
-  input: { level?: number; entry_type?: string; pos?: string } = {}
+  input: { level?: number; entry_type?: string; pos?: string; compact?: boolean } = {}
 ): Promise<{ vocabularies: UserVocabulary[] }> {
   const qs = new URLSearchParams();
   if (typeof input.level === "number") qs.set("level", String(input.level));
   if (input.entry_type) qs.set("entry_type", input.entry_type);
   if (input.pos) qs.set("pos", input.pos);
+  if (input.compact) qs.set("compact", "1");
   const suffix = qs.toString() ? `?${qs.toString()}` : "";
 
   return apiFetch(`/api/v1/vocabularies${suffix}`, { method: "GET", token });
