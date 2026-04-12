@@ -1,5 +1,5 @@
 .PHONY: help init init-backend init-frontend up down logs test \
-        lint-backend lint-backend-fix migrate fresh-migrate \
+        lint-backend lint-backend-fix composer-backend migrate fresh-migrate seed-vocabulary synthesize-vocabulary-audio \
         bash-backend bash-frontend bash-db \
         commit push pr pr-web pr-draft review approve
 
@@ -32,7 +32,7 @@ init-backend: ## Laravel プロジェクトを初期化
 init-frontend: ## Next.js プロジェクトを初期化
 	@if [ ! -f frontend/package.json ]; then \
 		echo "Next.js を初期化しています..."; \
-		docker run --rm -it \
+		docker run --rm \
 			-v "$(PWD)/frontend:/app" \
 			-w /app \
 			node:20-alpine \
@@ -61,11 +61,15 @@ logs: ## ログを表示（Ctrl+C で終了）
 
 # ── テスト ───────────────────────────────────────────────────────────────────
 
+TEST_APP_KEY ?= base64:nF12noq1nxW3cMMh1fRH85ip/046y/Y4myDfwj0XNyk=
+
 test: ## 全テストを実行
-	docker compose exec backend php artisan test
+	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
+	docker compose exec -e APP_ENV=testing -e APP_KEY=$(TEST_APP_KEY) backend php artisan test
 
 test-filter: ## 特定のテストを実行 (例: make test-filter FILTER=UserTest)
-	docker compose exec backend php artisan test --filter=$(FILTER)
+	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
+	docker compose exec -e APP_ENV=testing -e APP_KEY=$(TEST_APP_KEY) backend php artisan test --filter=$(FILTER)
 
 # ── コード品質 ────────────────────────────────────────────────────────────────
 
@@ -75,13 +79,25 @@ lint-backend: ## PHP スタイルチェック（修正なし）
 lint-backend-fix: ## PHP スタイルを自動修正
 	docker compose exec backend ./vendor/bin/pint
 
+composer-backend: ## backend コンテナで composer install（vendor ボリュームを lock と同期・依存追加後に実行）
+	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
+	docker compose exec backend composer install --no-interaction
+
 # ── データベース ──────────────────────────────────────────────────────────────
 
 migrate: ## マイグレーションを実行
 	docker compose exec backend php artisan migrate
 
-fresh-migrate: ## DB をリセットしてマイグレーション＋シード
+fresh-migrate: ## DB を空にしてマイグレーション＋全シード（CSV 含めきれいに揃える）
 	docker compose exec backend php artisan migrate:fresh --seed
+
+seed-vocabulary: ## 語彙だけ vocabulary_bulk.csv と同期（VocabularyBulkSeeder のみ・他テーブルはそのまま）
+	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
+	docker compose exec backend php artisan db:seed --class=VocabularyBulkSeeder
+
+synthesize-vocabulary-audio: ## Google TTS で語彙 MP3 を生成（GOOGLE_APPLICATION_CREDENTIALS 必須・OPTS で artisan 引数）
+	@docker compose ps --status running --services | grep -qx backend || $(MAKE) up
+	docker compose exec backend php artisan vocabulary:synthesize-audio $(OPTS)
 
 # ── シェル ───────────────────────────────────────────────────────────────────
 
