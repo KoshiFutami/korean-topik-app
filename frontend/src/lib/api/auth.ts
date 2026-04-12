@@ -43,3 +43,20 @@ export async function me(token: string): Promise<{ user: User }> {
   });
 }
 
+export async function updateMyProfile(
+  token: string,
+  input: {
+    name: string;
+    email: string;
+    current_password?: string;
+    new_password?: string;
+    new_password_confirmation?: string;
+  }
+): Promise<{ user: User }> {
+  return apiFetch("/api/v1/auth/me", {
+    method: "PATCH",
+    token,
+    body: JSON.stringify(input),
+  });
+}
+
