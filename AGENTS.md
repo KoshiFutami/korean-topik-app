@@ -56,8 +56,17 @@ korean-topik-app/
 1. `make up` でローカル環境を起動
 2. **機能ごとにブランチを作成**してから作業を開始する（下記「ブランチ運用」参照）
 3. 変更前に ADR を確認（大きな変更は Plan Mode で設計）
-4. 実装 → `make lint-backend` → `make test`
+4. 実装 →（必要な lint/test を実行）
 5. テストが通ったら `make push` → `make pr` で PR を作成
+
+### API 変更時のルール
+
+- **API を追加・変更したら Postman コレクションも必ず更新する**: `postman/korean-topik-app.postman_collection.json`
+
+### テスト実行のルール
+
+- **フロントエンドのみの変更**（`frontend/` 配下のみ）: バックエンドの `make test` は不要（必要ならフロント側のテスト/型チェックを実行）
+- **バックエンドに変更がある**（`backend/` 配下に差分がある）: `make lint-backend` と `make test` を実行
 
 ## ブランチ運用
 
