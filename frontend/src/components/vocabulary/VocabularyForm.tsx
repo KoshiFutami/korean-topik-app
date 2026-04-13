@@ -58,6 +58,7 @@ export function VocabularyForm({ initial, onSubmit, submitLabel, submitting, err
     initial?.example_translation_ja ?? ""
   );
   const [audioUrl, setAudioUrl] = useState(initial?.audio_url ?? "");
+  const [exampleAudioUrl, setExampleAudioUrl] = useState(initial?.example_audio_url ?? "");
   const [status, setStatus] = useState(initial?.status ?? "draft");
 
   const selectCls =
@@ -74,6 +75,7 @@ export function VocabularyForm({ initial, onSubmit, submitLabel, submitting, err
       example_sentence: exampleSentence || null,
       example_translation_ja: exampleTranslationJa || null,
       audio_url: audioUrl || null,
+      example_audio_url: exampleAudioUrl || null,
       status,
     });
   };
@@ -150,9 +152,15 @@ export function VocabularyForm({ initial, onSubmit, submitLabel, submitting, err
         <textarea
           className="min-h-[80px] rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:ring-2 focus:ring-zinc-900/20"
           value={exampleSentence}
-          onChange={(e) => setExampleSentence(e.target.value)}
+          onChange={(e) => {
+            setExampleSentence(e.target.value);
+            setExampleAudioUrl("");
+          }}
           placeholder="例文があれば入力してください"
         />
+        <span className="text-xs text-zinc-500">
+          該当の単語は &lt;&gt; で囲んでください（例: &lt;학교&gt;에 가요.）
+        </span>
       </label>
 
       <label className="flex flex-col gap-1">
@@ -169,6 +177,14 @@ export function VocabularyForm({ initial, onSubmit, submitLabel, submitting, err
         label="音声URL"
         value={audioUrl}
         onChange={(e) => setAudioUrl(e.target.value)}
+        placeholder="https://..."
+        type="url"
+      />
+
+      <Input
+        label="例文音声URL"
+        value={exampleAudioUrl}
+        onChange={(e) => setExampleAudioUrl(e.target.value)}
         placeholder="https://..."
         type="url"
       />

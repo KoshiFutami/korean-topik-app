@@ -77,8 +77,16 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -98,8 +106,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/auth/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "auth", "me"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "auth",
+                "me"
+              ]
             }
           }
         },
@@ -119,8 +135,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/auth/logout",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "auth", "logout"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "auth",
+                "logout"
+              ]
             }
           }
         }
@@ -248,8 +272,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/planned-features",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "planned-features"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "planned-features"
+              ]
             }
           }
         }
@@ -293,8 +323,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/vocabularies?compact=1",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "vocabularies"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vocabularies"
+              ],
               "query": [
                 {
                   "key": "compact",
@@ -377,8 +413,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/vocabularies/{{vocabularyId}}/audio",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "vocabularies", "{{vocabularyId}}", "audio"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vocabularies",
+                "{{vocabularyId}}",
+                "audio"
+              ]
             }
           }
         },
@@ -394,8 +438,17 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/vocabularies/{{vocabularyId}}/audio/example",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "vocabularies", "{{vocabularyId}}", "audio", "example"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vocabularies",
+                "{{vocabularyId}}",
+                "audio",
+                "example"
+              ]
             }
           }
         }
@@ -420,8 +473,15 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies"
+              ]
             }
           }
         },
@@ -441,8 +501,17 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}/audio",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}", "audio"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "{{vocabularyId}}",
+                "audio"
+              ]
             }
           }
         },
@@ -462,8 +531,18 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}/audio/example",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}", "audio", "example"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "{{vocabularyId}}",
+                "audio",
+                "example"
+              ]
             }
           }
         },
@@ -502,12 +581,19 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"term\": \"손을 씻다\",\n  \"meaning_ja\": \"手を洗う\",\n  \"pos\": \"verb\",\n  \"level\": 1,\n  \"entry_type\": \"phrase\",\n  \"example_sentence\": \"밥 먹기 전에 손을 씻어요.\",\n  \"example_translation_ja\": \"ご飯を食べる前に手を洗います。\",\n  \"status\": \"published\"\n}"
+              "raw": "{\n  \"term\": \"손을 씻다\",\n  \"meaning_ja\": \"手を洗う\",\n  \"pos\": \"verb\",\n  \"level\": 1,\n  \"entry_type\": \"phrase\",\n  \"example_sentence\": \"밥 먹기 전에 손을 씻어요.\",\n  \"example_translation_ja\": \"ご飯を食べる前に手を洗います。\",\n  \"status\": \"published\",\n  \"audio_url\": null,\n  \"example_audio_url\": null\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies"
+              ]
             }
           }
         },
@@ -527,8 +613,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "{{vocabularyId}}"
+              ]
             }
           }
         },
@@ -552,12 +646,20 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"term\": \"손을 씻다\",\n  \"meaning_ja\": \"（水で）手を洗う\",\n  \"pos\": \"verb\",\n  \"level\": 1,\n  \"entry_type\": \"phrase\",\n  \"example_sentence\": \"손을 씻고 밥을 먹어요.\",\n  \"example_translation_ja\": \"手を洗ってご飯を食べます。\",\n  \"status\": \"published\"\n}"
+              "raw": "{\n  \"term\": \"손을 씻다\",\n  \"meaning_ja\": \"（水で）手を洗う\",\n  \"pos\": \"verb\",\n  \"level\": 1,\n  \"entry_type\": \"phrase\",\n  \"example_sentence\": \"손을 씻고 밥을 먹어요.\",\n  \"example_translation_ja\": \"手を洗ってご飯を食べます。\",\n  \"status\": \"published\",\n  \"audio_url\": null,\n  \"example_audio_url\": null\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "{{vocabularyId}}"
+              ]
             }
           }
         },
@@ -577,8 +679,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "{{vocabularyId}}"
+              ]
             }
           }
         }
@@ -586,4 +696,3 @@
     }
   ]
 }
-

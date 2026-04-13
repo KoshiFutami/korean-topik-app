@@ -64,6 +64,7 @@ export type VocabularyFormData = {
   example_sentence?: string | null;
   example_translation_ja?: string | null;
   audio_url?: string | null;
+  example_audio_url?: string | null;
   status: string;
 };
 
