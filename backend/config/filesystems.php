@@ -81,7 +81,10 @@ return [
             'key_file_path' => env('GOOGLE_APPLICATION_CREDENTIALS'),
             'bucket' => env('GCS_AUDIO_BUCKET'),
             'path_prefix' => env('GCS_AUDIO_PATH_PREFIX', ''),
-            'visibility' => 'public',
+            // UBLA（Uniform bucket-level access）有効なバケットでは object ACL が禁止されるため、
+            // visibility=public を指定すると WriteObject INVALID_ARGUMENT になることがある。
+            // 公開アクセスはバケットの IAM（allUsers に objectViewer 付与など）で制御する。
+            'visibility' => 'private',
             'throw' => false,
             'report' => false,
         ],
