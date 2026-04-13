@@ -112,16 +112,15 @@ function VocabulariesPageInner() {
   );
 
   // Debounce the keyword: update URL 300 ms after the user stops typing.
-  // The effect only depends on qInput and the individual filter values to
-  // avoid an unnecessary re-run cycle caused by replaceParams being recreated
-  // when filters change after a URL update.
+  // The early-exit guard (qInput === filters.q) prevents a re-run cycle when
+  // the URL update causes filters to change and this effect fires again.
   useEffect(() => {
     if (qInput === filters.q) return;
     const timer = setTimeout(() => {
       router.replace(buildVocabulariesUrl({ ...filters, q: qInput }));
     }, 300);
     return () => clearTimeout(timer);
-  }, [qInput, filters.q, filters.level, filters.entry_type, filters.pos, router]);
+  }, [qInput, filters, router]);
 
   const query = useMemo(() => {
     const level = filters.level ? Number(filters.level) : undefined;
