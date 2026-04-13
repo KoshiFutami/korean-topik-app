@@ -1,6 +1,6 @@
-# Korean TOPIK App
+# Korean TOPIK App 🇰🇷
 
-韓国語能力試験 (TOPIK) 学習用 Web アプリケーション
+韓国語能力試験 (TOPIK) 学習用 Webアプリケーション
 
 ## スタック
 
@@ -49,6 +49,10 @@ make bash-db         # MySQL shell
 | フロントエンド | [Vercel](https://vercel.com) (無料) |
 | バックエンド | [Railway](https://railway.app) または [Render](https://render.com) |
 | データベース | Railway MySQL または [PlanetScale](https://planetscale.com) |
+
+### 手順
+
+- バックエンド（Railway）: `docs/deploy/railway-backend.md`
 
 ## AIエージェント向けドキュメント
 
