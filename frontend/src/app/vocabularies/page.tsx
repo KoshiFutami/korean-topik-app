@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, Suspense } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -107,24 +107,31 @@ function VocabulariesPageInner() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Keep a ref to always have the latest filters inside async callbacks
+  // without making them part of every effect's dependency array.
+  const filtersRef = useRef(filters);
+  useEffect(() => {
+    filtersRef.current = filters;
+  });
+
   // Helper: build new URL search params from the current params and a partial update.
   const replaceParams = useCallback(
     (updates: Partial<Filters>) => {
-      router.replace(buildVocabulariesUrl({ ...filters, ...updates }));
+      router.replace(buildVocabulariesUrl({ ...filtersRef.current, ...updates }));
     },
-    [filters, router],
+    [router],
   );
 
   // Debounce the keyword: update URL 300 ms after the user stops typing.
-  // The early-exit guard (qInput === filters.q) prevents a re-run cycle when
-  // the URL update causes filters to change and this effect fires again.
+  // Depends only on qInput (and the stable router ref) so that clicking a
+  // chip filter does not reset an in-progress keyword debounce.
   useEffect(() => {
-    if (qInput === filters.q) return;
     const timer = setTimeout(() => {
-      router.replace(buildVocabulariesUrl({ ...filters, q: qInput }));
+      if (qInput === filtersRef.current.q) return;
+      router.replace(buildVocabulariesUrl({ ...filtersRef.current, q: qInput }));
     }, 300);
     return () => clearTimeout(timer);
-  }, [qInput, filters, router]);
+  }, [qInput, router]);
 
   const query = useMemo(() => {
     const level = filters.level ? Number(filters.level) : undefined;
