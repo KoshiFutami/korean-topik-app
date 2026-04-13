@@ -14,13 +14,16 @@ final class UserNickname
 
     public function __construct(private readonly string $value)
     {
-        $length = mb_strlen(trim($value));
+        $trimmed = trim($value);
+        $length = mb_strlen($trimmed);
 
         if ($length < self::MIN_LENGTH || $length > self::MAX_LENGTH) {
             throw new InvalidArgumentException(
                 'User nickname must be between '.self::MIN_LENGTH.' and '.self::MAX_LENGTH.' characters.'
             );
         }
+
+        $this->value = $trimmed;
     }
 
     public function value(): string
