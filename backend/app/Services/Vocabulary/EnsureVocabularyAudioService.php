@@ -28,17 +28,83 @@ final class EnsureVocabularyAudioService
         $diskName = (string) config('filesystems.audio_disk', 'public');
         $driver = (string) (config("filesystems.disks.{$diskName}.driver") ?? 'local');
 
+        // GCS（UBLA 有効）では Flysystem 側が legacy ACL を付与して 400 になることがあるため、
+        // 音声アップロードは StorageClient で直接行い、ACL を指定しない。
+        $storageClientClass = 'Google\\Cloud\\Storage\\StorageClient';
+        if ($driver === 'gcs' && class_exists($storageClientClass)) {
+            $credentialsArray = $this->decodedGoogleCredentialsB64();
+
+            $clientOptions = [];
+            if ($credentialsArray !== null) {
+                $clientOptions['keyFile'] = $credentialsArray;
+            } else {
+                $keyFilePath = trim((string) config("filesystems.disks.{$diskName}.key_file_path", ''));
+                if ($keyFilePath !== '') {
+                    $clientOptions['keyFilePath'] = $this->absoluteCredentialsPath($keyFilePath);
+                }
+            }
+
+            $bucketName = trim((string) config("filesystems.disks.{$diskName}.bucket", ''));
+            if ($bucketName === '') {
+                throw new RuntimeException('GCS バケット名が未設定です。');
+            }
+
+            $prefix = trim((string) config("filesystems.disks.{$diskName}.path_prefix", ''), '/');
+            $objectName = ($prefix !== '') ? ($prefix.'/'.ltrim($relativePath, '/')) : ltrim($relativePath, '/');
+
+            /** @var object $client */
+            $client = new $storageClientClass($clientOptions);
+            $bucket = $client->bucket($bucketName);
+            $bucket->upload($binary, [
+                'name' => $objectName,
+                'metadata' => [
+                    'contentType' => 'audio/mpeg',
+                ],
+                // Do NOT set predefinedAcl under UBLA.
+            ]);
+
+            return;
+        }
+
         $disk = Storage::disk($diskName);
 
-        // GCS (UBLA) / S3 では object ACL を付与すると INVALID_ARGUMENT 等で弾かれることがあるため、
-        // local ディスク以外では明示的な visibility を渡さない。
         if ($driver === 'local') {
             $disk->put($relativePath, $binary, 'public');
 
             return;
         }
 
+        // S3 等は bucket policy / IAM で公開を制御する想定。ここでは ACL 指定を避ける。
         $disk->put($relativePath, $binary);
+    }
+
+    private function decodedGoogleCredentialsB64(): ?array
+    {
+        $b64 = trim((string) (getenv('GOOGLE_CREDENTIALS_B64') ?: ''));
+        if ($b64 === '') {
+            return null;
+        }
+        $json = base64_decode($b64, true);
+        if ($json === false) {
+            return null;
+        }
+        $decoded = json_decode($json, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    private function absoluteCredentialsPath(string $raw): string
+    {
+        $trimmed = trim($raw);
+        if ($trimmed === '') {
+            return '';
+        }
+
+        if (str_starts_with($trimmed, '/')) {
+            return $trimmed;
+        }
+
+        return base_path($trimmed);
     }
 
     /**
