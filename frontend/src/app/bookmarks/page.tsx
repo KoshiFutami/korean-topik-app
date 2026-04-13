@@ -4,54 +4,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Chip } from "@/components/ui/Chip";
 import { Section } from "@/components/ui/Section";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
+import { BookmarkListVirtualGrid } from "@/components/vocabulary/BookmarkListVirtualGrid";
 import {
   listBookmarks,
   removeBookmark,
   type BookmarkVocabulary,
 } from "@/lib/api/bookmarks";
 import { ApiError } from "@/lib/api/http";
-
-function posKo(pos: string): string {
-  switch (pos) {
-    case "noun":
-      return "명사";
-    case "verb":
-      return "동사";
-    case "adj":
-      return "형용사";
-    case "adv":
-      return "부사";
-    case "particle":
-      return "조사";
-    case "determiner":
-      return "관형사";
-    case "pronoun":
-      return "대명사";
-    case "interjection":
-      return "감탄사";
-    default:
-      return "기타";
-  }
-}
-
-function entryTypeKo(t: string): string {
-  switch (t) {
-    case "word":
-      return "단어";
-    case "phrase":
-      return "숙어";
-    case "idiom":
-      return "관용구";
-    default:
-      return "";
-  }
-}
 
 export default function BookmarksPage() {
   const { state, refreshMe } = useAuth();
@@ -167,79 +129,22 @@ export default function BookmarksPage() {
           titleClassName="text-white drop-shadow-sm"
           descriptionClassName="text-white/80"
         >
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {loading
-              ? Array.from({ length: 6 }).map((_, i) => (
-                  <Card key={i} className="border-white/10 bg-white/10 p-5 text-white backdrop-blur">
-                    <Skeleton className="h-6 w-2/3" />
-                    <Skeleton className="mt-3 h-4 w-5/6" />
-                    <div className="mt-4 flex gap-2">
-                      <Skeleton className="h-7 w-16 rounded-full" />
-                      <Skeleton className="h-7 w-20 rounded-full" />
-                    </div>
-                  </Card>
-                ))
-              : (items ?? []).map((v, idx) => (
-                  <Card
-                    key={v.id}
-                    className={[
-                      "p-5",
-                      "bg-gradient-to-br",
-                      idx % 3 === 0 ? "from-violet-700/60 via-fuchsia-600/40 to-orange-500/50" : "",
-                      idx % 3 === 1 ? "from-sky-500/60 via-emerald-500/40 to-lime-400/40" : "",
-                      idx % 3 === 2 ? "from-orange-500/70 via-rose-500/40 to-violet-700/50" : "",
-                      "border-white/10 text-white backdrop-blur",
-                    ].join(" ")}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <Link href={`/vocabularies/${v.id}`} className="min-w-0 flex-1">
-                        <div className="truncate text-lg font-extrabold text-white hover:underline">
-                          {v.term}
-                        </div>
-                        <div className="mt-1 line-clamp-2 text-sm text-white/85">
-                          {v.meaning_ja}
-                        </div>
-                      </Link>
-                      <div className="flex shrink-0 flex-col items-end gap-2">
-                        <div className="text-right text-xs text-white/80">
-                          <div className="font-semibold">{v.level_label_ja}</div>
-                          <div className="mt-1">{v.pos_label_ja}</div>
-                        </div>
-                        <VocabularyAudioPlayButton vocabularyId={v.id} initialAudioUrl={v.audio_url} />
-                      </div>
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <Chip type="button" selected disabled>
-                        {v.entry_type_label_ja}
-                        <span className="ml-1 text-[11px] font-semibold opacity-80">
-                          {entryTypeKo(v.entry_type)}
-                        </span>
-                      </Chip>
-                      <Chip type="button" selected disabled>
-                        {v.pos_label_ja}
-                        <span className="ml-1 text-[11px] font-semibold opacity-80">
-                          {posKo(v.pos)}
-                        </span>
-                      </Chip>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between gap-2">
-                      <span className="text-xs text-white/60">
-                        {new Date(v.bookmarked_at).toLocaleDateString("ja-JP")}
-                      </span>
-                      <Button
-                        variant="secondary"
-                        type="button"
-                        disabled={removing === v.id}
-                        onClick={() => handleRemove(v.id)}
-                      >
-                        {removing === v.id ? "削除中..." : "削除"}
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i} className="border-white/10 bg-white/10 p-5 text-white backdrop-blur">
+                  <Skeleton className="h-6 w-2/3" />
+                  <Skeleton className="mt-3 h-4 w-5/6" />
+                  <div className="mt-4 flex gap-2">
+                    <Skeleton className="h-7 w-16 rounded-full" />
+                    <Skeleton className="h-7 w-20 rounded-full" />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : items && items.length > 0 ? (
+            <BookmarkListVirtualGrid items={items} removing={removing} onRemove={handleRemove} />
+          ) : null}
 
           {!loading && items && items.length === 0 ? (
             <Card className="border-white/10 bg-white/10 text-center text-white backdrop-blur">
