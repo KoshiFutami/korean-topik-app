@@ -46,6 +46,17 @@ const LEVEL_OPTIONS: Array<{ value: string; label: string }> = [
   ...[1, 2, 3, 4, 5, 6].map((n) => ({ value: String(n), label: `${n}級` })),
 ];
 
+/** Build the /vocabularies URL with filter search params. */
+function buildVocabulariesUrl(filters: Filters): string {
+  const params = new URLSearchParams();
+  if (filters.level) params.set("level", filters.level);
+  if (filters.entry_type) params.set("entry_type", filters.entry_type);
+  if (filters.pos) params.set("pos", filters.pos);
+  if (filters.q) params.set("q", filters.q);
+  const qs = params.toString();
+  return qs ? `/vocabularies?${qs}` : "/vocabularies";
+}
+
 export default function VocabulariesPage() {
   return (
     <Suspense
@@ -95,14 +106,7 @@ function VocabulariesPageInner() {
   // Helper: build new URL search params from the current params and a partial update.
   const replaceParams = useCallback(
     (updates: Partial<Filters>) => {
-      const params = new URLSearchParams();
-      const next = { ...filters, ...updates };
-      if (next.level) params.set("level", next.level);
-      if (next.entry_type) params.set("entry_type", next.entry_type);
-      if (next.pos) params.set("pos", next.pos);
-      if (next.q) params.set("q", next.q);
-      const qs = params.toString();
-      router.replace(qs ? `/vocabularies?${qs}` : "/vocabularies");
+      router.replace(buildVocabulariesUrl({ ...filters, ...updates }));
     },
     [filters, router],
   );
@@ -114,13 +118,7 @@ function VocabulariesPageInner() {
   useEffect(() => {
     if (qInput === filters.q) return;
     const timer = setTimeout(() => {
-      const params = new URLSearchParams();
-      if (filters.level) params.set("level", filters.level);
-      if (filters.entry_type) params.set("entry_type", filters.entry_type);
-      if (filters.pos) params.set("pos", filters.pos);
-      if (qInput) params.set("q", qInput);
-      const qs = params.toString();
-      router.replace(qs ? `/vocabularies?${qs}` : "/vocabularies");
+      router.replace(buildVocabulariesUrl({ ...filters, q: qInput }));
     }, 300);
     return () => clearTimeout(timer);
   }, [qInput, filters.q, filters.level, filters.entry_type, filters.pos, router]);
