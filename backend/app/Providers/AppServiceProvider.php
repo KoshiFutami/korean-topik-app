@@ -104,16 +104,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Storage::extend('gcs', function ($app, array $config): FilesystemAdapter {
+        // NOTE:
+        // Storage::extend のクロージャ内で $this を参照すると、実行時の束縛が変わる環境があり
+        // FilesystemAdapter 経由で Flysystem に委譲されて致命的エラーになることがあるため、
+        // 必要な処理は use で捕まえ、クロージャ自体は static にする。
+        $decodedGoogleCredentialsB64 = fn (): ?array => $this->decodedGoogleCredentialsB64();
+        $absoluteCredentialsPath = fn (string $raw): string => $this->absoluteCredentialsPath($raw);
+
+        Storage::extend('gcs', static function ($app, array $config) use ($decodedGoogleCredentialsB64, $absoluteCredentialsPath): FilesystemAdapter {
             $clientOptions = [];
 
             // GOOGLE_CREDENTIALS_B64: base64 エンコードした JSON（Railway 等エフェメラル環境向け、TTS と共用）
-            $credentialsArray = $this->decodedGoogleCredentialsB64();
+            $credentialsArray = $decodedGoogleCredentialsB64();
             if ($credentialsArray !== null) {
                 $clientOptions['keyFile'] = $credentialsArray;
             } elseif (($keyFilePath = $config['key_file_path'] ?? null) !== null && $keyFilePath !== '') {
                 // GOOGLE_APPLICATION_CREDENTIALS: ファイルパス方式（Docker 等の永続ファイルシステム向け）
-                $clientOptions['keyFilePath'] = $this->absoluteCredentialsPath((string) $keyFilePath);
+                $clientOptions['keyFilePath'] = $absoluteCredentialsPath((string) $keyFilePath);
             }
 
             $storageClient = new StorageClient($clientOptions);
