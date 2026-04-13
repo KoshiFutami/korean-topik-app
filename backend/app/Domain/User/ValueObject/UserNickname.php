@@ -12,7 +12,9 @@ final class UserNickname
 
     private const MAX_LENGTH = 10;
 
-    public function __construct(private readonly string $value)
+    private readonly string $value;
+
+    public function __construct(string $value)
     {
         $trimmed = trim($value);
         $length = mb_strlen($trimmed);
