@@ -74,11 +74,10 @@ return [
 
         // 語彙音声 MP3 の本番用 GCS ディスク（AUDIO_STORAGE_DISK=audio_gcs で有効化）
         // 認証方法（どちらか一方を設定する）:
-        //   GCS_CREDENTIALS_JSON: サービスアカウント JSON の内容をそのまま文字列で設定（Railway 等のエフェメラル環境向け）
-        //   GOOGLE_APPLICATION_CREDENTIALS: サービスアカウント JSON ファイルのパス（Docker 等のファイルシステムが永続する環境向け）
+        //   GOOGLE_CREDENTIALS_B64: base64 エンコードした JSON（Railway 等エフェメラル環境向け、TTS と共用可）
+        //   GOOGLE_APPLICATION_CREDENTIALS: サービスアカウント JSON ファイルのパス（Docker 等の永続ファイルシステム向け）
         'audio_gcs' => [
             'driver' => 'gcs',
-            'gcs_credentials_json' => env('GCS_CREDENTIALS_JSON'),
             'key_file_path' => env('GOOGLE_APPLICATION_CREDENTIALS'),
             'bucket' => env('GCS_AUDIO_BUCKET'),
             'path_prefix' => env('GCS_AUDIO_PATH_PREFIX', ''),

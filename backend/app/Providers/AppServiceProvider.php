@@ -55,9 +55,15 @@ class AppServiceProvider extends ServiceProvider
             $this->app->singleton(VocabularySpeechSynthesizerInterface::class, UnavailableGoogleSpeechSynthesizer::class);
         } elseif (class_exists($ttsClientClass) && $this->googleTextToSpeechCredentialsAreReadable()) {
             $this->app->singleton($ttsClientClass, function () use ($ttsClientClass): object {
-                $credentials = $this->resolvedGoogleApplicationCredentialsPath();
-                if ($credentials === null) {
-                    throw new \LogicException('Google TTS 用クレデンシャルパスが解決できません。');
+                // GOOGLE_CREDENTIALS_B64 を優先し、なければファイルパス方式にフォールバック
+                $credentialsArray = $this->decodedGoogleCredentialsB64();
+                if ($credentialsArray !== null) {
+                    $credentials = $credentialsArray;
+                } else {
+                    $credentials = $this->resolvedGoogleApplicationCredentialsPath();
+                    if ($credentials === null) {
+                        throw new \LogicException('Google TTS 用クレデンシャルが解決できません。');
+                    }
                 }
 
                 return new $ttsClientClass([
@@ -101,13 +107,10 @@ class AppServiceProvider extends ServiceProvider
         Storage::extend('gcs', function ($app, array $config): FilesystemAdapter {
             $clientOptions = [];
 
-            // GCS_CREDENTIALS_JSON: JSON 文字列を直接環境変数に設定する方法（Railway 等のエフェメラル環境向け）
-            $credentialsJson = $config['gcs_credentials_json'] ?? null;
-            if ($credentialsJson !== null && $credentialsJson !== '') {
-                $decoded = json_decode((string) $credentialsJson, true);
-                if (is_array($decoded)) {
-                    $clientOptions['keyFile'] = $decoded;
-                }
+            // GOOGLE_CREDENTIALS_B64: base64 エンコードした JSON（Railway 等エフェメラル環境向け、TTS と共用）
+            $credentialsArray = $this->decodedGoogleCredentialsB64();
+            if ($credentialsArray !== null) {
+                $clientOptions['keyFile'] = $credentialsArray;
             } elseif (($keyFilePath = $config['key_file_path'] ?? null) !== null && $keyFilePath !== '') {
                 // GOOGLE_APPLICATION_CREDENTIALS: ファイルパス方式（Docker 等の永続ファイルシステム向け）
                 $clientOptions['keyFilePath'] = $this->absoluteCredentialsPath((string) $keyFilePath);
@@ -123,7 +126,27 @@ class AppServiceProvider extends ServiceProvider
 
     private function googleTextToSpeechCredentialsAreReadable(): bool
     {
-        return $this->resolvedGoogleApplicationCredentialsPath() !== null;
+        return $this->decodedGoogleCredentialsB64() !== null
+            || $this->resolvedGoogleApplicationCredentialsPath() !== null;
+    }
+
+    /**
+     * GOOGLE_CREDENTIALS_B64（base64 エンコードされたサービスアカウント JSON）をデコードして配列で返す。
+     * 未設定・デコード失敗なら null。Railway 等エフェメラル環境向け。TTS と GCS で共用。
+     */
+    private function decodedGoogleCredentialsB64(): ?array
+    {
+        $b64 = trim((string) (getenv('GOOGLE_CREDENTIALS_B64') ?: ''));
+        if ($b64 === '') {
+            return null;
+        }
+        $json = base64_decode($b64, true);
+        if ($json === false) {
+            return null;
+        }
+        $decoded = json_decode($json, true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 
     /**
