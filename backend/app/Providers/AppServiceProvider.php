@@ -100,8 +100,16 @@ class AppServiceProvider extends ServiceProvider
     {
         Storage::extend('gcs', function ($app, array $config): FilesystemAdapter {
             $clientOptions = [];
-            $keyFilePath = $config['key_file_path'] ?? null;
-            if ($keyFilePath !== null && $keyFilePath !== '') {
+
+            // GCS_CREDENTIALS_JSON: JSON 文字列を直接環境変数に設定する方法（Railway 等のエフェメラル環境向け）
+            $credentialsJson = $config['gcs_credentials_json'] ?? null;
+            if ($credentialsJson !== null && $credentialsJson !== '') {
+                $decoded = json_decode((string) $credentialsJson, true);
+                if (is_array($decoded)) {
+                    $clientOptions['keyFile'] = $decoded;
+                }
+            } elseif (($keyFilePath = $config['key_file_path'] ?? null) !== null && $keyFilePath !== '') {
+                // GOOGLE_APPLICATION_CREDENTIALS: ファイルパス方式（Docker 等の永続ファイルシステム向け）
                 $clientOptions['keyFilePath'] = $this->absoluteCredentialsPath((string) $keyFilePath);
             }
 
