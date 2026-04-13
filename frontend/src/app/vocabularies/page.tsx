@@ -61,7 +61,11 @@ export default function VocabulariesPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10">
+        <div
+          role="status"
+          aria-live="polite"
+          className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10"
+        >
           <div className="text-sm text-zinc-600">読み込み中...</div>
         </div>
       }
