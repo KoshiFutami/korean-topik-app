@@ -106,7 +106,65 @@ php artisan db:seed --force
 - `POST /api/v1/auth/register` が動く（本番で登録を開放する場合）
 - 管理者ログインを使う場合は seed 済みであること（`admin@example.com / password`）
 
-### 7. トラブルシュート
+### 7. 音声ファイルの永続化
+
+Railway のコンテナはデプロイのたびに再作成されるため、コンテナ内に保存した音声 MP3 はデフォルトでは消える。
+Railway Volume を使うことで追加アカウント不要・設定のみで永続化できる。
+
+#### 7-1. Procfile によるスタートコマンドの確認
+
+`backend/Procfile` に以下が記載されている（リポジトリ管理済み）:
+
+```
+web: php artisan migrate --force && php artisan storage:link --force && php -S 0.0.0.0:$PORT -t public
+```
+
+`storage:link --force` がデプロイのたびに実行され、Volume へのシンボリックリンクが毎回再作成される。
+
+#### 7-2. Railway Volume の作成とマウント
+
+Railway の UI で以下の手順を実施する。
+
+1. Railway プロジェクト → Backend サービスを選択
+2. 上部タブ「**Volumes**」→「**+ New Volume**」
+3. 以下を設定して保存:
+
+| 項目 | 値 |
+|------|-----|
+| Mount Path | `/app/storage/app/public` |
+| Size | 1 GB（目安、後から変更可） |
+
+4. サービスを **Redeploy** する
+
+これだけで `storage/app/public` がデプロイをまたいで永続化される。
+
+> **Mount Path の補足**
+> Railway が Nixpacks でビルドする PHP アプリのワーキングディレクトリは `/app`。
+> よって `storage/app/public` の絶対パスは `/app/storage/app/public` になる。
+> 不明な場合は Railway SSH で `pwd` + `ls storage/app/public` で確認する。
+
+#### 7-3. 動作確認
+
+- 再生ボタンを押して音声が流れることを確認
+- 再デプロイ後も同じ音声が再生されることを確認
+- Railway の Volumes タブで使用容量が増えていることを確認
+
+#### 7-4. （上級）AWS S3 による永続化
+
+スケールアウト（複数インスタンス）や Railway 外部へのデプロイ先変更に備えるなら AWS S3 が適切。
+以下の環境変数を設定するとコードを変えずに S3 へ切り替わる（`AUDIO_STORAGE_DISK` はリポジトリ対応済み）:
+
+| 変数名 | 値 |
+|--------|-----|
+| `AUDIO_STORAGE_DISK` | `audio_s3` |
+| `AWS_ACCESS_KEY_ID` | IAM アクセスキー |
+| `AWS_SECRET_ACCESS_KEY` | シークレットキー |
+| `AWS_DEFAULT_REGION` | `ap-northeast-1` |
+| `AWS_BUCKET` | バケット名 |
+
+S3 バケットは「ACL 有効」「パブリックアクセス一部許可（ACL のみ）」が必要。
+
+### 8. トラブルシュート
 
 #### DB 接続エラー（Connection refused / getaddrinfo failed）
 

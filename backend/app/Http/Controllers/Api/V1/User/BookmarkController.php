@@ -44,8 +44,8 @@ class BookmarkController extends Controller
                 'entry_type_label_ja' => $v->entryTypeLabelJa,
                 'example_sentence' => $v->exampleSentence,
                 'example_translation_ja' => $v->exampleTranslationJa,
-                'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
-                'example_audio_url' => VocabularyAudioUrl::resolveForHttp($v->exampleAudioUrl),
+                'audio_url' => VocabularyAudioUrl::resolveIfValidForHttp($v->audioUrl),
+                'example_audio_url' => VocabularyAudioUrl::resolveIfValidForHttp($v->exampleAudioUrl),
                 'bookmarked_at' => $v->bookmarkedAt,
             ], $output->vocabularies),
         ]);

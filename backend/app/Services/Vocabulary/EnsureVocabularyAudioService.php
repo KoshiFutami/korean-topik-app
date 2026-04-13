@@ -47,7 +47,7 @@ final class EnsureVocabularyAudioService
             if ($stored !== '') {
                 $looksRelative = ! str_starts_with($stored, 'http://') && ! str_starts_with($stored, 'https://');
                 if ($looksRelative) {
-                    $disk = Storage::disk('public');
+                    $disk = Storage::disk((string) config('filesystems.audio_disk', 'public'));
                     if (! $disk->exists($stored)) {
                         $model->audio_url = null;
                         $model->save();
@@ -82,7 +82,7 @@ final class EnsureVocabularyAudioService
             }
 
             $relativePath = 'vocabulary-audio/'.$model->id.'.mp3';
-            Storage::disk('public')->put($relativePath, $binary, 'public');
+            Storage::disk((string) config('filesystems.audio_disk', 'public'))->put($relativePath, $binary, 'public');
             $model->audio_url = $relativePath;
             $model->save();
 
@@ -120,7 +120,7 @@ final class EnsureVocabularyAudioService
             if ($stored !== '') {
                 $looksRelative = ! str_starts_with($stored, 'http://') && ! str_starts_with($stored, 'https://');
                 if ($looksRelative) {
-                    $disk = Storage::disk('public');
+                    $disk = Storage::disk((string) config('filesystems.audio_disk', 'public'));
                     if (! $disk->exists($stored)) {
                         $model->example_audio_url = null;
                         $model->save();
@@ -154,7 +154,7 @@ final class EnsureVocabularyAudioService
             }
 
             $relativePath = 'vocabulary-audio/'.$model->id.'-example.mp3';
-            Storage::disk('public')->put($relativePath, $binary, 'public');
+            Storage::disk((string) config('filesystems.audio_disk', 'public'))->put($relativePath, $binary, 'public');
             $model->example_audio_url = $relativePath;
             $model->save();
 
