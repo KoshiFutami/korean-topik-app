@@ -34,6 +34,7 @@ final class EloquentUserRepository implements UserRepositoryInterface
             ['id' => $user->id()->value()],
             [
                 'name' => $user->name()->value(),
+                'nickname' => $user->nickname()?->value(),
                 'email' => $user->email()->value(),
                 'password' => $user->password()->value(),
             ],

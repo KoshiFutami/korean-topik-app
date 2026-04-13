@@ -13,6 +13,7 @@ use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\ValueObject\UserId;
 use App\Domain\User\ValueObject\UserName;
+use App\Domain\User\ValueObject\UserNickname;
 
 final class UpdateMyProfileUseCase
 {
@@ -48,6 +49,7 @@ final class UpdateMyProfileUseCase
         $updated = User::reconstruct(
             id: $user->id(),
             name: new UserName($input->name),
+            nickname: $input->nickname !== null ? new UserNickname($input->nickname) : null,
             email: $newEmail,
             password: $hashedPassword,
             createdAt: $user->createdAt(),
@@ -58,6 +60,7 @@ final class UpdateMyProfileUseCase
         return new UpdateMyProfileOutput(
             userId: $updated->id()->value(),
             name: $updated->name()->value(),
+            nickname: $updated->nickname()?->value(),
             email: $updated->email()->value(),
             createdAt: $updated->createdAt(),
         );

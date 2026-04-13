@@ -8,6 +8,7 @@ use App\Domain\Shared\ValueObject\Email;
 use App\Domain\Shared\ValueObject\HashedPassword;
 use App\Domain\User\ValueObject\UserId;
 use App\Domain\User\ValueObject\UserName;
+use App\Domain\User\ValueObject\UserNickname;
 use DateTimeImmutable;
 
 final class User
@@ -15,6 +16,7 @@ final class User
     private function __construct(
         private readonly UserId $id,
         private readonly UserName $name,
+        private readonly ?UserNickname $nickname,
         private readonly Email $email,
         private readonly HashedPassword $password,
         private readonly DateTimeImmutable $createdAt,
@@ -28,6 +30,7 @@ final class User
         return new self(
             id: UserId::generate(),
             name: $name,
+            nickname: null,
             email: $email,
             password: $password,
             createdAt: new DateTimeImmutable,
@@ -37,6 +40,7 @@ final class User
     public static function reconstruct(
         UserId $id,
         UserName $name,
+        ?UserNickname $nickname,
         Email $email,
         HashedPassword $password,
         DateTimeImmutable $createdAt,
@@ -44,6 +48,7 @@ final class User
         return new self(
             id: $id,
             name: $name,
+            nickname: $nickname,
             email: $email,
             password: $password,
             createdAt: $createdAt,
@@ -58,6 +63,11 @@ final class User
     public function name(): UserName
     {
         return $this->name;
+    }
+
+    public function nickname(): ?UserNickname
+    {
+        return $this->nickname;
     }
 
     public function email(): Email

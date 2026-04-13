@@ -47,6 +47,7 @@ class UserAuthController extends Controller
                 'user' => [
                     'id' => $output->userId,
                     'name' => $output->name,
+                    'nickname' => $output->nickname,
                     'email' => $output->email,
                     'created_at' => $output->createdAt->format(DATE_ATOM),
                 ],
@@ -69,6 +70,7 @@ class UserAuthController extends Controller
                 'user' => [
                     'id' => $output->userId,
                     'name' => $output->name,
+                    'nickname' => $output->nickname,
                     'email' => $output->email,
                 ],
             ]);
@@ -113,6 +115,7 @@ class UserAuthController extends Controller
                 'user' => [
                     'id' => $output->userId,
                     'name' => $output->name,
+                    'nickname' => $output->nickname,
                     'email' => $output->email,
                     'created_at' => $output->createdAt->format(DATE_ATOM),
                 ],
@@ -129,6 +132,7 @@ class UserAuthController extends Controller
             $output = $this->updateMyProfile->execute(new UpdateMyProfileInput(
                 userId: (string) $user?->getAuthIdentifier(),
                 name: (string) $request->input('name'),
+                nickname: $request->input('nickname'),
                 email: (string) $request->input('email'),
                 currentPassword: $request->input('current_password'),
                 newPassword: $request->input('new_password'),
@@ -138,6 +142,7 @@ class UserAuthController extends Controller
                 'user' => [
                     'id' => $output->userId,
                     'name' => $output->name,
+                    'nickname' => $output->nickname,
                     'email' => $output->email,
                     'created_at' => $output->createdAt->format(DATE_ATOM),
                 ],

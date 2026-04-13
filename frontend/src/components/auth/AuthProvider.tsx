@@ -24,6 +24,7 @@ type AuthContextValue = {
   refreshMe: () => Promise<void>;
   updateProfile: (input: {
     name: string;
+    nickname?: string | null;
     email: string;
     current_password?: string;
     new_password?: string;
@@ -117,6 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const updateProfile = useCallback(
     async (input: {
       name: string;
+      nickname?: string | null;
       email: string;
       current_password?: string;
       new_password?: string;

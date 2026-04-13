@@ -41,6 +41,7 @@ final class RegisterUserUseCase
         return new RegisterUserOutput(
             userId: $user->id()->value(),
             name: $user->name()->value(),
+            nickname: $user->nickname()?->value(),
             email: $user->email()->value(),
             token: $token,
             createdAt: $user->createdAt(),
