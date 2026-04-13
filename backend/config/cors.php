@@ -24,7 +24,10 @@ return [
         array_filter(array_map('trim', explode(',', (string) env('CORS_ALLOWED_ORIGINS', ''))))
     ))),
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        // Vercel Preview URL (例: https://<project>-git-<branch>-<hash>-<team>.vercel.app)
+        '^https://.*\\.vercel\\.app$',
+    ],
 
     'allowed_headers' => ['*'],
 
