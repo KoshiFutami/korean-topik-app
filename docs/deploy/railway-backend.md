@@ -195,20 +195,20 @@ TTS 用サービスアカウントに以下のロールを追加（GCP コンソ
 | `AUDIO_STORAGE_DISK` | `audio_gcs` |
 | `GCS_AUDIO_BUCKET` | バケット名（例: `korean-topik-audio`） |
 | `GCS_AUDIO_PATH_PREFIX` | （任意）フォルダプレフィックス、通常は空欄 |
-| `GCS_CREDENTIALS_JSON` | サービスアカウント JSON の**内容**をそのまま貼る（後述） |
+| `GOOGLE_CREDENTIALS_B64` | base64 エンコードしたサービスアカウント JSON（TTS と共用・後述） |
 
-> **`GCS_CREDENTIALS_JSON` の設定方法**
+> **`GOOGLE_CREDENTIALS_B64` の設定方法**
 >
-> Railway のコンテナはエフェメラルのため、`GOOGLE_APPLICATION_CREDENTIALS` のようなファイルパス方式は使えません。
-> 代わりに、サービスアカウント JSON の**中身**を丸ごと環境変数に貼り付けます。
+> Railway のコンテナはエフェメラルのため、ファイルパス方式（`GOOGLE_APPLICATION_CREDENTIALS`）は使えません。
+> 代わりに、サービスアカウント JSON を base64 エンコードして環境変数に設定します。
+> **TTS 用にすでに設定済みであれば、同じ値をそのまま使えます**（GCS 権限が追加されていれば）。
 >
 > ```bash
-> # ローカルでサービスアカウント JSON の内容を確認する
-> cat /path/to/tts-credentials.json
+> # ローカルでエンコードして出力する（改行なし）
+> base64 -i /path/to/tts-credentials.json | tr -d '\n'
 > ```
 >
-> 出力された JSON（`{ "type": "service_account", ... }` の全文）を Railway の `GCS_CREDENTIALS_JSON` 変数に貼り付ける。
-> 改行はそのまま貼ってよい（Railway が適切にエスケープします）。
+> 出力された文字列を Railway の `GOOGLE_CREDENTIALS_B64` 変数に貼り付ける。
 
 ##### 動作確認
 
