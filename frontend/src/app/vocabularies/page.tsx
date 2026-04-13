@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
@@ -46,11 +47,43 @@ const LEVEL_OPTIONS: Array<{ value: string; label: string }> = [
 ];
 
 export default function VocabulariesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10">
+          <div className="text-sm text-zinc-600">読み込み中...</div>
+        </div>
+      }
+    >
+      <VocabulariesPageInner />
+    </Suspense>
+  );
+}
+
+function VocabulariesPageInner() {
   const { state, refreshMe } = useAuth();
-  const [filters, setFilters] = useState<Filters>({ level: "", entry_type: "", pos: "", q: "" });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [filters, setFilters] = useState<Filters>({
+    level: searchParams.get("level") ?? "",
+    entry_type: searchParams.get("entry_type") ?? "",
+    pos: searchParams.get("pos") ?? "",
+    q: searchParams.get("q") ?? "",
+  });
   const [items, setItems] = useState<UserVocabulary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filters.level) params.set("level", filters.level);
+    if (filters.entry_type) params.set("entry_type", filters.entry_type);
+    if (filters.pos) params.set("pos", filters.pos);
+    if (filters.q) params.set("q", filters.q);
+    const queryString = params.toString();
+    router.replace(queryString ? `/vocabularies?${queryString}` : "/vocabularies");
+  }, [filters, router]);
 
   const query = useMemo(() => {
     const level = filters.level ? Number(filters.level) : undefined;
