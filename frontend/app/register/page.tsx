@@ -12,7 +12,6 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: API 呼び出し
-    console.log({ name, email, password, passwordConfirmation });
   };
 
   return (

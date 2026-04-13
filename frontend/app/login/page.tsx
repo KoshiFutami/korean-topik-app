@@ -10,7 +10,6 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: API 呼び出し
-    console.log({ email, password });
   };
 
   return (
