@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, Suspense } from "react";
+import { useCallback, useEffect, useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -65,25 +65,55 @@ function VocabulariesPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [filters, setFilters] = useState<Filters>({
-    level: searchParams.get("level") ?? "",
-    entry_type: searchParams.get("entry_type") ?? "",
-    pos: searchParams.get("pos") ?? "",
-    q: searchParams.get("q") ?? "",
-  });
+  // Derive chip/select filters directly from URL so they stay in sync with
+  // browser back/forward navigation.
+  const filters: Filters = useMemo(
+    () => ({
+      level: searchParams.get("level") ?? "",
+      entry_type: searchParams.get("entry_type") ?? "",
+      pos: searchParams.get("pos") ?? "",
+      q: searchParams.get("q") ?? "",
+    }),
+    [searchParams],
+  );
+
+  // Keep a separate local state for the keyword input so typing is responsive.
+  // The URL (and therefore filters.q) is updated after a short debounce.
+  const [qInput, setQInput] = useState(filters.q);
+
+  // Sync the input field when the URL changes externally (e.g. browser back).
+  useEffect(() => {
+    setQInput(filters.q);
+  }, [filters.q]);
+
   const [items, setItems] = useState<UserVocabulary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Helper: build new URL search params from the current params and a partial update.
+  const replaceParams = useCallback(
+    (updates: Partial<Filters>) => {
+      const params = new URLSearchParams();
+      const next = { ...filters, ...updates };
+      if (next.level) params.set("level", next.level);
+      if (next.entry_type) params.set("entry_type", next.entry_type);
+      if (next.pos) params.set("pos", next.pos);
+      if (next.q) params.set("q", next.q);
+      const qs = params.toString();
+      router.replace(qs ? `/vocabularies?${qs}` : "/vocabularies");
+    },
+    [filters, router],
+  );
+
+  // Debounce the keyword: update URL 300 ms after the user stops typing.
   useEffect(() => {
-    const params = new URLSearchParams();
-    if (filters.level) params.set("level", filters.level);
-    if (filters.entry_type) params.set("entry_type", filters.entry_type);
-    if (filters.pos) params.set("pos", filters.pos);
-    if (filters.q) params.set("q", filters.q);
-    const queryString = params.toString();
-    router.replace(queryString ? `/vocabularies?${queryString}` : "/vocabularies");
-  }, [filters, router]);
+    const timer = setTimeout(() => {
+      if (qInput !== filters.q) {
+        replaceParams({ q: qInput });
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [qInput, filters.q, replaceParams]);
 
   const query = useMemo(() => {
     const level = filters.level ? Number(filters.level) : undefined;
@@ -152,7 +182,10 @@ function VocabulariesPageInner() {
             <Button
               variant="secondary"
               type="button"
-              onClick={() => setFilters({ level: "", entry_type: "", pos: "", q: "" })}
+              onClick={() => {
+                setQInput("");
+                replaceParams({ level: "", entry_type: "", pos: "", q: "" });
+              }}
             >
               リセット
             </Button>
@@ -167,8 +200,8 @@ function VocabulariesPageInner() {
                   tone="dark"
                   type="search"
                   placeholder="例: 안녕하세요 / こんにちは"
-                  value={filters.q}
-                  onChange={(e) => setFilters((p) => ({ ...p, q: e.target.value }))}
+                  value={qInput}
+                  onChange={(e) => setQInput(e.target.value)}
                 />
               </div>
 
@@ -183,7 +216,7 @@ function VocabulariesPageInner() {
                       type="button"
                       selected={filters.level === o.value}
                       onClick={() =>
-                        setFilters((p) => ({ ...p, level: p.level === o.value ? "" : o.value }))
+                        replaceParams({ level: filters.level === o.value ? "" : o.value })
                       }
                     >
                       {o.label}
@@ -203,10 +236,9 @@ function VocabulariesPageInner() {
                       type="button"
                       selected={filters.entry_type === o.value}
                       onClick={() =>
-                        setFilters((p) => ({
-                          ...p,
-                          entry_type: p.entry_type === o.value ? "" : o.value,
-                        }))
+                        replaceParams({
+                          entry_type: filters.entry_type === o.value ? "" : o.value,
+                        })
                       }
                     >
                       {o.label}
@@ -226,7 +258,7 @@ function VocabulariesPageInner() {
                       type="button"
                       selected={filters.pos === o.value}
                       onClick={() =>
-                        setFilters((p) => ({ ...p, pos: p.pos === o.value ? "" : o.value }))
+                        replaceParams({ pos: filters.pos === o.value ? "" : o.value })
                       }
                     >
                       {o.label}
@@ -275,4 +307,3 @@ function VocabulariesPageInner() {
     </div>
   );
 }
-
