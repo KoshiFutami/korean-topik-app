@@ -149,10 +149,64 @@ Railway の UI で以下の手順を実施する。
 - 再デプロイ後も同じ音声が再生されることを確認
 - Railway の Volumes タブで使用容量が増えていることを確認
 
-#### 7-4. （上級）AWS S3 による永続化
+#### 7-4. GCS（Google Cloud Storage）による永続化
 
-スケールアウト（複数インスタンス）や Railway 外部へのデプロイ先変更に備えるなら AWS S3 が適切。
-以下の環境変数を設定するとコードを変えずに S3 へ切り替わる（`AUDIO_STORAGE_DISK` はリポジトリ対応済み）:
+TTS で既に GCP を使っているなら、同じプロジェクト・サービスアカウントで GCS バケットも利用できる。
+
+##### GCS バケットの作成
+
+1. [GCP コンソール](https://console.cloud.google.com/) → Cloud Storage → バケットを作成
+   - 名前例: `korean-topik-audio`
+   - リージョン: `asia-northeast1`（東京）
+   - アクセス制御: **「均一」（uniform）** を選択
+2. **バケットの公開設定**（ブラウザから音声 URL を直接再生するため）
+   - バケット → 「権限」タブ → 「プリンシパルを追加」
+   - 新しいプリンシパル: `allUsers`
+   - ロール: `Storage オブジェクト閲覧者`（roles/storage.objectViewer）
+   - 保存
+3. **CORS 設定**（Vercel フロントからのリクエストを許可）
+
+```bash
+# cors.json を作成
+cat > /tmp/cors.json <<'EOF'
+[
+  {
+    "origin": ["https://*.vercel.app", "https://korean-topik-app.vercel.app"],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600
+  }
+]
+EOF
+
+# gcloud CLI で適用
+gcloud storage buckets update gs://korean-topik-audio --cors-file=/tmp/cors.json
+```
+
+##### サービスアカウントに GCS 権限を追加
+
+TTS 用サービスアカウントに以下のロールを追加（GCP コンソール → IAM → サービスアカウントを選択 → 「権限を編集」）:
+
+- `Storage オブジェクト管理者`（roles/storage.objectAdmin）
+
+##### Railway 環境変数に追加
+
+| 変数名 | 値 |
+|--------|-----|
+| `AUDIO_STORAGE_DISK` | `audio_gcs` |
+| `GCS_AUDIO_BUCKET` | バケット名（例: `korean-topik-audio`） |
+| `GCS_AUDIO_PATH_PREFIX` | （任意）フォルダプレフィックス、通常は空欄 |
+
+`GOOGLE_APPLICATION_CREDENTIALS` は TTS 用に設定済みのものをそのまま使用。
+
+##### 動作確認
+
+- 再生ボタンを押して音声が流れることを確認
+- GCS バケットに `vocabulary-audio/*.mp3` が作成されていることを確認
+- 再デプロイ後も同じ音声が再生されることを確認
+
+#### 7-5. （上級）AWS S3 による永続化
+
+AWS アカウントがある場合。S3 バケットは「ACL 有効」「パブリックアクセス一部許可（ACL のみ）」が必要。
 
 | 変数名 | 値 |
 |--------|-----|
@@ -161,8 +215,6 @@ Railway の UI で以下の手順を実施する。
 | `AWS_SECRET_ACCESS_KEY` | シークレットキー |
 | `AWS_DEFAULT_REGION` | `ap-northeast-1` |
 | `AWS_BUCKET` | バケット名 |
-
-S3 バケットは「ACL 有効」「パブリックアクセス一部許可（ACL のみ）」が必要。
 
 ### 8. トラブルシュート
 
