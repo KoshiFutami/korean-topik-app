@@ -36,7 +36,8 @@ export default function ProfilePage() {
       await userApi.updateNickname(token, nickname.trim());
       await refreshUser();
       setSuccessMessage("ニックネームを更新しました！");
-    } catch {
+    } catch (err) {
+      console.error("Failed to update nickname:", err);
       setError("更新に失敗しました。もう一度お試しください。");
     } finally {
       setSaving(false);

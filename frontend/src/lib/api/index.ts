@@ -2,6 +2,16 @@ import { AuthResponse, User } from "@/lib/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly body: unknown
+  ) {
+    super(`API error: ${status}`);
+    this.name = "ApiError";
+  }
+}
+
 async function request<T>(
   path: string,
   options: RequestInit = {}
@@ -17,7 +27,7 @@ async function request<T>(
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw { status: res.status, body };
+    throw new ApiError(res.status, body);
   }
 
   return res.json() as Promise<T>;

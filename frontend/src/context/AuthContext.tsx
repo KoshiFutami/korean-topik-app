@@ -57,7 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const u = await userApi.me(t);
       setToken(t);
       setUser(u);
-    } catch {
+    } catch (err) {
+      console.error("Failed to refresh user:", err);
       clearToken();
     } finally {
       setLoading(false);

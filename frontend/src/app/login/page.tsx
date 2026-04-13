@@ -21,8 +21,8 @@ export default function LoginPage() {
       await login(email, password);
       router.push("/");
     } catch (err: unknown) {
-      const e = err as { body?: { message?: string } };
-      setError(e?.body?.message ?? "ログインに失敗しました。");
+      const apiError = err as { body?: { message?: string } };
+      setError(apiError?.body?.message ?? "ログインに失敗しました。");
     } finally {
       setSubmitting(false);
     }

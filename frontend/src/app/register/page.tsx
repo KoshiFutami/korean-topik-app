@@ -30,9 +30,9 @@ export default function RegisterPage() {
       });
       router.push("/");
     } catch (err: unknown) {
-      const e = err as { body?: { errors?: Record<string, string[]> } };
-      if (e?.body?.errors) {
-        setErrors(e.body.errors);
+      const apiError = err as { body?: { errors?: Record<string, string[]> } };
+      if (apiError?.body?.errors) {
+        setErrors(apiError.body.errors);
       }
     } finally {
       setSubmitting(false);
