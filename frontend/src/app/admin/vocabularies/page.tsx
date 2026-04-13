@@ -2,16 +2,81 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
 import { ApiError } from "@/lib/api/http";
 import { logoutAdmin, meAdmin } from "@/lib/api/admin/auth";
 import { listAdminVocabularies, type AdminVocabulary } from "@/lib/api/admin/vocabularies";
 
 const ADMIN_TOKEN_KEY = "topik.admin.token";
+
+const LEVEL_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: "", label: "すべて" },
+  ...[1, 2, 3, 4, 5, 6].map((n) => ({ value: String(n), label: `${n}級` })),
+];
+
+const ENTRY_TYPE_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: "", label: "すべて" },
+  { value: "word", label: "単語" },
+  { value: "phrase", label: "熟語" },
+  { value: "idiom", label: "慣用句" },
+];
+
+const POS_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: "", label: "すべて" },
+  { value: "noun", label: "名詞" },
+  { value: "verb", label: "動詞" },
+  { value: "adj", label: "形容詞" },
+  { value: "adv", label: "副詞" },
+  { value: "particle", label: "助詞" },
+  { value: "determiner", label: "冠形詞" },
+  { value: "pronoun", label: "代名詞" },
+  { value: "interjection", label: "感動詞" },
+  { value: "other", label: "その他" },
+];
+
+const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: "", label: "すべて" },
+  { value: "published", label: "公開" },
+  { value: "private", label: "非公開" },
+  { value: "draft", label: "下書き" },
+];
+
+type Filters = {
+  q: string;
+  level: string;
+  entry_type: string;
+  pos: string;
+  status: string;
+};
+
+function FilterChip({
+  selected,
+  onClick,
+  children,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`inline-flex items-center justify-center rounded-full px-3 py-1.5 text-sm font-medium ring-1 ring-inset transition-colors ${
+        selected
+          ? "bg-zinc-900 text-white ring-zinc-900"
+          : "bg-white text-zinc-700 ring-zinc-300 hover:bg-zinc-50"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
 
 export default function AdminVocabulariesPage() {
   const router = useRouter();
@@ -20,6 +85,13 @@ export default function AdminVocabulariesPage() {
   const [items, setItems] = useState<AdminVocabulary[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<Filters>({
+    q: "",
+    level: "",
+    entry_type: "",
+    pos: "",
+    status: "",
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -54,6 +126,39 @@ export default function AdminVocabulariesPage() {
     };
     run().catch(() => undefined);
   }, [router, token]);
+
+  const normalizedItems = useMemo(
+    () =>
+      items?.map((v) => ({
+        ...v,
+        _termLower: v.term.toLowerCase(),
+        _meaningLower: v.meaning_ja.toLowerCase(),
+      })) ?? null,
+    [items],
+  );
+
+  const filteredItems = useMemo(() => {
+    if (!normalizedItems) return null;
+    const q = filters.q.trim().toLowerCase();
+    return normalizedItems.filter((v) => {
+      if (q && !v._termLower.includes(q) && !v._meaningLower.includes(q)) return false;
+      if (filters.level && String(v.level) !== filters.level) return false;
+      if (filters.entry_type && v.entry_type !== filters.entry_type) return false;
+      if (filters.pos && v.pos !== filters.pos) return false;
+      if (filters.status && v.status !== filters.status) return false;
+      return true;
+    });
+  }, [normalizedItems, filters]);
+
+  const toggleFilter = (key: keyof Filters, value: string) =>
+    setFilters((p) => ({ ...p, [key]: p[key] === value ? "" : value }));
+
+  const isFiltered =
+    filters.q.trim() !== "" ||
+    filters.level !== "" ||
+    filters.entry_type !== "" ||
+    filters.pos !== "" ||
+    filters.status !== "";
 
   return (
     <div className="flex flex-1 justify-center bg-zinc-50 px-4 py-10">
@@ -100,15 +205,106 @@ export default function AdminVocabulariesPage() {
         </Card>
 
         <Card>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-semibold text-zinc-700">絞り込み</div>
+              {isFiltered && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFilters({ q: "", level: "", entry_type: "", pos: "", status: "" })
+                  }
+                  className="text-sm text-zinc-500 underline hover:text-zinc-700"
+                >
+                  リセット
+                </button>
+              )}
+            </div>
+
+            <Input
+              label="キーワード"
+              type="search"
+              placeholder="例: 안녕하세요 / こんにちは"
+              value={filters.q}
+              onChange={(e) => setFilters((p) => ({ ...p, q: e.target.value }))}
+            />
+
+            <div>
+              <div className="mb-2 text-sm font-medium text-zinc-700">TOPIK レベル</div>
+              <div className="flex flex-wrap gap-2">
+                {LEVEL_OPTIONS.map((o) => (
+                  <FilterChip
+                    key={o.value}
+                    selected={filters.level === o.value}
+                    onClick={() => toggleFilter("level", o.value)}
+                  >
+                    {o.label}
+                  </FilterChip>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-2 text-sm font-medium text-zinc-700">種別</div>
+              <div className="flex flex-wrap gap-2">
+                {ENTRY_TYPE_OPTIONS.map((o) => (
+                  <FilterChip
+                    key={o.value}
+                    selected={filters.entry_type === o.value}
+                    onClick={() => toggleFilter("entry_type", o.value)}
+                  >
+                    {o.label}
+                  </FilterChip>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-2 text-sm font-medium text-zinc-700">品詞</div>
+              <div className="flex flex-wrap gap-2">
+                {POS_OPTIONS.map((o) => (
+                  <FilterChip
+                    key={o.value}
+                    selected={filters.pos === o.value}
+                    onClick={() => toggleFilter("pos", o.value)}
+                  >
+                    {o.label}
+                  </FilterChip>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-2 text-sm font-medium text-zinc-700">ステータス</div>
+              <div className="flex flex-wrap gap-2">
+                {STATUS_OPTIONS.map((o) => (
+                  <FilterChip
+                    key={o.value}
+                    selected={filters.status === o.value}
+                    onClick={() => toggleFilter("status", o.value)}
+                  >
+                    {o.label}
+                  </FilterChip>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card>
           <div className="flex items-center justify-between">
             <div className="text-sm text-zinc-600">
-              {loading ? "読み込み中..." : `件数: ${items?.length ?? 0}`}
+              {loading
+                ? "読み込み中..."
+                : isFiltered
+                  ? `件数: ${filteredItems?.length ?? 0} / ${items?.length ?? 0}`
+                  : `件数: ${items?.length ?? 0}`}
             </div>
             {error ? <div className="text-sm text-red-600">{error}</div> : null}
           </div>
 
           <div className="mt-4 divide-y divide-zinc-200">
-            {(items ?? []).map((v) => (
+            {(filteredItems ?? []).map((v) => (
               <div
                 key={v.id}
                 className="flex items-start justify-between gap-4 py-3 hover:bg-zinc-50 -mx-6 px-6"
@@ -136,8 +332,10 @@ export default function AdminVocabulariesPage() {
               </div>
             ))}
 
-            {!loading && items && items.length === 0 ? (
-              <div className="py-8 text-center text-sm text-zinc-600">語彙がありません。</div>
+            {!loading && filteredItems && filteredItems.length === 0 ? (
+              <div className="py-8 text-center text-sm text-zinc-600">
+                {isFiltered ? "条件に一致する語彙がありません。" : "語彙がありません。"}
+              </div>
             ) : null}
           </div>
         </Card>
