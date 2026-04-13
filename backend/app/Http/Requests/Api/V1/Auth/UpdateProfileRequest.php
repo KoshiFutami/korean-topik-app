@@ -15,7 +15,7 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:1', 'max:100'],
-            'nickname' => ['nullable', 'string', 'min:1', 'max:50'],
+            'nickname' => ['nullable', 'string', 'min:1', 'max:10'],
             'email' => ['required', 'string', 'email', 'max:255'],
             'current_password' => ['nullable', 'string'],
             'new_password' => ['nullable', 'string', 'min:8', 'max:255', 'confirmed'],

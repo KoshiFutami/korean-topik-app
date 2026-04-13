@@ -10,7 +10,7 @@ final class UserNickname
 {
     private const MIN_LENGTH = 1;
 
-    private const MAX_LENGTH = 50;
+    private const MAX_LENGTH = 10;
 
     public function __construct(private readonly string $value)
     {
