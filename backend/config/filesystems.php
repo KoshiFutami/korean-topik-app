@@ -72,6 +72,17 @@ return [
             'report' => false,
         ],
 
+        // 語彙音声 MP3 の本番用 GCS ディスク（AUDIO_STORAGE_DISK=audio_gcs で有効化）
+        'audio_gcs' => [
+            'driver' => 'gcs',
+            'key_file_path' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+            'bucket' => env('GCS_AUDIO_BUCKET'),
+            'path_prefix' => env('GCS_AUDIO_PATH_PREFIX', ''),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         // 語彙音声 MP3 の本番用 S3 ディスク（AUDIO_STORAGE_DISK=audio_s3 で有効化）
         'audio_s3' => [
             'driver' => 's3',

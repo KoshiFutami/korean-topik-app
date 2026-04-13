@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * DB に保存された音声パス（audio ディスク相対）を、クライアントが取得できる絶対 URL に変換する。
- * ローカル開発は 'public' ディスク、本番は 'audio_s3' ディスクを使用する（AUDIO_STORAGE_DISK で制御）。
+ * ローカル開発は 'public' ディスク、本番は 'audio_gcs'（GCS）または 'audio_s3'（S3）を使用する
+ * （AUDIO_STORAGE_DISK 環境変数で切り替え）。
  */
 final class VocabularyAudioUrl
 {
@@ -39,7 +40,7 @@ final class VocabularyAudioUrl
      * resolveForHttp と同様だが、ローカルディスクの場合はファイルの存在とサイズ（≥ 900B）も検証する。
      * 存在しない・小さすぎる（旧スタブ相当）ファイルは null を返し、
      * クライアントに ensureAudio を呼ばせて再生成を促す。
-     * S3 等のクラウドディスクでは API コストを避けるため検証をスキップし、DB 値を信頼する。
+     * GCS・S3 等のクラウドディスクでは API コストを避けるため検証をスキップし、DB 値を信頼する。
      * API レスポンスのシリアライズ時（一覧・詳細・ブックマーク等）に使用する。
      */
     public static function resolveIfValidForHttp(?string $stored): ?string

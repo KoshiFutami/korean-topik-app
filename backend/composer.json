@@ -7,12 +7,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "google/cloud-storage": "^1.51",
         "google/cloud-text-to-speech": "^2.0",
         "laravel/framework": "^13.0",
         "laravel/pint": "^1.29",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
-        "league/flysystem-aws-s3-v3": "^3.0"
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "league/flysystem-google-cloud-storage": "^3.0"
     },
     "require-dev": {
         "brianium/paratest": "^7.0",
