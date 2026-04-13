@@ -28,7 +28,12 @@ use App\Services\Vocabulary\Contracts\VocabularySpeechSynthesizerInterface;
 use App\Services\Vocabulary\GoogleCloudVocabularySpeechSynthesizer;
 use App\Services\Vocabulary\StubMp3VocabularySpeechSynthesizer;
 use App\Services\Vocabulary\UnavailableGoogleSpeechSynthesizer;
+use Google\Cloud\Storage\StorageClient;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
+use League\Flysystem\Filesystem;
+use League\Flysystem\GoogleCloudStorage\GoogleCloudStorageAdapter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -93,7 +98,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Storage::extend('gcs', function ($app, array $config): FilesystemAdapter {
+            $clientOptions = [];
+            $keyFilePath = $config['key_file_path'] ?? null;
+            if ($keyFilePath !== null && $keyFilePath !== '') {
+                $clientOptions['keyFilePath'] = $this->absoluteCredentialsPath((string) $keyFilePath);
+            }
+
+            $storageClient = new StorageClient($clientOptions);
+            $bucket = $storageClient->bucket((string) ($config['bucket'] ?? ''));
+            $adapter = new GoogleCloudStorageAdapter($bucket, (string) ($config['path_prefix'] ?? ''));
+
+            return new FilesystemAdapter(new Filesystem($adapter, $config), $adapter, $config);
+        });
     }
 
     private function googleTextToSpeechCredentialsAreReadable(): bool

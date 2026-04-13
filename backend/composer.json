@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "google/cloud-storage": "^1.51",
         "google/cloud-text-to-speech": "^2.0",
         "laravel/framework": "^13.0",
         "laravel/pint": "^1.29",
