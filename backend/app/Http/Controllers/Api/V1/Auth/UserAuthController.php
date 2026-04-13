@@ -10,12 +10,15 @@ use App\Application\User\Auth\LogoutUser\LogoutUserInput;
 use App\Application\User\Auth\LogoutUser\LogoutUserUseCase;
 use App\Application\User\Auth\RegisterUser\RegisterUserInput;
 use App\Application\User\Auth\RegisterUser\RegisterUserUseCase;
+use App\Application\User\Auth\UpdateMyProfile\UpdateMyProfileInput;
+use App\Application\User\Auth\UpdateMyProfile\UpdateMyProfileUseCase;
 use App\Domain\User\Exception\InvalidCredentialsException;
 use App\Domain\User\Exception\UserAlreadyExistsException;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RegisterRequest;
+use App\Http\Requests\Api\V1\Auth\UpdateProfileRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -27,6 +30,7 @@ class UserAuthController extends Controller
         private readonly LoginUserUseCase $loginUser,
         private readonly LogoutUserUseCase $logoutUser,
         private readonly GetMyProfileUseCase $getMyProfile,
+        private readonly UpdateMyProfileUseCase $updateMyProfile,
     ) {}
 
     public function register(RegisterRequest $request): JsonResponse
@@ -115,6 +119,35 @@ class UserAuthController extends Controller
             ]);
         } catch (UserNotFoundException $e) {
             return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function updateProfile(UpdateProfileRequest $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $output = $this->updateMyProfile->execute(new UpdateMyProfileInput(
+                userId: (string) $user?->getAuthIdentifier(),
+                name: (string) $request->input('name'),
+                email: (string) $request->input('email'),
+                currentPassword: $request->input('current_password'),
+                newPassword: $request->input('new_password'),
+            ));
+
+            return response()->json([
+                'user' => [
+                    'id' => $output->userId,
+                    'name' => $output->name,
+                    'email' => $output->email,
+                    'created_at' => $output->createdAt->format(DATE_ATOM),
+                ],
+            ]);
+        } catch (UserNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        } catch (UserAlreadyExistsException $e) {
+            return response()->json(['message' => $e->getMessage()], 409);
+        } catch (InvalidCredentialsException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
         }
     }
 }
