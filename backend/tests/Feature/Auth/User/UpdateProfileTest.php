@@ -8,6 +8,51 @@ use Tests\TestCase;
 
 class UpdateProfileTest extends TestCase
 {
+    public function test_update_profile_saves_nickname(): void
+    {
+        $user = User::query()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => Hash::make('password123'),
+        ]);
+
+        $token = $user->createToken('user')->plainTextToken;
+
+        $res = $this->patchJson('/api/v1/auth/me', [
+            'name' => 'Test User',
+            'nickname' => 'コシ',
+            'email' => 'test@example.com',
+        ], [
+            'Authorization' => "Bearer {$token}",
+        ]);
+
+        $res->assertOk();
+        $res->assertJsonPath('user.nickname', 'コシ');
+    }
+
+    public function test_update_profile_clears_nickname_when_null(): void
+    {
+        $user = User::query()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'nickname' => 'コシ',
+            'password' => Hash::make('password123'),
+        ]);
+
+        $token = $user->createToken('user')->plainTextToken;
+
+        $res = $this->patchJson('/api/v1/auth/me', [
+            'name' => 'Test User',
+            'nickname' => null,
+            'email' => 'test@example.com',
+        ], [
+            'Authorization' => "Bearer {$token}",
+        ]);
+
+        $res->assertOk();
+        $res->assertJsonPath('user.nickname', null);
+    }
+
     public function test_update_profile_changes_name_and_email(): void
     {
         $user = User::query()->create([
