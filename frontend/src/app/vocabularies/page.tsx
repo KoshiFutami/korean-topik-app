@@ -60,6 +60,8 @@ export default function VocabulariesPage() {
   );
 }
 
+// Inner component separated from the default export so that useSearchParams()
+// (which requires a Suspense boundary) can be used in a client component.
 function VocabulariesPageInner() {
   const { state, refreshMe } = useAuth();
   const router = useRouter();
@@ -106,14 +108,22 @@ function VocabulariesPageInner() {
   );
 
   // Debounce the keyword: update URL 300 ms after the user stops typing.
+  // The effect only depends on qInput and the individual filter values to
+  // avoid an unnecessary re-run cycle caused by replaceParams being recreated
+  // when filters change after a URL update.
   useEffect(() => {
+    if (qInput === filters.q) return;
     const timer = setTimeout(() => {
-      if (qInput !== filters.q) {
-        replaceParams({ q: qInput });
-      }
+      const params = new URLSearchParams();
+      if (filters.level) params.set("level", filters.level);
+      if (filters.entry_type) params.set("entry_type", filters.entry_type);
+      if (filters.pos) params.set("pos", filters.pos);
+      if (qInput) params.set("q", qInput);
+      const qs = params.toString();
+      router.replace(qs ? `/vocabularies?${qs}` : "/vocabularies");
     }, 300);
     return () => clearTimeout(timer);
-  }, [qInput, filters.q, replaceParams]);
+  }, [qInput, filters.q, filters.level, filters.entry_type, filters.pos, router]);
 
   const query = useMemo(() => {
     const level = filters.level ? Number(filters.level) : undefined;
