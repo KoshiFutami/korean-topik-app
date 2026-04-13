@@ -40,6 +40,7 @@ final class CreateVocabularyUseCase
             exampleSentence: $input->exampleSentence,
             exampleTranslationJa: $input->exampleTranslationJa,
             audioUrl: $input->audioUrl,
+            exampleAudioUrl: $input->exampleAudioUrl,
             status: $status,
         );
 

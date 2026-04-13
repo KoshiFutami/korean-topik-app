@@ -104,6 +104,7 @@ class VocabularyController extends Controller
                 exampleSentence: $request->input('example_sentence'),
                 exampleTranslationJa: $request->input('example_translation_ja'),
                 audioUrl: $request->input('audio_url'),
+                exampleAudioUrl: $request->input('example_audio_url'),
                 status: $request->input('status'),
             ));
 
@@ -145,6 +146,7 @@ class VocabularyController extends Controller
                 exampleSentence: $request->input('example_sentence'),
                 exampleTranslationJa: $request->input('example_translation_ja'),
                 audioUrl: $request->input('audio_url'),
+                exampleAudioUrl: $request->input('example_audio_url'),
                 status: $request->input('status'),
             ));
 

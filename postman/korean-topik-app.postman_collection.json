@@ -663,7 +663,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"term\": \"손을 씻다\",\n  \"meaning_ja\": \"手を洗う\",\n  \"pos\": \"verb\",\n  \"level\": 1,\n  \"entry_type\": \"phrase\",\n  \"example_sentence\": \"밥 먹기 전에 손을 씻어요.\",\n  \"example_translation_ja\": \"ご飯を食べる前に手を洗います。\",\n  \"status\": \"published\"\n}"
+              "raw": "{\n  \"term\": \"손을 씻다\",\n  \"meaning_ja\": \"手を洗う\",\n  \"pos\": \"verb\",\n  \"level\": 1,\n  \"entry_type\": \"phrase\",\n  \"example_sentence\": \"밥 먹기 전에 손을 씻어요.\",\n  \"example_translation_ja\": \"ご飯を食べる前に手を洗います。\",\n  \"status\": \"published\",\n  \"audio_url\": null,\n  \"example_audio_url\": null\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies",
@@ -728,7 +728,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"term\": \"손을 씻다\",\n  \"meaning_ja\": \"（水で）手を洗う\",\n  \"pos\": \"verb\",\n  \"level\": 1,\n  \"entry_type\": \"phrase\",\n  \"example_sentence\": \"손을 씻고 밥을 먹어요.\",\n  \"example_translation_ja\": \"手を洗ってご飯を食べます。\",\n  \"status\": \"published\"\n}"
+              "raw": "{\n  \"term\": \"손을 씻다\",\n  \"meaning_ja\": \"（水で）手を洗う\",\n  \"pos\": \"verb\",\n  \"level\": 1,\n  \"entry_type\": \"phrase\",\n  \"example_sentence\": \"손을 씻고 밥을 먹어요.\",\n  \"example_translation_ja\": \"手を洗ってご飯を食べます。\",\n  \"status\": \"published\",\n  \"audio_url\": null,\n  \"example_audio_url\": null\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}",
