@@ -35,6 +35,7 @@ final class LoginUserUseCase
         return new LoginUserOutput(
             userId: $user->id()->value(),
             name: $user->name()->value(),
+            nickname: $user->nickname()?->value(),
             email: $user->email()->value(),
             token: $token,
         );

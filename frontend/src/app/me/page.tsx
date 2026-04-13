@@ -30,6 +30,7 @@ export default function MePage() {
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
+  const [nickname, setNickname] = useState<string>("");
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -49,6 +50,7 @@ export default function MePage() {
   useEffect(() => {
     if (state.status === "authed" && !editing) {
       setName(state.user.name);
+      setNickname(state.user.nickname ?? "");
       setEmail(state.user.email);
     }
   }, [state, editing]);
@@ -87,6 +89,7 @@ export default function MePage() {
 
   const handleEdit = () => {
     setName(state.user.name);
+    setNickname(state.user.nickname ?? "");
     setEmail(state.user.email);
     setCurrentPassword("");
     setNewPassword("");
@@ -113,6 +116,7 @@ export default function MePage() {
     try {
       await updateProfile({
         name,
+        nickname: nickname.trim() || null,
         email,
         ...(newPassword
           ? {
@@ -166,6 +170,14 @@ export default function MePage() {
                 <dd className="col-span-2 break-all text-white">{state.user.id}</dd>
                 <dt className="text-white/70">名前</dt>
                 <dd className="col-span-2 text-white">{state.user.name}</dd>
+                <dt className="text-white/70">ニックネーム</dt>
+                <dd className="col-span-2 text-white">
+                  {state.user.nickname ? (
+                    state.user.nickname
+                  ) : (
+                    <span className="text-white/50">未設定</span>
+                  )}
+                </dd>
                 <dt className="text-white/70">メール</dt>
                 <dd className="col-span-2 text-white">{state.user.email}</dd>
               </dl>
@@ -198,6 +210,14 @@ export default function MePage() {
                   onChange={(e) => setName(e.target.value)}
                   required
                   error={fieldErrors["name"]}
+                />
+                <Input
+                  label="ニックネーム"
+                  labelSuffix="닉네임"
+                  tone="dark"
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                  error={fieldErrors["nickname"]}
                 />
                 <Input
                   label="メールアドレス"

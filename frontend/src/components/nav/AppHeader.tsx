@@ -101,7 +101,7 @@ export function AppHeader() {
                     : "hidden text-sm text-zinc-600 sm:block"
                 }
               >
-                {state.user.name}
+                {state.user.nickname ?? state.user.name}
               </div>
               <Button variant="secondary" type="button" onClick={() => logout()}>
                 ログアウト

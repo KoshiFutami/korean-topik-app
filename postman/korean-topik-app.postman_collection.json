@@ -77,8 +77,16 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -98,8 +106,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/auth/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "auth", "me"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "auth",
+                "me"
+              ]
             }
           }
         },
@@ -119,8 +135,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/auth/logout",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "auth", "logout"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "auth",
+                "logout"
+              ]
             }
           }
         }
@@ -129,6 +153,52 @@
     {
       "name": "User Auth",
       "item": [
+        {
+          "name": "User Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.token) {",
+                  "  pm.collectionVariables.set('userToken', json.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\",\n  \"password_confirmation\": \"{{userPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
         {
           "name": "User Login (set userToken)",
           "event": [
@@ -204,6 +274,42 @@
           }
         },
         {
+          "name": "User Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"nickname\": \"테스트\",\n  \"email\": \"{{userEmail}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            }
+          }
+        },
+        {
           "name": "User Logout",
           "request": {
             "method": "POST",
@@ -248,8 +354,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/planned-features",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "planned-features"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "planned-features"
+              ]
             }
           }
         }
@@ -293,8 +405,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/vocabularies?compact=1",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "vocabularies"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vocabularies"
+              ],
               "query": [
                 {
                   "key": "compact",
@@ -377,8 +495,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/vocabularies/{{vocabularyId}}/audio",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "vocabularies", "{{vocabularyId}}", "audio"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vocabularies",
+                "{{vocabularyId}}",
+                "audio"
+              ]
             }
           }
         },
@@ -394,8 +520,17 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/vocabularies/{{vocabularyId}}/audio/example",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "vocabularies", "{{vocabularyId}}", "audio", "example"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vocabularies",
+                "{{vocabularyId}}",
+                "audio",
+                "example"
+              ]
             }
           }
         }
@@ -420,8 +555,15 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies"
+              ]
             }
           }
         },
@@ -441,8 +583,17 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}/audio",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}", "audio"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "{{vocabularyId}}",
+                "audio"
+              ]
             }
           }
         },
@@ -462,8 +613,18 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}/audio/example",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}", "audio", "example"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "{{vocabularyId}}",
+                "audio",
+                "example"
+              ]
             }
           }
         },
@@ -506,8 +667,15 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies"
+              ]
             }
           }
         },
@@ -527,8 +695,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "{{vocabularyId}}"
+              ]
             }
           }
         },
@@ -556,8 +732,16 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "{{vocabularyId}}"
+              ]
             }
           }
         },
@@ -577,8 +761,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/vocabularies/{{vocabularyId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "vocabularies", "{{vocabularyId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "{{vocabularyId}}"
+              ]
             }
           }
         }
@@ -586,4 +778,3 @@
     }
   ]
 }
-

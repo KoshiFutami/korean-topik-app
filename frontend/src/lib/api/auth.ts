@@ -3,6 +3,7 @@ import { apiFetch } from "./http";
 export type User = {
   id: string;
   name: string;
+  nickname: string | null;
   email: string;
   created_at?: string;
 };
@@ -47,6 +48,7 @@ export async function updateMyProfile(
   token: string,
   input: {
     name: string;
+    nickname?: string | null;
     email: string;
     current_password?: string;
     new_password?: string;

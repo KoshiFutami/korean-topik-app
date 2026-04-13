@@ -23,6 +23,7 @@ final class GetMyProfileUseCase
         return new GetMyProfileOutput(
             userId: $user->id()->value(),
             name: $user->name()->value(),
+            nickname: $user->nickname()?->value(),
             email: $user->email()->value(),
             createdAt: $user->createdAt(),
         );
