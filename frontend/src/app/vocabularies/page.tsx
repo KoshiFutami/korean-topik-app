@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
@@ -45,12 +46,92 @@ const LEVEL_OPTIONS: Array<{ value: string; label: string }> = [
   ...[1, 2, 3, 4, 5, 6].map((n) => ({ value: String(n), label: `${n}級` })),
 ];
 
+/** Build the /vocabularies URL with filter search params. */
+function buildVocabulariesUrl(filters: Filters): string {
+  const params = new URLSearchParams();
+  if (filters.level) params.set("level", filters.level);
+  if (filters.entry_type) params.set("entry_type", filters.entry_type);
+  if (filters.pos) params.set("pos", filters.pos);
+  if (filters.q) params.set("q", filters.q);
+  const qs = params.toString();
+  return qs ? `/vocabularies?${qs}` : "/vocabularies";
+}
+
 export default function VocabulariesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          role="status"
+          aria-live="polite"
+          className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10"
+        >
+          <div className="text-sm text-zinc-600">読み込み中...</div>
+        </div>
+      }
+    >
+      <VocabulariesPageInner />
+    </Suspense>
+  );
+}
+
+// Inner component separated from the default export so that useSearchParams()
+// (which requires a Suspense boundary) can be used in a client component.
+function VocabulariesPageInner() {
   const { state, refreshMe } = useAuth();
-  const [filters, setFilters] = useState<Filters>({ level: "", entry_type: "", pos: "", q: "" });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Derive chip/select filters directly from URL so they stay in sync with
+  // browser back/forward navigation.
+  const filters: Filters = useMemo(
+    () => ({
+      level: searchParams.get("level") ?? "",
+      entry_type: searchParams.get("entry_type") ?? "",
+      pos: searchParams.get("pos") ?? "",
+      q: searchParams.get("q") ?? "",
+    }),
+    [searchParams],
+  );
+
+  // Keep a separate local state for the keyword input so typing is responsive.
+  // The URL (and therefore filters.q) is updated after a short debounce.
+  const [qInput, setQInput] = useState(filters.q);
+
+  // Sync the input field when the URL changes externally (e.g. browser back).
+  useEffect(() => {
+    setQInput(filters.q);
+  }, [filters.q]);
+
   const [items, setItems] = useState<UserVocabulary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Keep a ref to always have the latest filters inside async callbacks
+  // without making them part of every effect's dependency array.
+  const filtersRef = useRef(filters);
+  useEffect(() => {
+    filtersRef.current = filters;
+  });
+
+  // Helper: build new URL search params from the current params and a partial update.
+  const replaceParams = useCallback(
+    (updates: Partial<Filters>) => {
+      router.replace(buildVocabulariesUrl({ ...filtersRef.current, ...updates }));
+    },
+    [router],
+  );
+
+  // Debounce the keyword: update URL 300 ms after the user stops typing.
+  // Depends only on qInput (and the stable router ref) so that clicking a
+  // chip filter does not reset an in-progress keyword debounce.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (qInput === filtersRef.current.q) return;
+      router.replace(buildVocabulariesUrl({ ...filtersRef.current, q: qInput }));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [qInput, router]);
 
   const query = useMemo(() => {
     const level = filters.level ? Number(filters.level) : undefined;
@@ -119,7 +200,10 @@ export default function VocabulariesPage() {
             <Button
               variant="secondary"
               type="button"
-              onClick={() => setFilters({ level: "", entry_type: "", pos: "", q: "" })}
+              onClick={() => {
+                setQInput("");
+                replaceParams({ level: "", entry_type: "", pos: "", q: "" });
+              }}
             >
               リセット
             </Button>
@@ -134,8 +218,8 @@ export default function VocabulariesPage() {
                   tone="dark"
                   type="search"
                   placeholder="例: 안녕하세요 / こんにちは"
-                  value={filters.q}
-                  onChange={(e) => setFilters((p) => ({ ...p, q: e.target.value }))}
+                  value={qInput}
+                  onChange={(e) => setQInput(e.target.value)}
                 />
               </div>
 
@@ -150,7 +234,7 @@ export default function VocabulariesPage() {
                       type="button"
                       selected={filters.level === o.value}
                       onClick={() =>
-                        setFilters((p) => ({ ...p, level: p.level === o.value ? "" : o.value }))
+                        replaceParams({ level: filters.level === o.value ? "" : o.value })
                       }
                     >
                       {o.label}
@@ -170,10 +254,9 @@ export default function VocabulariesPage() {
                       type="button"
                       selected={filters.entry_type === o.value}
                       onClick={() =>
-                        setFilters((p) => ({
-                          ...p,
-                          entry_type: p.entry_type === o.value ? "" : o.value,
-                        }))
+                        replaceParams({
+                          entry_type: filters.entry_type === o.value ? "" : o.value,
+                        })
                       }
                     >
                       {o.label}
@@ -193,7 +276,7 @@ export default function VocabulariesPage() {
                       type="button"
                       selected={filters.pos === o.value}
                       onClick={() =>
-                        setFilters((p) => ({ ...p, pos: p.pos === o.value ? "" : o.value }))
+                        replaceParams({ pos: filters.pos === o.value ? "" : o.value })
                       }
                     >
                       {o.label}
@@ -242,4 +325,3 @@ export default function VocabulariesPage() {
     </div>
   );
 }
-

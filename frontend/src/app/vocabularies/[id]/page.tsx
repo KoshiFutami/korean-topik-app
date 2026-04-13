@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -53,6 +53,7 @@ function entryTypeKo(t: string): string {
 
 export default function VocabularyDetailPage() {
   const { state, refreshMe } = useAuth();
+  const router = useRouter();
   const params = useParams<{ id?: string }>();
   const id = typeof params?.id === "string" ? params.id : "";
   const [item, setItem] = useState<UserVocabularyDetail | null>(null);
@@ -124,13 +125,14 @@ export default function VocabularyDetailPage() {
     <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
       <div className="mx-auto w-full max-w-3xl space-y-6">
         <div className="flex items-center justify-between">
-          <Link
-            className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 hover:bg-white/15"
-            href="/vocabularies"
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           >
             <span aria-hidden="true">←</span>
             一覧に戻る
-          </Link>
+          </button>
           {state.status === "guest" ? (
             <button
               type="button"
