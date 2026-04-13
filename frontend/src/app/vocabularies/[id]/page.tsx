@@ -127,7 +127,6 @@ export default function VocabularyDetailPage() {
         <div className="flex items-center justify-between">
           <button
             type="button"
-            aria-label="一覧に戻る"
             onClick={() => router.back()}
             className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           >
