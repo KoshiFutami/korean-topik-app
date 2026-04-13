@@ -97,7 +97,6 @@ export function Input({
           />
           <button
             type="button"
-            tabIndex={-1}
             aria-label={showPassword ? "パスワードを隠す" : "パスワードを表示する"}
             className={`absolute inset-y-0 right-0 flex items-center px-3 ${toggleBtnCls} focus:outline-none`}
             onClick={() => setShowPassword((v) => !v)}
