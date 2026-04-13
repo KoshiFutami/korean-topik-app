@@ -46,7 +46,7 @@ class VocabularyController
                         'level_label_ja' => $v->levelLabelJa,
                         'entry_type' => $v->entryType,
                         'entry_type_label_ja' => $v->entryTypeLabelJa,
-                        'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
+                        'audio_url' => VocabularyAudioUrl::resolveIfValidForHttp($v->audioUrl),
                     ];
                 }
 
@@ -63,8 +63,8 @@ class VocabularyController
                     'entry_type_label_ja' => $v->entryTypeLabelJa,
                     'example_sentence' => $v->exampleSentence,
                     'example_translation_ja' => $v->exampleTranslationJa,
-                    'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
-                    'example_audio_url' => VocabularyAudioUrl::resolveForHttp($v->exampleAudioUrl),
+                    'audio_url' => VocabularyAudioUrl::resolveIfValidForHttp($v->audioUrl),
+                    'example_audio_url' => VocabularyAudioUrl::resolveIfValidForHttp($v->exampleAudioUrl),
                 ];
             }, $output->vocabularies),
         ]);
@@ -88,8 +88,8 @@ class VocabularyController
                     'entry_type_label_ja' => $v->entryTypeLabelJa,
                     'example_sentence' => $v->exampleSentence,
                     'example_translation_ja' => $v->exampleTranslationJa,
-                    'audio_url' => VocabularyAudioUrl::resolveForHttp($v->audioUrl),
-                    'example_audio_url' => VocabularyAudioUrl::resolveForHttp($v->exampleAudioUrl),
+                    'audio_url' => VocabularyAudioUrl::resolveIfValidForHttp($v->audioUrl),
+                    'example_audio_url' => VocabularyAudioUrl::resolveIfValidForHttp($v->exampleAudioUrl),
                 ],
             ]);
         } catch (VocabularyNotFoundException $e) {

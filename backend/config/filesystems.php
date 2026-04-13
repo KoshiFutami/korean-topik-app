@@ -17,6 +17,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Audio Storage Disk
+    |--------------------------------------------------------------------------
+    |
+    | 語彙音声 MP3 の保存先ディスク。ローカル開発は 'public'（local driver）、
+    | Railway 等の本番環境では 'audio_s3'（S3 driver）を推奨。
+    | 環境変数 AUDIO_STORAGE_DISK で切り替える。
+    |
+    */
+    'audio_disk' => env('AUDIO_STORAGE_DISK', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |
@@ -56,6 +68,21 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+            'report' => false,
+        ],
+
+        // 語彙音声 MP3 の本番用 S3 ディスク（AUDIO_STORAGE_DISK=audio_s3 で有効化）
+        'audio_s3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION', 'ap-northeast-1'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'visibility' => 'public',
             'throw' => false,
             'report' => false,
         ],
