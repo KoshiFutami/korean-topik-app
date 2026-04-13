@@ -79,7 +79,7 @@ export function VocabularyForm({ initial, onSubmit, submitLabel, submitting, err
   };
 
   return (
-    <form onSubmit={(e) => { handleSubmit(e).catch(() => undefined); }} className="space-y-4">
+    <form onSubmit={(e) => { void handleSubmit(e); }} className="space-y-4">
       <Input
         label="見出し語（韓国語）"
         labelSuffix="必須"

@@ -198,6 +198,11 @@ export default function AdminVocabularyDetailPage() {
                 deleteAdminVocabulary(token, id)
                   .then(() => router.push("/admin/vocabularies"))
                   .catch((e) => {
+                    if (e instanceof ApiError && (e.status === 401 || e.status === 419)) {
+                      window.localStorage.removeItem(ADMIN_TOKEN_KEY);
+                      router.replace(`/admin/login?next=${encodeURIComponent(`/admin/vocabularies/${id}`)}`);
+                      return;
+                    }
                     if (e instanceof ApiError) setError(e.message);
                     else setError("語彙の削除に失敗しました。");
                   })
