@@ -10,7 +10,7 @@ import { VocabularyInlineAudio } from "@/components/vocabulary/VocabularyInlineA
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ApiError } from "@/lib/api/http";
-import { getAdminVocabulary, type AdminVocabulary } from "@/lib/api/admin/vocabularies";
+import { getAdminVocabulary, deleteAdminVocabulary, type AdminVocabulary } from "@/lib/api/admin/vocabularies";
 
 const ADMIN_TOKEN_KEY = "topik.admin.token";
 
@@ -180,6 +180,31 @@ export default function AdminVocabularyDetailPage() {
               }}
             >
               {loading ? "更新中..." : "更新"}
+            </Button>
+            <Link
+              className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-zinc-900 text-white hover:bg-zinc-800 disabled:opacity-50"
+              href={`/admin/vocabularies/${id}/edit`}
+            >
+              編集
+            </Link>
+            <Button
+              variant="secondary"
+              type="button"
+              disabled={loading}
+              onClick={() => {
+                if (!token || !id) return;
+                if (!window.confirm(`「${item?.term ?? "この語彙"}」を削除しますか？`)) return;
+                setLoading(true);
+                deleteAdminVocabulary(token, id)
+                  .then(() => router.push("/admin/vocabularies"))
+                  .catch((e) => {
+                    if (e instanceof ApiError) setError(e.message);
+                    else setError("語彙の削除に失敗しました。");
+                  })
+                  .finally(() => setLoading(false));
+              }}
+            >
+              削除
             </Button>
           </div>
         </Card>

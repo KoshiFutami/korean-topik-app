@@ -73,6 +73,12 @@ export default function AdminVocabulariesPage() {
               >
                 学習者画面へ
               </Link>
+              <Link
+                className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-zinc-900 text-white hover:bg-zinc-800"
+                href="/admin/vocabularies/new"
+              >
+                新規登録
+              </Link>
               <Button
                 variant="secondary"
                 type="button"
