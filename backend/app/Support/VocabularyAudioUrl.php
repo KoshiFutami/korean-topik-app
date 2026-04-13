@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Support;
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 /**
  * DB に保存された音声パス（audio ディスク相対）を、クライアントが取得できる絶対 URL に変換する。
@@ -18,6 +20,27 @@ final class VocabularyAudioUrl
         return (string) config('filesystems.audio_disk', 'public');
     }
 
+    private static function gcsPublicUrl(string $stored): ?string
+    {
+        $bucket = trim((string) config('filesystems.disks.audio_gcs.bucket', ''));
+        if ($bucket === '') {
+            return null;
+        }
+
+        $prefix = (string) (config('filesystems.disks.audio_gcs.path_prefix') ?? '');
+        $prefix = trim($prefix, '/');
+
+        $path = ltrim($stored, '/');
+        $fullPath = ($prefix !== '') ? ($prefix.'/'.$path) : $path;
+
+        // Google Cloud Storage public URL format:
+        // https://storage.googleapis.com/<bucket>/<object>
+        // Keep "/" separators but encode path segments.
+        $encoded = implode('/', array_map('rawurlencode', explode('/', $fullPath)));
+
+        return 'https://storage.googleapis.com/'.rawurlencode($bucket).'/'.$encoded;
+    }
+
     public static function resolveForHttp(?string $stored): ?string
     {
         if ($stored === null || $stored === '') {
@@ -28,7 +51,22 @@ final class VocabularyAudioUrl
             return $stored;
         }
 
-        $url = Storage::disk(self::audioDiskName())->url($stored);
+        $diskName = self::audioDiskName();
+        $driver = (string) (config("filesystems.disks.{$diskName}.driver") ?? 'local');
+
+        try {
+            /** @var FilesystemAdapter $disk */
+            $disk = Storage::disk($diskName);
+            $url = $disk->url($stored);
+        } catch (Throwable) {
+            // Some custom disks (e.g. GCS via Flysystem adapter) may not support url().
+            $url = '';
+        }
+
+        if ($url === '' && $driver === 'gcs') {
+            return self::gcsPublicUrl($stored);
+        }
+
         if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
             return $url;
         }
