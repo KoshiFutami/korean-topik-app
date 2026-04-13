@@ -6,6 +6,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
 import { ApiError } from "@/lib/api/http";
 import { loginAdmin } from "@/lib/api/admin/auth";
 
@@ -89,16 +90,13 @@ function AdminLoginInner() {
             />
           </label>
 
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium text-zinc-800">パスワード</span>
-            <input
-              className="h-10 rounded-md border border-zinc-200 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
+          <Input
+            label="パスワード"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
           {error ? <div className="text-sm text-red-600">{error}</div> : null}
 
