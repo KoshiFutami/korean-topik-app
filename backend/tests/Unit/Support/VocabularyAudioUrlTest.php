@@ -33,4 +33,22 @@ class VocabularyAudioUrlTest extends TestCase
         $this->assertStringStartsWith('http://api.test/storage/', $resolved);
         $this->assertStringContainsString('vocabulary-audio/01HZTEST.mp3', $resolved);
     }
+
+    public function test_resolves_gcs_public_url_when_url_method_is_unavailable(): void
+    {
+        // Simulate production config where AUDIO_STORAGE_DISK=audio_gcs
+        config([
+            'filesystems.audio_disk' => 'audio_gcs',
+            'filesystems.disks.audio_gcs.driver' => 'gcs',
+            'filesystems.disks.audio_gcs.bucket' => 'korean-topik-app-prod-audio-file',
+            'filesystems.disks.audio_gcs.path_prefix' => '',
+        ]);
+
+        $resolved = VocabularyAudioUrl::resolveForHttp('vocabulary-audio/01HZTEST.mp3');
+
+        $this->assertSame(
+            'https://storage.googleapis.com/korean-topik-app-prod-audio-file/vocabulary-audio/01HZTEST.mp3',
+            $resolved
+        );
+    }
 }
