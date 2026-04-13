@@ -55,3 +55,45 @@ export async function ensureAdminVocabularyExampleAudio(
   });
 }
 
+export type VocabularyFormData = {
+  term: string;
+  meaning_ja: string;
+  pos: string;
+  level: number;
+  entry_type: string;
+  example_sentence?: string | null;
+  example_translation_ja?: string | null;
+  audio_url?: string | null;
+  status: string;
+};
+
+export async function createAdminVocabulary(
+  token: string,
+  data: VocabularyFormData
+): Promise<{ vocabulary: AdminVocabulary }> {
+  return apiFetch("/api/v1/admin/vocabularies", {
+    method: "POST",
+    token,
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateAdminVocabulary(
+  token: string,
+  id: string,
+  data: VocabularyFormData
+): Promise<{ vocabulary: AdminVocabulary }> {
+  return apiFetch(`/api/v1/admin/vocabularies/${encodeURIComponent(id)}`, {
+    method: "PUT",
+    token,
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteAdminVocabulary(token: string, id: string): Promise<void> {
+  return apiFetch(`/api/v1/admin/vocabularies/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    token,
+  });
+}
+
