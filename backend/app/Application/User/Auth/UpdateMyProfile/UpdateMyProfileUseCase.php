@@ -1,0 +1,68 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Application\User\Auth\UpdateMyProfile;
+
+use App\Application\Shared\Port\PasswordHasherInterface;
+use App\Domain\Shared\ValueObject\Email;
+use App\Domain\User\Entity\User;
+use App\Domain\User\Exception\InvalidCredentialsException;
+use App\Domain\User\Exception\UserAlreadyExistsException;
+use App\Domain\User\Exception\UserNotFoundException;
+use App\Domain\User\Repository\UserRepositoryInterface;
+use App\Domain\User\ValueObject\UserId;
+use App\Domain\User\ValueObject\UserName;
+use App\Domain\User\ValueObject\UserNickname;
+
+final class UpdateMyProfileUseCase
+{
+    public function __construct(
+        private readonly UserRepositoryInterface $users,
+        private readonly PasswordHasherInterface $hasher,
+    ) {}
+
+    public function execute(UpdateMyProfileInput $input): UpdateMyProfileOutput
+    {
+        $user = $this->users->findById(new UserId($input->userId));
+
+        if ($user === null) {
+            throw new UserNotFoundException;
+        }
+
+        $newEmail = new Email($input->email);
+
+        if (! $user->email()->equals($newEmail) && $this->users->existsByEmail($newEmail)) {
+            throw new UserAlreadyExistsException;
+        }
+
+        $hashedPassword = $user->password();
+
+        if ($input->newPassword !== null) {
+            if ($input->currentPassword === null || ! $this->hasher->verify($input->currentPassword, $user->password())) {
+                throw new InvalidCredentialsException;
+            }
+
+            $hashedPassword = $this->hasher->hash($input->newPassword);
+        }
+
+        $updated = User::reconstruct(
+            id: $user->id(),
+            name: new UserName($input->name),
+            email: $newEmail,
+            password: $hashedPassword,
+            createdAt: $user->createdAt(),
+            nickname: $input->nickname !== null ? new UserNickname($input->nickname) : null,
+        );
+
+        $this->users->save($updated);
+
+        return new UpdateMyProfileOutput(
+            userId: $updated->id()->value(),
+            name: $updated->name()->value(),
+            nickname: $updated->nickname()?->value(),
+            email: $updated->email()->value(),
+            createdAt: $updated->createdAt(),
+        );
+    }
+}
