@@ -38,11 +38,10 @@ final class UpdateVocabularyUseCase
             throw new VocabularyAlreadyExistsException;
         }
 
-        $exampleAudioUrl = $vocabulary->exampleAudioUrl();
         $prevExample = $vocabulary->exampleSentence();
-        if ($prevExample !== $input->exampleSentence) {
-            $exampleAudioUrl = null;
-        }
+        $exampleAudioUrl = ($prevExample !== $input->exampleSentence)
+            ? null
+            : $input->exampleAudioUrl;
 
         $vocabulary->update(
             term: $term,

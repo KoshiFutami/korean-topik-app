@@ -22,6 +22,7 @@ class StoreVocabularyRequest extends FormRequest
             'example_sentence' => ['nullable', 'string'],
             'example_translation_ja' => ['nullable', 'string'],
             'audio_url' => ['nullable', 'string', 'max:2048'],
+            'example_audio_url' => ['nullable', 'string', 'max:2048'],
             'status' => ['nullable', 'string', 'in:draft,published,archived'],
         ];
     }
