@@ -31,6 +31,7 @@ interface VocabularyRepositoryInterface
         ?TopikLevel $level = null,
         ?EntryType $entryType = null,
         ?PartOfSpeech $pos = null,
+        ?string $q = null,
     ): array;
 
     /**
@@ -43,6 +44,7 @@ interface VocabularyRepositoryInterface
         ?TopikLevel $level = null,
         ?EntryType $entryType = null,
         ?PartOfSpeech $pos = null,
+        ?string $q = null,
     ): array;
 
     public function findByIdAndStatus(VocabularyId $id, VocabularyStatus $status): ?Vocabulary;

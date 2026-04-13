@@ -40,20 +40,27 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
         ?TopikLevel $level = null,
         ?EntryType $entryType = null,
         ?PartOfSpeech $pos = null,
+        ?string $q = null,
     ): array {
-        $q = EloquentVocabulary::query()->where('status', $status->value);
+        $q_ = EloquentVocabulary::query()->where('status', $status->value);
 
         if ($level !== null) {
-            $q->where('level', $level->value);
+            $q_->where('level', $level->value);
         }
         if ($entryType !== null) {
-            $q->where('entry_type', $entryType->value);
+            $q_->where('entry_type', $entryType->value);
         }
         if ($pos !== null) {
-            $q->where('pos', $pos->value);
+            $q_->where('pos', $pos->value);
+        }
+        if ($q !== null) {
+            $q_->where(static function ($query) use ($q): void {
+                $query->where('term', 'like', '%'.$q.'%')
+                    ->orWhere('meaning_ja', 'like', '%'.$q.'%');
+            });
         }
 
-        return $q->orderBy('level')
+        return $q_->orderBy('level')
             ->orderBy('term')
             ->get()
             ->map(static fn (EloquentVocabulary $m): DomainVocabulary => VocabularyMapper::toDomain($m))
@@ -65,8 +72,9 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
         ?TopikLevel $level = null,
         ?EntryType $entryType = null,
         ?PartOfSpeech $pos = null,
+        ?string $q = null,
     ): array {
-        $q = EloquentVocabulary::query()
+        $query = EloquentVocabulary::query()
             ->select([
                 'id',
                 'term',
@@ -79,16 +87,22 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
             ->where('status', $status->value);
 
         if ($level !== null) {
-            $q->where('level', $level->value);
+            $query->where('level', $level->value);
         }
         if ($entryType !== null) {
-            $q->where('entry_type', $entryType->value);
+            $query->where('entry_type', $entryType->value);
         }
         if ($pos !== null) {
-            $q->where('pos', $pos->value);
+            $query->where('pos', $pos->value);
+        }
+        if ($q !== null) {
+            $query->where(static function ($sub) use ($q): void {
+                $sub->where('term', 'like', '%'.$q.'%')
+                    ->orWhere('meaning_ja', 'like', '%'.$q.'%');
+            });
         }
 
-        return $q->orderBy('level')
+        return $query->orderBy('level')
             ->orderBy('term')
             ->get()
             ->map(static fn (EloquentVocabulary $m): VocabularyListCardReadModel => new VocabularyListCardReadModel(

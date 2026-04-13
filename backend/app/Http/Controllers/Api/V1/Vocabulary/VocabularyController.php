@@ -30,6 +30,7 @@ class VocabularyController
             entryType: $request->query('entry_type'),
             pos: $request->query('pos'),
             compactList: $request->boolean('compact'),
+            q: $request->query('q') !== '' ? $request->query('q') : null,
         ));
 
         return response()->json([
