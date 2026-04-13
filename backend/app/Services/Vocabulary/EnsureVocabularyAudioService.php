@@ -23,6 +23,24 @@ final class EnsureVocabularyAudioService
         private readonly VocabularySpeechSynthesizerInterface $synthesizer,
     ) {}
 
+    private function putAudioBinary(string $relativePath, string $binary): void
+    {
+        $diskName = (string) config('filesystems.audio_disk', 'public');
+        $driver = (string) (config("filesystems.disks.{$diskName}.driver") ?? 'local');
+
+        $disk = Storage::disk($diskName);
+
+        // GCS (UBLA) / S3 では object ACL を付与すると INVALID_ARGUMENT 等で弾かれることがあるため、
+        // local ディスク以外では明示的な visibility を渡さない。
+        if ($driver === 'local') {
+            $disk->put($relativePath, $binary, 'public');
+
+            return;
+        }
+
+        $disk->put($relativePath, $binary);
+    }
+
     /**
      * @param  bool  $onlyPublished  true のとき status=published の行のみ対象
      *
@@ -82,7 +100,7 @@ final class EnsureVocabularyAudioService
             }
 
             $relativePath = 'vocabulary-audio/'.$model->id.'.mp3';
-            Storage::disk((string) config('filesystems.audio_disk', 'public'))->put($relativePath, $binary, 'public');
+            $this->putAudioBinary($relativePath, $binary);
             $model->audio_url = $relativePath;
             $model->save();
 
@@ -154,7 +172,7 @@ final class EnsureVocabularyAudioService
             }
 
             $relativePath = 'vocabulary-audio/'.$model->id.'-example.mp3';
-            Storage::disk((string) config('filesystems.audio_disk', 'public'))->put($relativePath, $binary, 'public');
+            $this->putAudioBinary($relativePath, $binary);
             $model->example_audio_url = $relativePath;
             $model->save();
 
