@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { HighlightedExampleText } from "@/components/vocabulary/HighlightedExampleText";
-import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import { VocabularyInlineAudio } from "@/components/vocabulary/VocabularyInlineAudio";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -127,18 +126,7 @@ export default function AdminVocabularyDetailPage() {
           <div className="my-6 h-px bg-zinc-200" />
 
           <div className="space-y-4 text-base leading-relaxed">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="text-sm font-semibold text-zinc-900">例文</div>
-              {item?.example_sentence && token && item?.id ? (
-                <VocabularyAudioPlayButton
-                  vocabularyId={item.id}
-                  scope="example"
-                  initialAudioUrl={item.example_audio_url}
-                  adminToken={token}
-                  tone="zinc"
-                />
-              ) : null}
-            </div>
+            <div className="text-sm font-semibold text-zinc-900">例文</div>
 
             {item?.example_sentence ? (
               <div className="text-zinc-900 whitespace-pre-wrap">
@@ -159,28 +147,28 @@ export default function AdminVocabularyDetailPage() {
                 />
               </div>
             ) : null}
+
+            <Row
+              label="例文音声URL"
+              value={
+                item?.example_audio_url ? (
+                  <a className="underline" href={item.example_audio_url}>
+                    {item.example_audio_url}
+                  </a>
+                ) : (
+                  <span className="text-zinc-500">なし</span>
+                )
+              }
+            />
+            {item?.example_audio_url ? (
+              <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+                <div className="text-sm font-semibold text-zinc-800">再生プレビュー</div>
+                <VocabularyInlineAudio className="mt-2" src={item.example_audio_url} />
+              </div>
+            ) : null}
           </div>
 
           <div className="mt-6 flex gap-3">
-            <Button
-              variant="secondary"
-              type="button"
-              disabled={loading}
-              onClick={() => {
-                if (!token) return;
-                if (!id) return;
-                setLoading(true);
-                getAdminVocabulary(token, id)
-                  .then((res) => setItem(res.vocabulary))
-                  .catch((e) => {
-                    if (e instanceof ApiError) setError(e.message);
-                    else setError("語彙の取得に失敗しました。");
-                  })
-                  .finally(() => setLoading(false));
-              }}
-            >
-              {loading ? "更新中..." : "更新"}
-            </Button>
             <Link
               className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-zinc-900 text-white hover:bg-zinc-800 disabled:opacity-50"
               href={`/admin/vocabularies/${id}/edit`}
