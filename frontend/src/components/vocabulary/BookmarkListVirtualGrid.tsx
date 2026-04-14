@@ -79,7 +79,7 @@ function BookmarkGridCard({ vocabulary: v, paletteIndex, removing, onRemove }: C
   return (
     <Card
       className={[
-        "p-5",
+        "group relative p-5 transition-transform hover:-translate-y-0.5 hover:shadow-md",
         "bg-gradient-to-br",
         palette === 0 ? "from-violet-700/60 via-fuchsia-600/40 to-orange-500/50" : "",
         palette === 1 ? "from-sky-500/60 via-emerald-500/40 to-lime-400/40" : "",
@@ -87,12 +87,17 @@ function BookmarkGridCard({ vocabulary: v, paletteIndex, removing, onRemove }: C
         "border-white/10 text-white backdrop-blur",
       ].join(" ")}
     >
+      <Link
+        href={`/vocabularies/${v.id}`}
+        className="absolute inset-0 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+        aria-label={`${v.term} - ${v.meaning_ja}`}
+      />
       <div className="flex items-start justify-between gap-3">
-        <Link href={`/vocabularies/${v.id}`} className="min-w-0 flex-1">
-          <div className="truncate text-lg font-extrabold text-white hover:underline">{v.term}</div>
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-lg font-extrabold text-white group-hover:underline">{v.term}</div>
           <div className="mt-1 line-clamp-2 text-sm text-white/85">{v.meaning_ja}</div>
-        </Link>
-        <div className="flex shrink-0 flex-col items-end gap-2">
+        </div>
+        <div className="relative z-10 flex shrink-0 flex-col items-end gap-2">
           <div className="text-right text-xs text-white/80">
             <div className="font-semibold">{v.level_label_ja}</div>
             <div className="mt-1">{v.pos_label_ja}</div>
@@ -101,7 +106,7 @@ function BookmarkGridCard({ vocabulary: v, paletteIndex, removing, onRemove }: C
         </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="relative z-10 mt-3 flex flex-wrap gap-2">
         <Chip type="button" selected disabled>
           {v.entry_type_label_ja}
           <span className="ml-1 text-[11px] font-semibold opacity-80">{entryTypeKo(v.entry_type)}</span>
@@ -112,7 +117,7 @@ function BookmarkGridCard({ vocabulary: v, paletteIndex, removing, onRemove }: C
         </Chip>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-2">
+      <div className="relative z-10 mt-4 flex items-center justify-between gap-2">
         <span className="text-xs text-white/60">
           {new Date(v.bookmarked_at).toLocaleDateString("ja-JP")}
         </span>
