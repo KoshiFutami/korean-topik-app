@@ -40,8 +40,8 @@ function AdminLoginInner() {
   const searchParams = useSearchParams();
   const nextPath = useMemo(() => searchParams.get("next") || "/admin/vocabularies", [searchParams]);
 
-  const [email, setEmail] = useState("admin@example.com");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
