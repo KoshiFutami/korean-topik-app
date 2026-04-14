@@ -95,6 +95,6 @@ final class TopikQuestion
             }
         }
 
-        return 1;
+        throw new \LogicException("Question {$this->id->value()} has no correct option defined.");
     }
 }
