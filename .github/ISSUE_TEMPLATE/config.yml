@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 AGENTS.md（開発ガイド）
+    url: https://github.com/KoshiFutami/korean-topik-app/blob/main/AGENTS.md
+    about: ブランチ命名・コマンド一覧・API 設計規約はこちらを参照してください。
