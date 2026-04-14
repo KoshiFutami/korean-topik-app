@@ -568,6 +568,46 @@
           }
         },
         {
+          "name": "Import Vocabularies CSV",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": "CSV file (UTF-8). Columns: term, meaning_ja, pos, level, entry_type, example_sentence (opt), example_translation_ja (opt), status (opt, default: published)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/vocabularies/import",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "vocabularies",
+                "import"
+              ]
+            },
+            "description": "Upload a CSV file to bulk create or update vocabularies. Matches on term + pos + meaning_ja."
+          }
+        },
+        {
           "name": "Ensure Vocabulary Audio (admin)",
           "request": {
             "method": "POST",

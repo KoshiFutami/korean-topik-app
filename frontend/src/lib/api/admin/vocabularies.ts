@@ -91,6 +91,19 @@ export async function updateAdminVocabulary(
   });
 }
 
+export async function importAdminVocabulariesCsv(
+  token: string,
+  file: File
+): Promise<{ created: number; updated: number }> {
+  const formData = new FormData();
+  formData.append("file", file);
+  return apiFetch("/api/v1/admin/vocabularies/import", {
+    method: "POST",
+    token,
+    body: formData,
+  });
+}
+
 export async function deleteAdminVocabulary(token: string, id: string): Promise<void> {
   return apiFetch(`/api/v1/admin/vocabularies/${encodeURIComponent(id)}`, {
     method: "DELETE",

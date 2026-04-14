@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import { Button } from "@/components/ui/Button";
@@ -10,7 +10,11 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { ApiError } from "@/lib/api/http";
 import { logoutAdmin, meAdmin } from "@/lib/api/admin/auth";
-import { listAdminVocabularies, type AdminVocabulary } from "@/lib/api/admin/vocabularies";
+import {
+  importAdminVocabulariesCsv,
+  listAdminVocabularies,
+  type AdminVocabulary,
+} from "@/lib/api/admin/vocabularies";
 
 const ADMIN_TOKEN_KEY = "topik.admin.token";
 
@@ -93,6 +97,11 @@ export default function AdminVocabulariesPage() {
     status: "",
   });
 
+  const csvInputRef = useRef<HTMLInputElement>(null);
+  const [csvImporting, setCsvImporting] = useState(false);
+  const [csvResult, setCsvResult] = useState<{ created: number; updated: number } | null>(null);
+  const [csvError, setCsvError] = useState<string | null>(null);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     const t = window.localStorage.getItem(ADMIN_TOKEN_KEY);
@@ -126,6 +135,32 @@ export default function AdminVocabulariesPage() {
     };
     run().catch(() => undefined);
   }, [router, token]);
+
+  const handleCsvImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !token) return;
+    setCsvImporting(true);
+    setCsvResult(null);
+    setCsvError(null);
+    try {
+      const result = await importAdminVocabulariesCsv(token, file);
+      setCsvResult(result);
+      // Refresh list
+      const listRes = await listAdminVocabularies(token);
+      setItems(listRes.vocabularies);
+    } catch (err) {
+      if (err instanceof ApiError && (err.status === 401 || err.status === 419)) {
+        window.localStorage.removeItem(ADMIN_TOKEN_KEY);
+        router.replace(`/admin/login?next=${encodeURIComponent("/admin/vocabularies")}`);
+        return;
+      }
+      if (err instanceof ApiError) setCsvError(err.message);
+      else setCsvError("CSVのインポートに失敗しました。");
+    } finally {
+      setCsvImporting(false);
+      if (csvInputRef.current) csvInputRef.current.value = "";
+    }
+  };
 
   const normalizedItems = useMemo(
     () =>
@@ -184,6 +219,17 @@ export default function AdminVocabulariesPage() {
               >
                 新規登録
               </Link>
+              <label className="inline-flex cursor-pointer items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-zinc-100 text-zinc-700 hover:bg-zinc-200">
+                <input
+                  ref={csvInputRef}
+                  type="file"
+                  accept=".csv,text/csv"
+                  className="sr-only"
+                  onChange={handleCsvImport}
+                  disabled={csvImporting}
+                />
+                {csvImporting ? "インポート中..." : "CSV一括登録"}
+              </label>
               <Button
                 variant="secondary"
                 type="button"
@@ -203,6 +249,17 @@ export default function AdminVocabulariesPage() {
             </div>
           </div>
         </Card>
+
+        {(csvResult || csvError) && (
+          <Card>
+            {csvResult && (
+              <p className="text-sm text-green-700">
+                インポート完了: 新規登録 {csvResult.created} 件、更新 {csvResult.updated} 件
+              </p>
+            )}
+            {csvError && <p className="text-sm text-red-600">{csvError}</p>}
+          </Card>
+        )}
 
         <Card>
           <div className="space-y-4">

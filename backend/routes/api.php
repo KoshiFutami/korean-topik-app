@@ -50,6 +50,7 @@ Route::prefix('v1')->group(function (): void {
             ->middleware('throttle:60,1');
         Route::post('vocabularies/{id}/audio/example', [VocabularyController::class, 'ensureExampleAudio'])
             ->middleware('throttle:60,1');
+        Route::post('vocabularies/import', [VocabularyController::class, 'importCsv']);
         Route::apiResource('vocabularies', VocabularyController::class);
     });
 });
