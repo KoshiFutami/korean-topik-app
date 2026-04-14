@@ -26,7 +26,7 @@ return [
 
     'allowed_origins_patterns' => [
         // Vercel Preview URL (例: https://<project>-git-<branch>-<hash>-<team>.vercel.app)
-        '^https://.*\\.vercel\\.app$',
+        '#^https://.*\\.vercel\\.app$#',
     ],
 
     'allowed_headers' => ['*'],
