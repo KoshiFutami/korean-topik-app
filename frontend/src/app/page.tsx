@@ -142,6 +142,18 @@ export default async function Home() {
           </FeatureCard>
         </div>
 
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          <FeatureCard
+            href="/topik-practice"
+            emoji="📝"
+            title="TOPIK 問題練習"
+            titleKo="토픽 문제 연습"
+            cta="問題を解いてみる"
+          >
+            文法の空欄補充問題（TOPIK 1 の31〜37番形式）を1問ずつ解いて答えを確認できます。
+          </FeatureCard>
+        </div>
+
         {plannedFeatures.length > 0 ? (
           <section className="mt-14" aria-labelledby="coming-soon-heading">
             <div className="text-center">

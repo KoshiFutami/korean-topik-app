@@ -368,6 +368,67 @@
       ]
     },
     {
+      "name": "TOPIK Questions (public)",
+      "item": [
+        {
+          "name": "List Questions (all)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/questions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "questions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Questions (level=1, type=grammar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/questions?level=1&type=grammar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "questions"
+              ],
+              "query": [
+                {
+                  "key": "level",
+                  "value": "1"
+                },
+                {
+                  "key": "type",
+                  "value": "grammar"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "User Vocabularies",
       "item": [
         {

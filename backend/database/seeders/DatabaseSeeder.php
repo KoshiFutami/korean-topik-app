@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminSeeder::class);
         $this->call(VocabularyBulkSeeder::class);
         $this->call(PlannedFeatureSeeder::class);
+        $this->call(TopikQuestionBulkSeeder::class);
 
         User::query()->firstOrCreate(
             ['email' => 'test@example.com'],
