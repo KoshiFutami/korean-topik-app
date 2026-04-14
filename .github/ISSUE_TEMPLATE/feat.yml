@@ -1,0 +1,72 @@
+name: "✨ 機能追加 (feat)"
+description: "新しい機能・エンドポイント・コンポーネントの追加を依頼する"
+title: "feat: "
+labels: ["feat"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Copilot への依頼フォーム — 機能追加
+
+        このテンプレートに沿って記入すると、Copilot が自動でブランチ作成・実装・PR 作成まで対応できます。
+        **太字** の項目は必須です。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: "📝 概要（何を実装してほしいか）"
+      description: "1〜3 文で目的・背景を説明してください。"
+      placeholder: "例: 単語一覧を取得する GET /api/v1/words エンドポイントを追加したい。"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: "🗂 対象レイヤー"
+      description: "変更が必要な領域を選んでください（複数選択可）。"
+      multiple: true
+      options:
+        - "backend（Laravel）"
+        - "frontend（Next.js）"
+        - "DB マイグレーション"
+        - "Postman コレクション"
+        - "その他"
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: "🔧 実装詳細・仕様"
+      description: "API の場合はエンドポイント・リクエスト/レスポンス例を記載してください。"
+      placeholder: |
+        - エンドポイント: GET /api/v1/words
+        - 認証: Bearer トークン必須
+        - レスポンス例:
+          {
+            "data": [{ "id": 1, "word": "안녕", "meaning": "こんにちは" }]
+          }
+        - 対象ファイル（わかれば）:
+          - backend/app/Http/Controllers/WordController.php
+          - backend/routes/api.php
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "✅ 完了条件（Done Criteria）"
+      description: "どうなっていれば実装完了とみなすか、箇条書きで列挙してください。"
+      placeholder: |
+        - [ ] GET /api/v1/words が 200 を返す
+        - [ ] 認証なしで叩くと 401 を返す
+        - [ ] `make test` が通る
+        - [ ] Postman コレクションを更新済み
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: "🔗 参考・関連情報"
+      description: "ADR・関連 Issue・設計ドキュメントなどがあればリンクを貼ってください。"
+      placeholder: "例: docs/adr/0003-xxx.md, #42"

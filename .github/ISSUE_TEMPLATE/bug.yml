@@ -1,0 +1,75 @@
+name: "🐛 バグ報告 (fix)"
+description: "バグ・不具合の修正を依頼する"
+title: "fix: "
+labels: ["fix"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Copilot への依頼フォーム — バグ修正
+
+        再現手順と期待動作を記入すると、Copilot が原因調査・修正・PR 作成まで対応できます。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: "🐛 バグの概要"
+      description: "何が起きているかを一言で説明してください。"
+      placeholder: "例: ログイン後に /dashboard へリダイレクトされず 404 になる。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: "🔁 再現手順"
+      description: "バグを再現するための最小手順を記載してください。"
+      placeholder: |
+        1. `make up` で環境起動
+        2. POST /api/v1/login でログイン
+        3. レスポンスのトークンを使って GET /api/v1/dashboard を叩く
+        4. → 404 が返る
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "✅ 期待する動作"
+      placeholder: "例: 200 とダッシュボードのデータが返るべき。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: "❌ 実際の動作"
+      placeholder: "例: 404 Not Found が返る。ログに 'Route not defined' が出ている。"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: "🗂 バグが疑われる領域"
+      multiple: true
+      options:
+        - "backend（Laravel）"
+        - "frontend（Next.js）"
+        - "DB マイグレーション"
+        - "Docker / 環境設定"
+        - "不明"
+
+  - type: textarea
+    id: context
+    attributes:
+      label: "🔧 調査メモ・関連ファイル"
+      description: "エラーログ・スタックトレース・関連ファイルなどを貼ってください。"
+      placeholder: |
+        エラーログ:
+        ```
+        [2024-01-01] production.ERROR: ...
+        ```
+        関連ファイル（わかれば）:
+        - backend/app/Http/Controllers/AuthController.php
+        - backend/routes/api.php
