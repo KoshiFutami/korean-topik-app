@@ -53,6 +53,8 @@ interface VocabularyRepositoryInterface
 
     public function delete(VocabularyId $id): void;
 
+    public function findByUniqueKey(Term $term, PartOfSpeech $pos, MeaningJa $meaningJa): ?Vocabulary;
+
     public function existsByUniqueKey(Term $term, PartOfSpeech $pos, MeaningJa $meaningJa): bool;
 
     public function existsByUniqueKeyExcludingId(

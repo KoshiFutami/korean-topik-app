@@ -29,7 +29,7 @@ export async function apiFetch<T>(
   const headers = new Headers(init.headers);
   headers.set("Accept", "application/json");
 
-  if (init.body && !headers.has("Content-Type")) {
+  if (init.body && typeof init.body === "string" && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 

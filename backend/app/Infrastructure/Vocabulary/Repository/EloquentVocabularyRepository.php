@@ -151,6 +151,17 @@ final class EloquentVocabularyRepository implements VocabularyRepositoryInterfac
         EloquentVocabulary::query()->whereKey($id->value())->delete();
     }
 
+    public function findByUniqueKey(Term $term, PartOfSpeech $pos, MeaningJa $meaningJa): ?DomainVocabulary
+    {
+        $model = EloquentVocabulary::query()
+            ->where('term', $term->value())
+            ->where('pos', $pos->value)
+            ->where('meaning_ja', $meaningJa->value())
+            ->first();
+
+        return $model ? VocabularyMapper::toDomain($model) : null;
+    }
+
     public function existsByUniqueKey(Term $term, PartOfSpeech $pos, MeaningJa $meaningJa): bool
     {
         return EloquentVocabulary::query()

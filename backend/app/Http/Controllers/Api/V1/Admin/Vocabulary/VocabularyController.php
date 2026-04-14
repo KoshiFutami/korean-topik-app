@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Admin\Vocabulary;
 
+use App\Application\Admin\Vocabulary\BulkUpsertVocabularies\BulkUpsertVocabulariesInput;
+use App\Application\Admin\Vocabulary\BulkUpsertVocabularies\BulkUpsertVocabulariesUseCase;
 use App\Application\Admin\Vocabulary\CreateVocabulary\CreateVocabularyInput;
 use App\Application\Admin\Vocabulary\CreateVocabulary\CreateVocabularyUseCase;
 use App\Application\Admin\Vocabulary\DeleteVocabulary\DeleteVocabularyInput;
@@ -19,6 +21,7 @@ use App\Domain\Vocabulary\ValueObject\PartOfSpeech;
 use App\Domain\Vocabulary\ValueObject\TopikLevel;
 use App\Domain\Vocabulary\ValueObject\VocabularyStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Admin\Vocabulary\ImportVocabularyCsvRequest;
 use App\Http\Requests\Api\V1\Admin\Vocabulary\StoreVocabularyRequest;
 use App\Http\Requests\Api\V1\Admin\Vocabulary\UpdateVocabularyRequest;
 use App\Services\Vocabulary\EnsureVocabularyAudioService;
@@ -34,6 +37,7 @@ class VocabularyController extends Controller
         private readonly CreateVocabularyUseCase $createVocabulary,
         private readonly UpdateVocabularyUseCase $updateVocabulary,
         private readonly DeleteVocabularyUseCase $deleteVocabulary,
+        private readonly BulkUpsertVocabulariesUseCase $bulkUpsertVocabularies,
     ) {}
 
     public function index(): JsonResponse
@@ -211,6 +215,112 @@ class VocabularyController extends Controller
                 'message' => '音声の生成に失敗しました。設定やクォータを確認のうえ、しばらくしてから再度お試しください。',
             ], 503);
         }
+    }
+
+    public function importCsv(ImportVocabularyCsvRequest $request): JsonResponse
+    {
+        $file = $request->file('file');
+        $content = file_get_contents($file->getRealPath());
+        if ($content === false) {
+            return response()->json(['message' => 'ファイルの読み込みに失敗しました。'], 422);
+        }
+
+        // Strip UTF-8 BOM if present
+        if (str_starts_with($content, "\xEF\xBB\xBF")) {
+            $content = substr($content, 3);
+        }
+
+        $validPos = array_column(PartOfSpeech::cases(), 'value');
+        $validEntryTypes = array_column(EntryType::cases(), 'value');
+        $validStatuses = array_column(VocabularyStatus::cases(), 'value');
+
+        $rows = [];
+        $lineNumber = 0;
+        foreach (explode("\n", $content) as $line) {
+            $lineNumber++;
+            $line = trim($line);
+            if ($line === '' || str_starts_with($line, '#')) {
+                continue;
+            }
+
+            $parts = str_getcsv($line);
+
+            // Skip header row
+            if (($parts[0] ?? '') === 'term') {
+                continue;
+            }
+
+            if (count($parts) < 4) {
+                return response()->json([
+                    'message' => "行 {$lineNumber}: カラム数が不足しています（term, meaning_ja, pos, level は必須）。",
+                ], 422);
+            }
+
+            [$term, $meaningJa, $pos, $level] = $parts;
+            $entryType = isset($parts[4]) && $parts[4] !== '' ? $parts[4] : 'word';
+            $exampleSentence = isset($parts[5]) && $parts[5] !== '' ? $parts[5] : null;
+            $exampleTranslationJa = isset($parts[6]) && $parts[6] !== '' ? $parts[6] : null;
+            $status = isset($parts[7]) && $parts[7] !== '' ? $parts[7] : 'published';
+
+            $term = trim($term);
+            $meaningJa = trim($meaningJa);
+            $pos = trim($pos);
+            $level = (int) trim($level);
+            $entryType = trim($entryType);
+            $status = trim($status);
+
+            if ($term === '' || $meaningJa === '') {
+                return response()->json([
+                    'message' => "行 {$lineNumber}: term と meaning_ja は必須です。",
+                ], 422);
+            }
+
+            if (! in_array($pos, $validPos, true)) {
+                return response()->json([
+                    'message' => "行 {$lineNumber}: pos の値が不正です（{$pos}）。有効な値: ".implode(', ', $validPos),
+                ], 422);
+            }
+
+            if ($level < 1 || $level > 6) {
+                return response()->json([
+                    'message' => "行 {$lineNumber}: level は 1 〜 6 の整数で指定してください。",
+                ], 422);
+            }
+
+            if (! in_array($entryType, $validEntryTypes, true)) {
+                return response()->json([
+                    'message' => "行 {$lineNumber}: entry_type の値が不正です（{$entryType}）。有効な値: ".implode(', ', $validEntryTypes),
+                ], 422);
+            }
+
+            if (! in_array($status, $validStatuses, true)) {
+                return response()->json([
+                    'message' => "行 {$lineNumber}: status の値が不正です（{$status}）。有効な値: ".implode(', ', $validStatuses),
+                ], 422);
+            }
+
+            $rows[] = [
+                'term' => $term,
+                'meaning_ja' => $meaningJa,
+                'pos' => $pos,
+                'level' => $level,
+                'entry_type' => $entryType,
+                'example_sentence' => $exampleSentence,
+                'example_translation_ja' => $exampleTranslationJa,
+                'status' => $status,
+            ];
+        }
+
+        if ($rows === []) {
+            return response()->json(['message' => 'インポートするデータがありません。'], 422);
+        }
+
+        $output = $this->bulkUpsertVocabularies->execute(new BulkUpsertVocabulariesInput(rows: $rows));
+
+        return response()->json([
+            'created' => $output->created,
+            'updated' => $output->updated,
+        ]);
     }
 
     public function destroy(string $id): JsonResponse
