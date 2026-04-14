@@ -230,9 +230,9 @@ class VocabularyController extends Controller
             $content = substr($content, 3);
         }
 
-        $validPos = ['noun', 'verb', 'adj', 'adv', 'particle', 'determiner', 'pronoun', 'interjection', 'other'];
-        $validEntryTypes = ['word', 'phrase', 'idiom'];
-        $validStatuses = ['draft', 'published', 'archived'];
+        $validPos = array_column(PartOfSpeech::cases(), 'value');
+        $validEntryTypes = array_column(EntryType::cases(), 'value');
+        $validStatuses = array_column(VocabularyStatus::cases(), 'value');
 
         $rows = [];
         $lineNumber = 0;

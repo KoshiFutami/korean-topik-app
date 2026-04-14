@@ -223,7 +223,7 @@ export default function AdminVocabulariesPage() {
                 <input
                   ref={csvInputRef}
                   type="file"
-                  accept=".csv,text/csv"
+                  accept=".csv"
                   className="sr-only"
                   onChange={handleCsvImport}
                   disabled={csvImporting}

@@ -33,6 +33,10 @@ final class BulkUpsertVocabulariesUseCase
             $existing = $this->vocabularies->findByUniqueKey($term, $pos, $meaningJa);
 
             if ($existing !== null) {
+                $exampleAudioUrl = $existing->exampleSentence() !== $row['example_sentence']
+                    ? null
+                    : $existing->exampleAudioUrl();
+
                 $existing->update(
                     term: $term,
                     meaningJa: $meaningJa,
@@ -42,9 +46,7 @@ final class BulkUpsertVocabulariesUseCase
                     exampleSentence: $row['example_sentence'],
                     exampleTranslationJa: $row['example_translation_ja'],
                     audioUrl: $existing->audioUrl(),
-                    exampleAudioUrl: $existing->exampleSentence() !== $row['example_sentence']
-                        ? null
-                        : $existing->exampleAudioUrl(),
+                    exampleAudioUrl: $exampleAudioUrl,
                     status: $status,
                 );
                 $this->vocabularies->save($existing);
