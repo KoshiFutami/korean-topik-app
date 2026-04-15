@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\Auth\AdminAuthController;
+use App\Http\Controllers\Api\V1\Admin\Question\QuestionController as AdminQuestionController;
 use App\Http\Controllers\Api\V1\Admin\Vocabulary\VocabularyController;
 use App\Http\Controllers\Api\V1\Auth\UserAuthController;
 use App\Http\Controllers\Api\V1\PlannedFeature\PlannedFeatureController;
@@ -54,5 +55,6 @@ Route::prefix('v1')->group(function (): void {
             ->middleware('throttle:60,1');
         Route::post('vocabularies/import', [VocabularyController::class, 'importCsv']);
         Route::apiResource('vocabularies', VocabularyController::class);
+        Route::apiResource('questions', AdminQuestionController::class);
     });
 });

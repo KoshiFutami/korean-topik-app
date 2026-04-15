@@ -14,15 +14,38 @@ final class TopikQuestion
     /** @param array<int, QuestionOption> $options */
     private function __construct(
         private readonly QuestionId $id,
-        private readonly int $level,
-        private readonly QuestionType $questionType,
-        private readonly string $questionText,
-        private readonly ?string $questionTextJa,
-        private readonly ?string $explanationJa,
-        private readonly QuestionStatus $status,
-        private readonly array $options,
+        private int $level,
+        private QuestionType $questionType,
+        private string $questionText,
+        private ?string $questionTextJa,
+        private ?string $explanationJa,
+        private QuestionStatus $status,
+        private array $options,
         private readonly DateTimeImmutable $createdAt,
     ) {}
+
+    /** @param array<int, QuestionOption> $options */
+    public static function create(
+        int $level,
+        QuestionType $questionType,
+        string $questionText,
+        ?string $questionTextJa,
+        ?string $explanationJa,
+        QuestionStatus $status,
+        array $options,
+    ): self {
+        return new self(
+            id: QuestionId::generate(),
+            level: $level,
+            questionType: $questionType,
+            questionText: $questionText,
+            questionTextJa: $questionTextJa,
+            explanationJa: $explanationJa,
+            status: $status,
+            options: $options,
+            createdAt: new DateTimeImmutable,
+        );
+    }
 
     /** @param array<int, QuestionOption> $options */
     public static function reconstruct(
@@ -47,6 +70,25 @@ final class TopikQuestion
             options: $options,
             createdAt: $createdAt,
         );
+    }
+
+    /** @param array<int, QuestionOption> $options */
+    public function update(
+        int $level,
+        QuestionType $questionType,
+        string $questionText,
+        ?string $questionTextJa,
+        ?string $explanationJa,
+        QuestionStatus $status,
+        array $options,
+    ): void {
+        $this->level = $level;
+        $this->questionType = $questionType;
+        $this->questionText = $questionText;
+        $this->questionTextJa = $questionTextJa;
+        $this->explanationJa = $explanationJa;
+        $this->status = $status;
+        $this->options = $options;
     }
 
     public function id(): QuestionId
