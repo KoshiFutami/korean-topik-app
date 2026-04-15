@@ -876,6 +876,199 @@
           }
         }
       ]
+    },
+    {
+      "name": "Admin Questions",
+      "item": [
+        {
+          "name": "List Questions (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "questions"
+              ]
+            },
+            "description": "Returns all questions (published + draft) for admin management."
+          }
+        },
+        {
+          "name": "Get Question (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questions/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "questions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"level\": 1,\n  \"question_type\": \"grammar\",\n  \"question_text\": \"저는 학교( ) 가요.\",\n  \"question_text_ja\": \"私は学校（　）行きます。\",\n  \"explanation_ja\": \"「에」は目的地を表す助詞です。\",\n  \"status\": \"published\",\n  \"options\": [\n    {\n      \"option_number\": 1,\n      \"text\": \"에\",\n      \"text_ja\": \"に\",\n      \"is_correct\": true\n    },\n    {\n      \"option_number\": 2,\n      \"text\": \"에서\",\n      \"text_ja\": \"で\",\n      \"is_correct\": false\n    },\n    {\n      \"option_number\": 3,\n      \"text\": \"에게\",\n      \"text_ja\": \"に（人）\",\n      \"is_correct\": false\n    },\n    {\n      \"option_number\": 4,\n      \"text\": \"으로\",\n      \"text_ja\": \"へ\",\n      \"is_correct\": false\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "questions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Question",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"level\": 1,\n  \"question_type\": \"grammar\",\n  \"question_text\": \"저는 학교( ) 가요. (updated)\",\n  \"question_text_ja\": null,\n  \"explanation_ja\": \"「에」は目的地を表す助詞です。\",\n  \"status\": \"published\",\n  \"options\": [\n    {\n      \"option_number\": 1,\n      \"text\": \"에\",\n      \"text_ja\": \"に\",\n      \"is_correct\": true\n    },\n    {\n      \"option_number\": 2,\n      \"text\": \"에서\",\n      \"text_ja\": \"で\",\n      \"is_correct\": false\n    },\n    {\n      \"option_number\": 3,\n      \"text\": \"에게\",\n      \"text_ja\": \"に（人）\",\n      \"is_correct\": false\n    },\n    {\n      \"option_number\": 4,\n      \"text\": \"으로\",\n      \"text_ja\": \"へ\",\n      \"is_correct\": false\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questions/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "questions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Question",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questions/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "questions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
     }
   ]
 }
