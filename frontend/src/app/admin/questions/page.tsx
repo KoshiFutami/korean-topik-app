@@ -2,19 +2,18 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { ApiError } from "@/lib/api/http";
 import { logoutAdmin, meAdmin } from "@/lib/api/admin/auth";
 import {
-  importAdminVocabulariesCsv,
-  listAdminVocabularies,
-  type AdminVocabulary,
-} from "@/lib/api/admin/vocabularies";
+  deleteAdminQuestion,
+  listAdminQuestions,
+  type AdminQuestion,
+} from "@/lib/api/admin/questions";
 
 const ADMIN_TOKEN_KEY = "topik.admin.token";
 
@@ -23,38 +22,22 @@ const LEVEL_OPTIONS: Array<{ value: string; label: string }> = [
   ...[1, 2, 3, 4, 5, 6].map((n) => ({ value: String(n), label: `${n}級` })),
 ];
 
-const ENTRY_TYPE_OPTIONS: Array<{ value: string; label: string }> = [
+const TYPE_OPTIONS: Array<{ value: string; label: string }> = [
   { value: "", label: "すべて" },
-  { value: "word", label: "単語" },
-  { value: "phrase", label: "熟語" },
-  { value: "idiom", label: "慣用句" },
-];
-
-const POS_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: "", label: "すべて" },
-  { value: "noun", label: "名詞" },
-  { value: "verb", label: "動詞" },
-  { value: "adj", label: "形容詞" },
-  { value: "adv", label: "副詞" },
-  { value: "particle", label: "助詞" },
-  { value: "determiner", label: "冠形詞" },
-  { value: "pronoun", label: "代名詞" },
-  { value: "interjection", label: "感動詞" },
-  { value: "other", label: "その他" },
+  { value: "grammar", label: "文法" },
+  { value: "topic", label: "主題" },
 ];
 
 const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
   { value: "", label: "すべて" },
   { value: "published", label: "公開" },
-  { value: "private", label: "非公開" },
   { value: "draft", label: "下書き" },
 ];
 
 type Filters = {
   q: string;
   level: string;
-  entry_type: string;
-  pos: string;
+  question_type: string;
   status: string;
 };
 
@@ -82,31 +65,25 @@ function FilterChip({
   );
 }
 
-export default function AdminVocabulariesPage() {
+export default function AdminQuestionsPage() {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [adminName, setAdminName] = useState<string>("");
-  const [items, setItems] = useState<AdminVocabulary[] | null>(null);
+  const [items, setItems] = useState<AdminQuestion[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>({
     q: "",
     level: "",
-    entry_type: "",
-    pos: "",
+    question_type: "",
     status: "",
   });
-
-  const csvInputRef = useRef<HTMLInputElement>(null);
-  const [csvImporting, setCsvImporting] = useState(false);
-  const [csvResult, setCsvResult] = useState<{ created: number; updated: number } | null>(null);
-  const [csvError, setCsvError] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const t = window.localStorage.getItem(ADMIN_TOKEN_KEY);
     if (!t) {
-      router.replace(`/admin/login?next=${encodeURIComponent("/admin/vocabularies")}`);
+      router.replace(`/admin/login?next=${encodeURIComponent("/admin/questions")}`);
       return;
     }
     setToken(t);
@@ -118,17 +95,17 @@ export default function AdminVocabulariesPage() {
       setLoading(true);
       setError(null);
       try {
-        const [meRes, listRes] = await Promise.all([meAdmin(token), listAdminVocabularies(token)]);
+        const [meRes, listRes] = await Promise.all([meAdmin(token), listAdminQuestions(token)]);
         setAdminName(meRes.admin.name);
-        setItems(listRes.vocabularies);
+        setItems(listRes.questions);
       } catch (e) {
         if (e instanceof ApiError && (e.status === 401 || e.status === 419)) {
           window.localStorage.removeItem(ADMIN_TOKEN_KEY);
-          router.replace(`/admin/login?next=${encodeURIComponent("/admin/vocabularies")}`);
+          router.replace(`/admin/login?next=${encodeURIComponent("/admin/questions")}`);
           return;
         }
         if (e instanceof ApiError) setError(e.message);
-        else setError("語彙の取得に失敗しました。");
+        else setError("問題の取得に失敗しました。");
       } finally {
         setLoading(false);
       }
@@ -136,54 +113,34 @@ export default function AdminVocabulariesPage() {
     run().catch(() => undefined);
   }, [router, token]);
 
-  const handleCsvImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !token) return;
-    setCsvImporting(true);
-    setCsvResult(null);
-    setCsvError(null);
+  const handleDelete = async (id: string, questionText: string) => {
+    if (!token) return;
+    if (!window.confirm(`「${questionText.slice(0, 30)}…」を削除しますか？`)) return;
     try {
-      const result = await importAdminVocabulariesCsv(token, file);
-      setCsvResult(result);
-      // Refresh list
-      const listRes = await listAdminVocabularies(token);
-      setItems(listRes.vocabularies);
-    } catch (err) {
-      if (err instanceof ApiError && (err.status === 401 || err.status === 419)) {
+      await deleteAdminQuestion(token, id);
+      setItems((prev) => prev?.filter((q) => q.id !== id) ?? null);
+    } catch (e) {
+      if (e instanceof ApiError && (e.status === 401 || e.status === 419)) {
         window.localStorage.removeItem(ADMIN_TOKEN_KEY);
-        router.replace(`/admin/login?next=${encodeURIComponent("/admin/vocabularies")}`);
+        router.replace(`/admin/login?next=${encodeURIComponent("/admin/questions")}`);
         return;
       }
-      if (err instanceof ApiError) setCsvError(err.message);
-      else setCsvError("CSVのインポートに失敗しました。");
-    } finally {
-      setCsvImporting(false);
-      if (csvInputRef.current) csvInputRef.current.value = "";
+      if (e instanceof ApiError) setError(e.message);
+      else setError("問題の削除に失敗しました。");
     }
   };
 
-  const normalizedItems = useMemo(
-    () =>
-      items?.map((v) => ({
-        ...v,
-        _termLower: v.term.toLowerCase(),
-        _meaningLower: v.meaning_ja.toLowerCase(),
-      })) ?? null,
-    [items],
-  );
-
   const filteredItems = useMemo(() => {
-    if (!normalizedItems) return null;
+    if (!items) return null;
     const q = filters.q.trim().toLowerCase();
-    return normalizedItems.filter((v) => {
-      if (q && !v._termLower.includes(q) && !v._meaningLower.includes(q)) return false;
+    return items.filter((v) => {
+      if (q && !v.question_text.toLowerCase().includes(q)) return false;
       if (filters.level && String(v.level) !== filters.level) return false;
-      if (filters.entry_type && v.entry_type !== filters.entry_type) return false;
-      if (filters.pos && v.pos !== filters.pos) return false;
+      if (filters.question_type && v.question_type !== filters.question_type) return false;
       if (filters.status && v.status !== filters.status) return false;
       return true;
     });
-  }, [normalizedItems, filters]);
+  }, [items, filters]);
 
   const toggleFilter = (key: keyof Filters, value: string) =>
     setFilters((p) => ({ ...p, [key]: p[key] === value ? "" : value }));
@@ -191,8 +148,7 @@ export default function AdminVocabulariesPage() {
   const isFiltered =
     filters.q.trim() !== "" ||
     filters.level !== "" ||
-    filters.entry_type !== "" ||
-    filters.pos !== "" ||
+    filters.question_type !== "" ||
     filters.status !== "";
 
   return (
@@ -201,17 +157,17 @@ export default function AdminVocabulariesPage() {
         <Card>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-zinc-900">管理: 語彙</h1>
+              <h1 className="text-2xl font-semibold text-zinc-900">管理: TOPIK 問題</h1>
               <p className="mt-1 text-sm text-zinc-600">
                 {adminName ? `ログイン中: ${adminName}` : "管理者としてログイン中"}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Link
                 className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
-                href="/admin/questions"
+                href="/admin/vocabularies"
               >
-                問題管理へ
+                語彙管理へ
               </Link>
               <Link
                 className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
@@ -221,21 +177,10 @@ export default function AdminVocabulariesPage() {
               </Link>
               <Link
                 className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-zinc-900 text-white hover:bg-zinc-800"
-                href="/admin/vocabularies/new"
+                href="/admin/questions/new"
               >
                 新規登録
               </Link>
-              <label className="inline-flex cursor-pointer items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors bg-zinc-100 text-zinc-700 hover:bg-zinc-200">
-                <input
-                  ref={csvInputRef}
-                  type="file"
-                  accept=".csv"
-                  className="sr-only"
-                  onChange={handleCsvImport}
-                  disabled={csvImporting}
-                />
-                {csvImporting ? "インポート中..." : "CSV一括登録"}
-              </label>
               <Button
                 variant="secondary"
                 type="button"
@@ -256,17 +201,6 @@ export default function AdminVocabulariesPage() {
           </div>
         </Card>
 
-        {(csvResult || csvError) && (
-          <Card>
-            {csvResult && (
-              <p className="text-sm text-green-700">
-                インポート完了: 新規登録 {csvResult.created} 件、更新 {csvResult.updated} 件
-              </p>
-            )}
-            {csvError && <p className="text-sm text-red-600">{csvError}</p>}
-          </Card>
-        )}
-
         <Card>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -275,7 +209,7 @@ export default function AdminVocabulariesPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    setFilters({ q: "", level: "", entry_type: "", pos: "", status: "" })
+                    setFilters({ q: "", level: "", question_type: "", status: "" })
                   }
                   className="text-sm text-zinc-500 underline hover:text-zinc-700"
                 >
@@ -287,7 +221,7 @@ export default function AdminVocabulariesPage() {
             <Input
               label="キーワード"
               type="search"
-              placeholder="例: 안녕하세요 / こんにちは"
+              placeholder="問題文で検索"
               value={filters.q}
               onChange={(e) => setFilters((p) => ({ ...p, q: e.target.value }))}
             />
@@ -310,26 +244,11 @@ export default function AdminVocabulariesPage() {
             <div>
               <div className="mb-2 text-sm font-medium text-zinc-700">種別</div>
               <div className="flex flex-wrap gap-2">
-                {ENTRY_TYPE_OPTIONS.map((o) => (
+                {TYPE_OPTIONS.map((o) => (
                   <FilterChip
                     key={o.value}
-                    selected={filters.entry_type === o.value}
-                    onClick={() => toggleFilter("entry_type", o.value)}
-                  >
-                    {o.label}
-                  </FilterChip>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="mb-2 text-sm font-medium text-zinc-700">品詞</div>
-              <div className="flex flex-wrap gap-2">
-                {POS_OPTIONS.map((o) => (
-                  <FilterChip
-                    key={o.value}
-                    selected={filters.pos === o.value}
-                    onClick={() => toggleFilter("pos", o.value)}
+                    selected={filters.question_type === o.value}
+                    onClick={() => toggleFilter("question_type", o.value)}
                   >
                     {o.label}
                   </FilterChip>
@@ -367,37 +286,40 @@ export default function AdminVocabulariesPage() {
           </div>
 
           <div className="mt-4 divide-y divide-zinc-200">
-            {(filteredItems ?? []).map((v) => (
+            {(filteredItems ?? []).map((q) => (
               <div
-                key={v.id}
+                key={q.id}
                 className="flex items-start justify-between gap-4 py-3 hover:bg-zinc-50 -mx-6 px-6"
               >
-                <Link href={`/admin/vocabularies/${v.id}`} className="min-w-0 flex-1">
-                  <div className="truncate text-base font-medium text-zinc-900 hover:underline">
-                    {v.term}
+                <Link href={`/admin/questions/${q.id}`} className="min-w-0 flex-1">
+                  <div className="text-base font-medium text-zinc-900 hover:underline line-clamp-2">
+                    {q.question_text}
                   </div>
-                  <div className="mt-1 truncate text-sm text-zinc-600">{v.meaning_ja}</div>
+                  <div className="mt-1 text-sm text-zinc-500">
+                    {q.level_label_ja} ／ {q.question_type_label_ja} ／ {q.status_label_ja}
+                  </div>
                 </Link>
-                <div className="flex shrink-0 flex-col items-end gap-2">
-                  <div className="text-right text-xs text-zinc-500">
-                    <div>{v.level_label_ja ?? `${v.level}級`}</div>
-                    <div className="mt-1">
-                      {(v.entry_type_label_ja ?? v.entry_type) + " / " + (v.pos_label_ja ?? v.pos)}
-                    </div>
-                  </div>
-                  <VocabularyAudioPlayButton
-                    vocabularyId={v.id}
-                    initialAudioUrl={v.audio_url}
-                    adminToken={token}
-                    tone="zinc"
-                  />
+                <div className="flex shrink-0 items-center gap-2">
+                  <Link
+                    href={`/admin/questions/${q.id}/edit`}
+                    className="rounded px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-100"
+                  >
+                    編集
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => { void handleDelete(q.id, q.question_text); }}
+                    className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
+                  >
+                    削除
+                  </button>
                 </div>
               </div>
             ))}
 
             {!loading && filteredItems && filteredItems.length === 0 ? (
               <div className="py-8 text-center text-sm text-zinc-600">
-                {isFiltered ? "条件に一致する語彙がありません。" : "語彙がありません。"}
+                {isFiltered ? "条件に一致する問題がありません。" : "問題がありません。"}
               </div>
             ) : null}
           </div>
@@ -406,4 +328,3 @@ export default function AdminVocabulariesPage() {
     </div>
   );
 }
-
