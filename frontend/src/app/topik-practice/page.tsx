@@ -57,9 +57,14 @@ function renderGrammarQuestionText(text: string) {
   );
 }
 
+/** ブラウザが Web Speech API をサポートしているか確認する */
+function isSpeechSupported(): boolean {
+  return typeof window !== "undefined" && typeof window.SpeechSynthesisUtterance !== "undefined";
+}
+
 /** 韓国語テキストを音声で読み上げる（Web Speech API 使用） */
 function speakKorean(text: string) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
+  if (!isSpeechSupported()) return;
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = "ko-KR";
@@ -295,7 +300,8 @@ export default function TopikPracticePage() {
                 <button
                   type="button"
                   onClick={() => speakKorean(q.question_text)}
-                  className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-white/80 ring-1 ring-white/20 hover:bg-white/20"
+                  disabled={!isSpeechSupported()}
+                  className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-white/80 ring-1 ring-white/20 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
                   aria-label="韓国語を音声で聞く"
                 >
                   <span aria-hidden="true">🔊</span>
@@ -308,7 +314,11 @@ export default function TopikPracticePage() {
                   : q.question_text}
               </div>
               {isAnswered && q.question_text_ja ? (
-                <div className="rounded-lg bg-white/10 px-3 py-2 text-sm text-white/80">
+                <div
+                  className="rounded-lg bg-white/10 px-3 py-2 text-sm text-white/80"
+                  role="note"
+                  aria-label="日本語訳"
+                >
                   {q.question_text_ja}
                 </div>
               ) : null}
@@ -434,59 +444,60 @@ export default function TopikPracticePage() {
           titleClassName="text-white drop-shadow-sm"
         >
           <div className="space-y-3">
-            {results.map((r, i) => (
-              <div
-                key={r.question.id}
-                className={[
-                  "rounded-xl border px-4 py-3 text-sm",
-                  r.correct
-                    ? "border-emerald-300/30 bg-emerald-900/30 text-white"
-                    : "border-red-300/30 bg-red-900/30 text-white",
-                ].join(" ")}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <span className="font-bold text-white/60">Q{i + 1}.</span>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium leading-relaxed">{r.question.question_text}</span>
-                      <button
-                        type="button"
-                        onClick={() => speakKorean(r.question.question_text)}
-                        className="shrink-0 rounded-full bg-white/10 px-1.5 py-0.5 text-xs text-white/70 ring-1 ring-white/20 hover:bg-white/20"
-                        aria-label="韓国語を音声で聞く"
-                      >
-                        🔊
-                      </button>
+            {results.map((r, i) => {
+              const correctOpt = r.question.options.find(
+                (o) => o.option_number === r.question.correct_option_number,
+              );
+              return (
+                <div
+                  key={r.question.id}
+                  className={[
+                    "rounded-xl border px-4 py-3 text-sm",
+                    r.correct
+                      ? "border-emerald-300/30 bg-emerald-900/30 text-white"
+                      : "border-red-300/30 bg-red-900/30 text-white",
+                  ].join(" ")}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="font-bold text-white/60">Q{i + 1}.</span>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium leading-relaxed">{r.question.question_text}</span>
+                        <button
+                          type="button"
+                          onClick={() => speakKorean(r.question.question_text)}
+                          disabled={!isSpeechSupported()}
+                          className="shrink-0 rounded-full bg-white/10 px-1.5 py-0.5 text-xs text-white/70 ring-1 ring-white/20 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+                          aria-label="韓国語を音声で聞く"
+                        >
+                          🔊
+                        </button>
+                      </div>
+                      {r.question.question_text_ja ? (
+                        <div className="mt-0.5 text-xs text-white/55" role="note" aria-label="日本語訳">
+                          {r.question.question_text_ja}
+                        </div>
+                      ) : null}
                     </div>
-                    {r.question.question_text_ja ? (
-                      <div className="mt-0.5 text-xs text-white/55">{r.question.question_text_ja}</div>
-                    ) : null}
-                  </div>
-                  <span
-                    className={["font-bold", r.correct ? "text-emerald-300" : "text-red-300"].join(" ")}
-                    aria-label={r.correct ? "正解" : "不正解"}
-                  >
-                    {r.correct ? "✓" : "✗"}
-                  </span>
-                </div>
-                {!r.correct ? (
-                  <p className="mt-1 text-white/70">
-                    正解:{" "}
-                    <span className="font-semibold text-emerald-200">
-                      {r.question.options.find((o) => o.option_number === r.question.correct_option_number)?.text}
+                    <span
+                      className={["font-bold", r.correct ? "text-emerald-300" : "text-red-300"].join(" ")}
+                      aria-label={r.correct ? "正解" : "不正解"}
+                    >
+                      {r.correct ? "✓" : "✗"}
                     </span>
-                    {(() => {
-                      const correctOpt = r.question.options.find(
-                        (o) => o.option_number === r.question.correct_option_number,
-                      );
-                      return correctOpt?.text_ja ? (
+                  </div>
+                  {!r.correct ? (
+                    <p className="mt-1 text-white/70">
+                      正解:{" "}
+                      <span className="font-semibold text-emerald-200">{correctOpt?.text}</span>
+                      {correctOpt?.text_ja ? (
                         <span className="ml-1 text-emerald-200/70">（{correctOpt.text_ja}）</span>
-                      ) : null;
-                    })()}
-                  </p>
-                ) : null}
-              </div>
-            ))}
+                      ) : null}
+                    </p>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
         </Section>
 
