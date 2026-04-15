@@ -3,6 +3,7 @@ import { apiFetch } from "./http";
 export type QuestionOption = {
   option_number: number;
   text: string;
+  text_ja: string | null;
 };
 
 export type TopikQuestion = {
@@ -12,6 +13,7 @@ export type TopikQuestion = {
   question_type: string;
   question_type_label_ja: string;
   question_text: string;
+  question_text_ja: string | null;
   explanation_ja: string | null;
   options: QuestionOption[];
   correct_option_number: number;

@@ -64,10 +64,12 @@ class QuestionApiTest extends TestCase
                 'question_type',
                 'question_type_label_ja',
                 'question_text',
+                'question_text_ja',
                 'explanation_ja',
                 'options' => [[
                     'option_number',
                     'text',
+                    'text_ja',
                 ]],
                 'correct_option_number',
             ]],
