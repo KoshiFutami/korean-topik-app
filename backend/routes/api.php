@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\Admin\Auth\AdminAuthController;
 use App\Http\Controllers\Api\V1\Admin\Vocabulary\VocabularyController;
 use App\Http\Controllers\Api\V1\Auth\UserAuthController;
 use App\Http\Controllers\Api\V1\PlannedFeature\PlannedFeatureController;
+use App\Http\Controllers\Api\V1\Question\QuestionController;
 use App\Http\Controllers\Api\V1\User\BookmarkController;
 use App\Http\Controllers\Api\V1\Vocabulary\VocabularyController as UserVocabularyController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,7 @@ Route::prefix('v1')->group(function (): void {
         ->middleware('throttle:30,1');
 
     Route::get('/planned-features', [PlannedFeatureController::class, 'index']);
+    Route::get('/questions', [QuestionController::class, 'index']);
 
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/bookmarks', [BookmarkController::class, 'index']);

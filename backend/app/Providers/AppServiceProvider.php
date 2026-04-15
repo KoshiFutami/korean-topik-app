@@ -14,12 +14,14 @@ use App\Application\User\Auth\RegisterUser\RegisterUserUseCase;
 use App\Domain\Admin\Repository\AdminRepositoryInterface;
 use App\Domain\Bookmark\Repository\BookmarkRepositoryInterface;
 use App\Domain\PlannedFeature\Repository\PlannedFeatureRepositoryInterface;
+use App\Domain\Question\Repository\QuestionRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\Vocabulary\Repository\VocabularyRepositoryInterface;
 use App\Infrastructure\Admin\Repository\EloquentAdminRepository;
 use App\Infrastructure\Admin\Token\SanctumAdminTokenService;
 use App\Infrastructure\Bookmark\Repository\EloquentBookmarkRepository;
 use App\Infrastructure\PlannedFeature\Repository\EloquentPlannedFeatureRepository;
+use App\Infrastructure\Question\Repository\EloquentQuestionRepository;
 use App\Infrastructure\Shared\Password\BcryptPasswordHasher;
 use App\Infrastructure\User\Repository\EloquentUserRepository;
 use App\Infrastructure\User\Token\SanctumUserTokenService;
@@ -47,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(VocabularyRepositoryInterface::class, EloquentVocabularyRepository::class);
         $this->app->bind(BookmarkRepositoryInterface::class, EloquentBookmarkRepository::class);
         $this->app->bind(PlannedFeatureRepositoryInterface::class, EloquentPlannedFeatureRepository::class);
+        $this->app->bind(QuestionRepositoryInterface::class, EloquentQuestionRepository::class);
         $this->app->bind(PasswordHasherInterface::class, BcryptPasswordHasher::class);
 
         $ttsClientClass = 'Google\\Cloud\\TextToSpeech\\V1\\Client\\TextToSpeechClient';

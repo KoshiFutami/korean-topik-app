@@ -1,0 +1,58 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Question\Repository;
+
+use App\Domain\Question\Entity\QuestionOption;
+use App\Domain\Question\Entity\TopikQuestion;
+use App\Domain\Question\Repository\QuestionRepositoryInterface;
+use App\Domain\Question\ValueObject\QuestionId;
+use App\Domain\Question\ValueObject\QuestionStatus;
+use App\Domain\Question\ValueObject\QuestionType;
+use App\Models\TopikQuestion as EloquentTopikQuestion;
+use DateTimeImmutable;
+
+final class EloquentQuestionRepository implements QuestionRepositoryInterface
+{
+    public function listByStatus(
+        QuestionStatus $status,
+        ?int $level = null,
+        ?QuestionType $questionType = null,
+    ): array {
+        $query = EloquentTopikQuestion::query()
+            ->with(['options'])
+            ->where('status', $status->value);
+
+        if ($level !== null) {
+            $query->where('level', $level);
+        }
+
+        if ($questionType !== null) {
+            $query->where('question_type', $questionType->value);
+        }
+
+        return $query->orderBy('level')
+            ->orderBy('created_at')
+            ->get()
+            ->map(static function (EloquentTopikQuestion $m): TopikQuestion {
+                $options = $m->options->map(static fn ($o): QuestionOption => new QuestionOption(
+                    optionNumber: (string) $o->option_number,
+                    text: (string) $o->text,
+                    isCorrect: (bool) $o->is_correct,
+                ))->all();
+
+                return TopikQuestion::reconstruct(
+                    id: QuestionId::from((string) $m->id),
+                    level: (int) $m->level,
+                    questionType: QuestionType::from((string) $m->question_type),
+                    questionText: (string) $m->question_text,
+                    explanationJa: $m->explanation_ja !== null ? (string) $m->explanation_ja : null,
+                    status: QuestionStatus::from((string) $m->status),
+                    options: $options,
+                    createdAt: new DateTimeImmutable((string) $m->created_at),
+                );
+            })
+            ->all();
+    }
+}
