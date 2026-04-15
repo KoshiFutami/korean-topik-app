@@ -29,6 +29,7 @@ final class ListQuestionsUseCase
                     static fn ($o): ListQuestionsQuestionOption => new ListQuestionsQuestionOption(
                         optionNumber: (int) $o->optionNumber(),
                         text: $o->text(),
+                        textJa: $o->textJa(),
                     ),
                     $q->options(),
                 );
@@ -40,6 +41,7 @@ final class ListQuestionsUseCase
                     questionType: $q->questionType()->value,
                     questionTypeLabelJa: $q->questionType()->labelJa(),
                     questionText: $q->questionText(),
+                    questionTextJa: $q->questionTextJa(),
                     explanationJa: $q->explanationJa(),
                     options: $options,
                     correctOptionNumber: $q->correctOptionNumber(),

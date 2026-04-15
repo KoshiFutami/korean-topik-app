@@ -39,6 +39,7 @@ final class EloquentQuestionRepository implements QuestionRepositoryInterface
                 $options = $m->options->map(static fn ($o): QuestionOption => new QuestionOption(
                     optionNumber: (string) $o->option_number,
                     text: (string) $o->text,
+                    textJa: $o->text_ja !== null ? (string) $o->text_ja : null,
                     isCorrect: (bool) $o->is_correct,
                 ))->all();
 
@@ -47,6 +48,7 @@ final class EloquentQuestionRepository implements QuestionRepositoryInterface
                     level: (int) $m->level,
                     questionType: QuestionType::from((string) $m->question_type),
                     questionText: (string) $m->question_text,
+                    questionTextJa: $m->question_text_ja !== null ? (string) $m->question_text_ja : null,
                     explanationJa: $m->explanation_ja !== null ? (string) $m->explanation_ja : null,
                     status: QuestionStatus::from((string) $m->status),
                     options: $options,

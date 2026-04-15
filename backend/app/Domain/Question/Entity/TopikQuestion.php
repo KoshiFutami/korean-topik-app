@@ -17,6 +17,7 @@ final class TopikQuestion
         private readonly int $level,
         private readonly QuestionType $questionType,
         private readonly string $questionText,
+        private readonly ?string $questionTextJa,
         private readonly ?string $explanationJa,
         private readonly QuestionStatus $status,
         private readonly array $options,
@@ -29,6 +30,7 @@ final class TopikQuestion
         int $level,
         QuestionType $questionType,
         string $questionText,
+        ?string $questionTextJa,
         ?string $explanationJa,
         QuestionStatus $status,
         array $options,
@@ -39,6 +41,7 @@ final class TopikQuestion
             level: $level,
             questionType: $questionType,
             questionText: $questionText,
+            questionTextJa: $questionTextJa,
             explanationJa: $explanationJa,
             status: $status,
             options: $options,
@@ -64,6 +67,11 @@ final class TopikQuestion
     public function questionText(): string
     {
         return $this->questionText;
+    }
+
+    public function questionTextJa(): ?string
+    {
+        return $this->questionTextJa;
     }
 
     public function explanationJa(): ?string

@@ -57,6 +57,16 @@ function renderGrammarQuestionText(text: string) {
   );
 }
 
+/** 韓国語テキストを音声で読み上げる（Web Speech API 使用） */
+function speakKorean(text: string) {
+  if (typeof window === "undefined" || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "ko-KR";
+  utter.rate = 0.9;
+  window.speechSynthesis.speak(utter);
+}
+
 export default function TopikPracticePage() {
   // ── setup state ──────────────────────────────────────────
   const [levelFilter, setLevelFilter] = useState("");
@@ -278,14 +288,30 @@ export default function TopikPracticePage() {
           {/* 問題カード */}
           <Card className="border-white/20 bg-white/10 backdrop-blur-md">
             <div className="space-y-4 p-2">
-              <div className="text-xs font-semibold text-white/55">
-                {q.level_label_ja} · {q.question_type_label_ja}
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-semibold text-white/55">
+                  {q.level_label_ja} · {q.question_type_label_ja}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => speakKorean(q.question_text)}
+                  className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-white/80 ring-1 ring-white/20 hover:bg-white/20"
+                  aria-label="韓国語を音声で聞く"
+                >
+                  <span aria-hidden="true">🔊</span>
+                  <span>音声</span>
+                </button>
               </div>
               <div className="text-xl font-bold leading-relaxed text-white sm:text-2xl">
                 {q.question_type === "grammar"
                   ? renderGrammarQuestionText(q.question_text)
                   : q.question_text}
               </div>
+              {isAnswered && q.question_text_ja ? (
+                <div className="rounded-lg bg-white/10 px-3 py-2 text-sm text-white/80">
+                  {q.question_text_ja}
+                </div>
+              ) : null}
               <p className="text-sm text-white/60">
                 {q.question_type === "grammar"
                   ? "（　）に入る最も適切なものを選んでください。"
@@ -324,6 +350,9 @@ export default function TopikPracticePage() {
                 >
                   <span className="mr-1.5 text-xs font-bold opacity-60">{opt.option_number}.</span>
                   {opt.text}
+                  {isAnswered && opt.text_ja ? (
+                    <span className="ml-1.5 text-xs font-normal opacity-70">（{opt.text_ja}）</span>
+                  ) : null}
                   {isAnswered && isThisCorrect && (
                     <span className="ml-1.5 text-emerald-300" aria-hidden="true">
                       ✓
@@ -417,7 +446,22 @@ export default function TopikPracticePage() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <span className="font-bold text-white/60">Q{i + 1}.</span>
-                  <span className="flex-1 font-medium leading-relaxed">{r.question.question_text}</span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium leading-relaxed">{r.question.question_text}</span>
+                      <button
+                        type="button"
+                        onClick={() => speakKorean(r.question.question_text)}
+                        className="shrink-0 rounded-full bg-white/10 px-1.5 py-0.5 text-xs text-white/70 ring-1 ring-white/20 hover:bg-white/20"
+                        aria-label="韓国語を音声で聞く"
+                      >
+                        🔊
+                      </button>
+                    </div>
+                    {r.question.question_text_ja ? (
+                      <div className="mt-0.5 text-xs text-white/55">{r.question.question_text_ja}</div>
+                    ) : null}
+                  </div>
                   <span
                     className={["font-bold", r.correct ? "text-emerald-300" : "text-red-300"].join(" ")}
                     aria-label={r.correct ? "正解" : "不正解"}
@@ -431,6 +475,14 @@ export default function TopikPracticePage() {
                     <span className="font-semibold text-emerald-200">
                       {r.question.options.find((o) => o.option_number === r.question.correct_option_number)?.text}
                     </span>
+                    {(() => {
+                      const correctOpt = r.question.options.find(
+                        (o) => o.option_number === r.question.correct_option_number,
+                      );
+                      return correctOpt?.text_ja ? (
+                        <span className="ml-1 text-emerald-200/70">（{correctOpt.text_ja}）</span>
+                      ) : null;
+                    })()}
                   </p>
                 ) : null}
               </div>

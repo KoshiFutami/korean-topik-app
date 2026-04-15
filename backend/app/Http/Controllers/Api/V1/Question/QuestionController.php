@@ -28,10 +28,12 @@ class QuestionController
                 'question_type' => $q->questionType,
                 'question_type_label_ja' => $q->questionTypeLabelJa,
                 'question_text' => $q->questionText,
+                'question_text_ja' => $q->questionTextJa,
                 'explanation_ja' => $q->explanationJa,
                 'options' => array_map(static fn ($o) => [
                     'option_number' => $o->optionNumber,
                     'text' => $o->text,
+                    'text_ja' => $o->textJa,
                 ], $q->options),
                 'correct_option_number' => $q->correctOptionNumber,
             ], $output->questions),

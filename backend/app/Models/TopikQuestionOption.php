@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'question_id',
     'option_number',
     'text',
+    'text_ja',
     'is_correct',
 ])]
 class TopikQuestionOption extends Model

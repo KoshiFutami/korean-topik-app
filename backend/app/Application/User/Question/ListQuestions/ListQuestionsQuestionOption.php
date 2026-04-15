@@ -9,5 +9,6 @@ final class ListQuestionsQuestionOption
     public function __construct(
         public readonly int $optionNumber,
         public readonly string $text,
+        public readonly ?string $textJa,
     ) {}
 }
