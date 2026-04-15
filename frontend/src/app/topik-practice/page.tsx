@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -15,6 +15,12 @@ type Phase = "setup" | "playing" | "finished";
 const LEVEL_OPTIONS = [
   { value: "", label: "すべて" },
   ...[1, 2, 3, 4, 5, 6].map((n) => ({ value: String(n), label: `${n}級` })),
+];
+
+const TYPE_OPTIONS = [
+  { value: "", label: "すべて" },
+  { value: "topic", label: "주제 (主題)" },
+  { value: "grammar", label: "문법 (文法)" },
 ];
 
 const COUNT_OPTIONS = [
@@ -32,17 +38,17 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-/** 問題文の「___」を強調スパンに変換する */
-function renderQuestionText(text: string) {
-  const parts = text.split("___");
+/** 問題文内の「( )」を強調スパンに変換する（文法問題用） */
+function renderGrammarQuestionText(text: string) {
+  const parts = text.split("( )");
   return (
     <>
       {parts.map((part, i) => (
         <span key={i}>
           {part}
           {i < parts.length - 1 && (
-            <span className="mx-0.5 inline-block rounded border border-white/50 bg-white/20 px-2 py-0.5 font-bold tracking-wider text-amber-200">
-              ___
+            <span className="mx-0.5 inline-block min-w-[3rem] rounded border border-white/50 bg-white/20 px-3 py-0.5 text-center font-bold tracking-wider text-amber-200">
+              （　　）
             </span>
           )}
         </span>
@@ -54,6 +60,7 @@ function renderQuestionText(text: string) {
 export default function TopikPracticePage() {
   // ── setup state ──────────────────────────────────────────
   const [levelFilter, setLevelFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
   const [count, setCount] = useState(10);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -71,7 +78,7 @@ export default function TopikPracticePage() {
     try {
       const res = await listQuestions({
         level: levelFilter ? Number(levelFilter) : undefined,
-        type: "grammar",
+        type: typeFilter || undefined,
       });
 
       if (res.questions.length === 0) {
@@ -91,7 +98,7 @@ export default function TopikPracticePage() {
     } finally {
       setLoading(false);
     }
-  }, [levelFilter, count]);
+  }, [levelFilter, typeFilter, count]);
 
   const handleAnswer = useCallback(
     (optionNumber: number) => {
@@ -156,6 +163,25 @@ export default function TopikPracticePage() {
             titleClassName="text-white drop-shadow-sm"
           >
             <Card className="space-y-5 border-white/10 bg-white/10 text-white backdrop-blur">
+              {/* 問題タイプ絞り込み */}
+              <div>
+                <div className="text-sm font-semibold text-white">
+                  問題タイプ <span className="ml-1 text-white/70">문제 유형</span>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {TYPE_OPTIONS.map((o) => (
+                    <Chip
+                      key={o.value}
+                      type="button"
+                      selected={typeFilter === o.value}
+                      onClick={() => setTypeFilter(o.value)}
+                    >
+                      {o.label}
+                    </Chip>
+                  ))}
+                </div>
+              </div>
+
               {/* レベル絞り込み */}
               <div>
                 <div className="text-sm font-semibold text-white">
@@ -256,9 +282,15 @@ export default function TopikPracticePage() {
                 {q.level_label_ja} · {q.question_type_label_ja}
               </div>
               <div className="text-xl font-bold leading-relaxed text-white sm:text-2xl">
-                {renderQuestionText(q.question_text)}
+                {q.question_type === "grammar"
+                  ? renderGrammarQuestionText(q.question_text)
+                  : q.question_text}
               </div>
-              <p className="text-sm text-white/60">빈칸에 들어갈 알맞은 것을 고르세요.</p>
+              <p className="text-sm text-white/60">
+                {q.question_type === "grammar"
+                  ? "（　）に入る最も適切なものを選んでください。"
+                  : "무엇에 대한 내용입니까？　何についての内容ですか？"}
+              </p>
             </div>
           </Card>
 
