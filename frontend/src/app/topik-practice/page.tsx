@@ -72,6 +72,26 @@ function speakKorean(text: string) {
   window.speechSynthesis.speak(utter);
 }
 
+/** 音声再生用のアイコン */
+function PlayGlyph({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M8 5.14v13.72c0 .89 1.02 1.39 1.71.83l9.93-6.86a1 1 0 0 0 0-1.66L9.71 4.31A.998.998 0 0 0 8 5.14Z" />
+    </svg>
+  );
+}
+
+/** 回答済みの場合は正解を含む読み上げテキストを、未回答の場合は問題文のみを返す */
+function buildSpeakText(q: TopikQuestion, answered: boolean): string {
+  if (!answered) return q.question_text;
+  const correctOpt = q.options.find((o) => o.option_number === q.correct_option_number);
+  if (!correctOpt) return q.question_text;
+  if (q.question_type === "grammar") {
+    return q.question_text.replace("( )", correctOpt.text);
+  }
+  return q.question_text;
+}
+
 export default function TopikPracticePage() {
   // ── setup state ──────────────────────────────────────────
   const [levelFilter, setLevelFilter] = useState("");
@@ -299,12 +319,12 @@ export default function TopikPracticePage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => speakKorean(q.question_text)}
+                  onClick={() => speakKorean(buildSpeakText(q, isAnswered))}
                   disabled={!isSpeechSupported()}
                   className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-white/80 ring-1 ring-white/20 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
                   aria-label="韓国語を音声で聞く"
                 >
-                  <span aria-hidden="true">🔊</span>
+                  <PlayGlyph className="h-[0.9rem] w-[0.9rem] shrink-0" />
                   <span>音声</span>
                 </button>
               </div>
@@ -465,12 +485,12 @@ export default function TopikPracticePage() {
                         <span className="font-medium leading-relaxed">{r.question.question_text}</span>
                         <button
                           type="button"
-                          onClick={() => speakKorean(r.question.question_text)}
+                          onClick={() => speakKorean(buildSpeakText(r.question, true))}
                           disabled={!isSpeechSupported()}
-                          className="shrink-0 rounded-full bg-white/10 px-1.5 py-0.5 text-xs text-white/70 ring-1 ring-white/20 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+                          className="shrink-0 inline-flex items-center justify-center rounded-full bg-white/10 px-1.5 py-1 text-white/70 ring-1 ring-white/20 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
                           aria-label="韓国語を音声で聞く"
                         >
-                          🔊
+                          <PlayGlyph className="h-[0.9rem] w-[0.9rem] shrink-0" />
                         </button>
                       </div>
                       {r.question.question_text_ja ? (
