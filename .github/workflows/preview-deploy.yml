@@ -12,11 +12,10 @@ jobs:
   deploy-frontend:
     runs-on: ubuntu-latest
     # Railway PR 環境の成功通知のみ処理する。
-    # Railway は PR 環境を "pr-{number}" という environment 名で GitHub に登録する。
-    # 実際の値は Actions ログの github.event.deployment.environment で要確認。
+    # Railway の environment 名は "{project}-pr-{number}" 形式（例: korean-topik-app-pr-104）。
     if: |
       github.event.deployment_status.state == 'success' &&
-      startsWith(github.event.deployment.environment, 'pr-') &&
+      contains(github.event.deployment.environment, '-pr-') &&
       github.event.deployment_status.environment_url != ''
 
     steps:
@@ -100,15 +99,17 @@ jobs:
             const marker = '<!-- preview-env -->';
             const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
 
-            const body = `${marker}
-## プレビュー環境 🚀
-
-| | URL |
-|---|---|
-| **フロントエンド** | [${frontendUrl}](${frontendUrl}) |
-| **バックエンド API** | [${backendUrl}](${backendUrl}) |
-
-> 最終更新: ${now} UTC`;
+            const body = [
+              marker,
+              '## プレビュー環境 🚀',
+              '',
+              '| | URL |',
+              '|---|---|',
+              `| **フロントエンド** | [${frontendUrl}](${frontendUrl}) |`,
+              `| **バックエンド API** | [${backendUrl}](${backendUrl}) |`,
+              '',
+              `> 最終更新: ${now} UTC`,
+            ].join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
               owner:        context.repo.owner,
