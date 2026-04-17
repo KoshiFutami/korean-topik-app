@@ -26,7 +26,8 @@ return [
 
     'allowed_origins_patterns' => [
         // Vercel Preview URL (例: https://<project>-git-<branch>-<hash>-<team>.vercel.app)
-        '^https://.*\\.vercel\\.app$',
+        // preg_match はデリミタが必要なため # で囲む
+        '#^https://.*\\.vercel\\.app$#',
     ],
 
     'allowed_headers' => ['*'],
