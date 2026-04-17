@@ -100,15 +100,17 @@ jobs:
             const marker = '<!-- preview-env -->';
             const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
 
-            const body = `${marker}
-## プレビュー環境 🚀
-
-| | URL |
-|---|---|
-| **フロントエンド** | [${frontendUrl}](${frontendUrl}) |
-| **バックエンド API** | [${backendUrl}](${backendUrl}) |
-
-> 最終更新: ${now} UTC`;
+            const body = [
+              marker,
+              '## プレビュー環境 🚀',
+              '',
+              '| | URL |',
+              '|---|---|',
+              `| **フロントエンド** | [${frontendUrl}](${frontendUrl}) |`,
+              `| **バックエンド API** | [${backendUrl}](${backendUrl}) |`,
+              '',
+              `> 最終更新: ${now} UTC`,
+            ].join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
               owner:        context.repo.owner,
