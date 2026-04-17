@@ -1,0 +1,175 @@
+name: PR Preview Deploy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # ── 1. Backend: Fly.io ────────────────────────────────────────────────────
+  deploy-backend:
+    runs-on: ubuntu-latest
+    outputs:
+      backend_url: ${{ steps.vars.outputs.backend_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set derived variables
+        id: vars
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          APP_NAME="korean-topik-pr-${PR_NUMBER}"
+          echo "app_name=${APP_NAME}"           >> $GITHUB_OUTPUT
+          echo "db_name=pr_${PR_NUMBER}_korean_topik" >> $GITHUB_OUTPUT
+          echo "backend_url=https://${APP_NAME}.fly.dev" >> $GITHUB_OUTPUT
+
+      - name: Create PR database on shared MySQL
+        env:
+          MYSQL_HOST: ${{ secrets.PREVIEW_MYSQL_HOST }}
+          MYSQL_USER: ${{ secrets.PREVIEW_MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.PREVIEW_MYSQL_PASSWORD }}
+          DB_NAME: ${{ steps.vars.outputs.db_name }}
+        run: |
+          sudo apt-get install -y -q default-mysql-client
+          mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" "-p${MYSQL_PASSWORD}" \
+            -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+      - name: Setup Fly CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Create Fly app (idempotent)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          APP_NAME: ${{ steps.vars.outputs.app_name }}
+        run: fly apps create "$APP_NAME" --org personal 2>/dev/null || true
+
+      - name: Set Fly secrets
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          APP_NAME: ${{ steps.vars.outputs.app_name }}
+          DB_NAME: ${{ steps.vars.outputs.db_name }}
+          BACKEND_URL: ${{ steps.vars.outputs.backend_url }}
+        run: |
+          fly secrets set \
+            APP_KEY="${{ secrets.PREVIEW_APP_KEY }}" \
+            APP_URL="$BACKEND_URL" \
+            DB_HOST="${{ secrets.PREVIEW_MYSQL_HOST }}" \
+            DB_DATABASE="$DB_NAME" \
+            DB_USERNAME="${{ secrets.PREVIEW_MYSQL_USER }}" \
+            DB_PASSWORD="${{ secrets.PREVIEW_MYSQL_PASSWORD }}" \
+            CORS_ALLOWED_ORIGINS="*" \
+            --app "$APP_NAME"
+
+      - name: Deploy backend to Fly.io
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          APP_NAME: ${{ steps.vars.outputs.app_name }}
+        working-directory: backend
+        run: |
+          fly deploy \
+            --app "$APP_NAME" \
+            --config fly.preview.toml \
+            --remote-only \
+            --wait-timeout 300
+
+  # ── 2. Frontend: Vercel ──────────────────────────────────────────────────
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    needs: deploy-backend
+    outputs:
+      frontend_url: ${{ steps.deploy.outputs.frontend_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Pull Vercel project settings
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: frontend
+        run: npx vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+
+      - name: Build with per-PR backend URL
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          BACKEND_URL: ${{ needs.deploy-backend.outputs.backend_url }}
+        working-directory: frontend
+        run: |
+          npx vercel build \
+            --token="$VERCEL_TOKEN" \
+            --build-env "NEXT_PUBLIC_API_URL=$BACKEND_URL" \
+            --build-env "API_BASE_URL=$BACKEND_URL"
+
+      - name: Deploy prebuilt to Vercel
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        working-directory: frontend
+        run: |
+          DEPLOY_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_TOKEN" 2>&1 | grep -E '^https://' | tail -1)
+          echo "frontend_url=${DEPLOY_URL}" >> $GITHUB_OUTPUT
+
+  # ── 3. PR comment ─────────────────────────────────────────────────────────
+  notify:
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-frontend]
+    if: always() && needs.deploy-backend.result == 'success'
+
+    steps:
+      - name: Post / update preview comment
+        uses: actions/github-script@v7
+        env:
+          BACKEND_URL: ${{ needs.deploy-backend.outputs.backend_url }}
+          FRONTEND_URL: ${{ needs.deploy-frontend.outputs.frontend_url }}
+        with:
+          script: |
+            const backendUrl  = process.env.BACKEND_URL;
+            const frontendUrl = process.env.FRONTEND_URL || '（デプロイ失敗）';
+            const marker = '<!-- preview-env -->';
+            const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
+
+            const body = `${marker}
+            ## プレビュー環境 🚀
+
+            | | URL |
+            |---|---|
+            | **フロントエンド** | [${frontendUrl}](${frontendUrl}) |
+            | **バックエンド API** | [${backendUrl}/api](${backendUrl}/api) |
+
+            > 最終更新: ${now} UTC — コミット \`${{ github.event.pull_request.head.sha }}\``;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(
+              c => c.user.type === 'Bot' && c.body.includes(marker)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner:      context.repo.owner,
+                repo:       context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner:        context.repo.owner,
+                repo:         context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
