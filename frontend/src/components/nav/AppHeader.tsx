@@ -86,11 +86,12 @@ export function AppHeader() {
   }
 
   const isLearnerGlass =
+    pathname === null ||
     pathname === "/" ||
-    pathname?.startsWith("/vocabularies") ||
-    pathname?.startsWith("/bookmarks") ||
-    pathname?.startsWith("/quiz") ||
-    pathname?.startsWith("/topik-practice") ||
+    pathname.startsWith("/vocabularies") ||
+    pathname.startsWith("/bookmarks") ||
+    pathname.startsWith("/quiz") ||
+    pathname.startsWith("/topik-practice") ||
     pathname === "/login" ||
     pathname === "/register" ||
     pathname === "/me";
