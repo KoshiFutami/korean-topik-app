@@ -1,38 +1,34 @@
 name: PR Preview Cleanup
 
+# バックエンド環境の削除は Railway が PR クローズ時に自動で行う。
+# このワークフローは PR コメントを「削除済み」に更新するだけ。
+
 on:
   pull_request:
     types: [closed]
 
 jobs:
-  cleanup:
+  update-comment:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Set derived variables
-        id: vars
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          echo "app_name=korean-topik-pr-${PR_NUMBER}"      >> $GITHUB_OUTPUT
-          echo "db_name=pr_${PR_NUMBER}_korean_topik"       >> $GITHUB_OUTPUT
-
-      - name: Setup Fly CLI
-        uses: superfly/flyctl-actions/setup-flyctl@master
-
-      - name: Destroy Fly.io preview app
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-          APP_NAME: ${{ steps.vars.outputs.app_name }}
-        run: fly apps destroy "$APP_NAME" --yes 2>/dev/null || echo "App ${APP_NAME} not found, skipping."
-
-      - name: Drop PR database
-        env:
-          MYSQL_HOST: ${{ secrets.PREVIEW_MYSQL_HOST }}
-          MYSQL_USER: ${{ secrets.PREVIEW_MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ secrets.PREVIEW_MYSQL_PASSWORD }}
-          DB_NAME: ${{ steps.vars.outputs.db_name }}
-        run: |
-          sudo apt-get install -y -q default-mysql-client
-          mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" "-p${MYSQL_PASSWORD}" \
-            -e "DROP DATABASE IF EXISTS \`${DB_NAME}\`;"
+      - name: Mark preview comment as removed
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- preview-env -->';
+            const { data: comments } = await github.rest.issues.listComments({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(
+              c => c.user.type === 'Bot' && c.body.includes(marker)
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner:      context.repo.owner,
+                repo:       context.repo.repo,
+                comment_id: existing.id,
+                body:       `${marker}\n## プレビュー環境\n\nPR がクローズされたため、Railway によって自動削除されました。`,
+              });
+            }
