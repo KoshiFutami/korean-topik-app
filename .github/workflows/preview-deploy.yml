@@ -1,0 +1,136 @@
+name: PR Preview (Frontend → Vercel)
+
+# Railway が PR 環境のデプロイ完了を GitHub deployment_status で通知するのをトリガーにする。
+# バックエンドのデプロイ・DB 作成・クリーンアップは Railway が全自動で行う。
+# このワークフローはフロントエンドを Railway バックエンド URL に向けて Vercel へデプロイし、
+# PR コメントで両 URL を通知するだけ。
+
+on:
+  deployment_status:
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    # Railway PR 環境の成功通知のみ処理する。
+    # Railway は PR 環境を "pr-{number}" という environment 名で GitHub に登録する。
+    # 実際の値は Actions ログの github.event.deployment.environment で要確認。
+    if: |
+      github.event.deployment_status.state == 'success' &&
+      startsWith(github.event.deployment.environment, 'pr-') &&
+      github.event.deployment_status.environment_url != ''
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha }}
+
+      - name: Resolve PR number and backend URL
+        id: info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const ref = context.payload.deployment.ref;
+            const backendUrl = context.payload.deployment_status.environment_url.replace(/\/$/, '');
+
+            // ブランチ名から対応する open PR を検索
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              state: 'open',
+              head:  `${context.repo.owner}:${ref}`,
+            });
+
+            if (prs.length === 0) {
+              core.warning(`No open PR found for branch: ${ref} — skipping`);
+              return;
+            }
+
+            core.setOutput('pr_number',   String(prs[0].number));
+            core.setOutput('backend_url', backendUrl);
+
+      - name: Setup Node.js
+        if: steps.info.outputs.pr_number != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Pull Vercel project settings
+        if: steps.info.outputs.pr_number != ''
+        env:
+          VERCEL_TOKEN:      ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID:     ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: frontend
+        run: npx vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+
+      - name: Build with Railway backend URL
+        if: steps.info.outputs.pr_number != ''
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          BACKEND_URL:  ${{ steps.info.outputs.backend_url }}
+        working-directory: frontend
+        run: |
+          npx vercel build \
+            --token="$VERCEL_TOKEN" \
+            --build-env "NEXT_PUBLIC_API_URL=$BACKEND_URL" \
+            --build-env "API_BASE_URL=$BACKEND_URL"
+
+      - name: Deploy prebuilt to Vercel
+        id: deploy
+        if: steps.info.outputs.pr_number != ''
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        working-directory: frontend
+        run: |
+          DEPLOY_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_TOKEN" 2>&1 | grep -E '^https://' | tail -1)
+          echo "frontend_url=${DEPLOY_URL}" >> $GITHUB_OUTPUT
+
+      - name: Post / update preview comment on PR
+        if: steps.info.outputs.pr_number != ''
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER:    ${{ steps.info.outputs.pr_number }}
+          BACKEND_URL:  ${{ steps.info.outputs.backend_url }}
+          FRONTEND_URL: ${{ steps.deploy.outputs.frontend_url }}
+        with:
+          script: |
+            const prNumber    = parseInt(process.env.PR_NUMBER);
+            const backendUrl  = process.env.BACKEND_URL;
+            const frontendUrl = process.env.FRONTEND_URL || '（Vercel デプロイ失敗）';
+            const marker = '<!-- preview-env -->';
+            const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
+
+            const body = `${marker}
+## プレビュー環境 🚀
+
+| | URL |
+|---|---|
+| **フロントエンド** | [${frontendUrl}](${frontendUrl}) |
+| **バックエンド API** | [${backendUrl}](${backendUrl}) |
+
+> 最終更新: ${now} UTC`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: prNumber,
+            });
+            const existing = comments.find(
+              c => c.user.type === 'Bot' && c.body.includes(marker)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner:      context.repo.owner,
+                repo:       context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner:        context.repo.owner,
+                repo:         context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+            }
