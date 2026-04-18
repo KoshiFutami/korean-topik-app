@@ -84,9 +84,9 @@ export default function VocabularyDetailPage() {
       // 水平方向が 60px 以上かつ垂直方向より大きい場合のみスワイプとみなす
       if (Math.abs(dx) >= 60 && Math.abs(dx) > Math.abs(dy) * 1.2) {
         if (dx < 0 && nextId) {
-          router.push(`/vocabularies/${nextId}`);
+          router.replace(`/vocabularies/${nextId}`);
         } else if (dx > 0 && prevId) {
-          router.push(`/vocabularies/${prevId}`);
+          router.replace(`/vocabularies/${prevId}`);
         }
       }
     };
@@ -212,7 +212,7 @@ export default function VocabularyDetailPage() {
           <div className="flex items-center justify-between gap-2">
             <button
               type="button"
-              onClick={() => prevId && router.push(`/vocabularies/${prevId}`)}
+              onClick={() => prevId && router.replace(`/vocabularies/${prevId}`)}
               disabled={!prevId}
               aria-label="前の語彙"
               className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
@@ -225,7 +225,7 @@ export default function VocabularyDetailPage() {
             </span>
             <button
               type="button"
-              onClick={() => nextId && router.push(`/vocabularies/${nextId}`)}
+              onClick={() => nextId && router.replace(`/vocabularies/${nextId}`)}
               disabled={!nextId}
               aria-label="次の語彙"
               className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
