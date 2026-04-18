@@ -2,13 +2,14 @@
 
 import { useWindowVirtualizer, measureElement } from "@tanstack/react-virtual";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import type { BookmarkVocabulary } from "@/lib/api/bookmarks";
+import { saveVocabularyListContext } from "@/lib/vocabularyListContext";
 
 function subscribeWindowResize(onStoreChange: () => void): () => void {
   window.addEventListener("resize", onStoreChange);
@@ -72,9 +73,10 @@ type CardProps = {
   paletteIndex: number;
   removing: boolean;
   onRemove: (id: string) => void;
+  allIds: string[];
 };
 
-function BookmarkGridCard({ vocabulary: v, paletteIndex, removing, onRemove }: CardProps) {
+function BookmarkGridCard({ vocabulary: v, paletteIndex, removing, onRemove, allIds }: CardProps) {
   const palette = paletteIndex % 3;
   return (
     <Card
@@ -89,6 +91,7 @@ function BookmarkGridCard({ vocabulary: v, paletteIndex, removing, onRemove }: C
     >
       <Link
         href={`/vocabularies/${v.id}`}
+        onClick={() => saveVocabularyListContext(allIds)}
         className="absolute inset-0 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
         aria-label={`${v.term} - ${v.meaning_ja}`}
       />
@@ -141,6 +144,7 @@ type Props = {
 export function BookmarkListVirtualGrid({ items, removing, onRemove }: Props) {
   const cols = useResponsiveColumnCount();
   const rowCount = Math.ceil(items.length / cols);
+  const allIds = useMemo(() => items.map((v) => v.id), [items]);
 
   const rowVirtualizer = useWindowVirtualizer({
     count: rowCount,
@@ -186,6 +190,7 @@ export function BookmarkListVirtualGrid({ items, removing, onRemove }: Props) {
                   paletteIndex={start + i}
                   removing={removing === v.id}
                   onRemove={onRemove}
+                  allIds={allIds}
                 />
               ))}
             </div>

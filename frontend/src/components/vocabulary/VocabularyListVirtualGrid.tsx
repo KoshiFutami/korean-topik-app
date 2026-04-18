@@ -2,11 +2,12 @@
 
 import { useWindowVirtualizer, measureElement } from "@tanstack/react-virtual";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 
 import { Card } from "@/components/ui/Card";
 import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import type { UserVocabulary } from "@/lib/api/vocabularies";
+import { saveVocabularyListContext } from "@/lib/vocabularyListContext";
 
 function subscribeWindowResize(onStoreChange: () => void): () => void {
   window.addEventListener("resize", onStoreChange);
@@ -65,7 +66,15 @@ function entryTypeKo(t: string): string {
   }
 }
 
-function VocabularyGridCard({ vocabulary: v, paletteIndex }: { vocabulary: UserVocabulary; paletteIndex: number }) {
+function VocabularyGridCard({
+  vocabulary: v,
+  paletteIndex,
+  allIds,
+}: {
+  vocabulary: UserVocabulary;
+  paletteIndex: number;
+  allIds: string[];
+}) {
   const palette = paletteIndex % 3;
   return (
     <Card
@@ -80,6 +89,7 @@ function VocabularyGridCard({ vocabulary: v, paletteIndex }: { vocabulary: UserV
     >
       <Link
         href={`/vocabularies/${v.id}`}
+        onClick={() => saveVocabularyListContext(allIds)}
         className="absolute inset-0 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
         aria-label={`${v.term} - ${v.meaning_ja}`}
       />
@@ -121,6 +131,7 @@ type Props = {
 export function VocabularyListVirtualGrid({ items }: Props) {
   const cols = useResponsiveColumnCount();
   const rowCount = Math.ceil(items.length / cols);
+  const allIds = useMemo(() => items.map((v) => v.id), [items]);
 
   const rowVirtualizer = useWindowVirtualizer({
     count: rowCount,
@@ -160,7 +171,7 @@ export function VocabularyListVirtualGrid({ items }: Props) {
               }}
             >
               {rowItems.map((v, i) => (
-                <VocabularyGridCard key={v.id} vocabulary={v} paletteIndex={start + i} />
+                <VocabularyGridCard key={v.id} vocabulary={v} paletteIndex={start + i} allIds={allIds} />
               ))}
             </div>
           </div>

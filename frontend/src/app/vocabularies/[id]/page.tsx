@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { HighlightedExampleText } from "@/components/vocabulary/HighlightedExampleText";
@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { addBookmark, listBookmarks, removeBookmark } from "@/lib/api/bookmarks";
 import { ApiError } from "@/lib/api/http";
 import { getVocabulary, type UserVocabularyDetail } from "@/lib/api/vocabularies";
+import { getVocabularyListContext } from "@/lib/vocabularyListContext";
 
 function posKo(pos: string): string {
   switch (pos) {
@@ -61,6 +62,41 @@ export default function VocabularyDetailPage() {
   const [loading, setLoading] = useState(false);
   const [bookmarked, setBookmarked] = useState<boolean | null>(null);
   const [bookmarkBusy, setBookmarkBusy] = useState(false);
+
+  // スワイプナビゲーション用: 語彙一覧から遷移した際に保存された ID リストを読み込む
+  const [listIds] = useState<string[]>(() => getVocabularyListContext());
+  const currentIndex = listIds.indexOf(id);
+  const prevId = currentIndex > 0 ? listIds[currentIndex - 1] : null;
+  const nextId = currentIndex >= 0 && currentIndex < listIds.length - 1 ? listIds[currentIndex + 1] : null;
+
+  // タッチスワイプ検出
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    };
+    const handleTouchEnd = (e: TouchEvent) => {
+      const start = touchStartRef.current;
+      if (!start) return;
+      const dx = e.changedTouches[0].clientX - start.x;
+      const dy = e.changedTouches[0].clientY - start.y;
+      touchStartRef.current = null;
+      // 水平方向が 60px 以上かつ垂直方向より大きい場合のみスワイプとみなす
+      if (Math.abs(dx) >= 60 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        if (dx < 0 && nextId) {
+          router.replace(`/vocabularies/${nextId}`);
+        } else if (dx > 0 && prevId) {
+          router.replace(`/vocabularies/${prevId}`);
+        }
+      }
+    };
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [nextId, prevId, router]);
 
   useEffect(() => {
     if (state.status === "loading") {
@@ -170,6 +206,35 @@ export default function VocabularyDetailPage() {
             </button>
           ) : null}
         </div>
+
+        {/* スワイプナビゲーション: 語彙一覧から遷移した場合のみ表示 */}
+        {listIds.length > 0 && currentIndex >= 0 ? (
+          <div className="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => prevId && router.replace(`/vocabularies/${prevId}`)}
+              disabled={!prevId}
+              aria-label="前の語彙"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              <span aria-hidden="true">‹</span>
+              前へ
+            </button>
+            <span className="text-xs font-medium text-white/70">
+              {currentIndex + 1} / {listIds.length}
+            </span>
+            <button
+              type="button"
+              onClick={() => nextId && router.replace(`/vocabularies/${nextId}`)}
+              disabled={!nextId}
+              aria-label="次の語彙"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              次へ
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
+        ) : null}
 
         {state.status === "guest" ? (
           <Card className="border-amber-300/30 bg-amber-500/15 text-white ring-1 ring-amber-200/25 backdrop-blur">
