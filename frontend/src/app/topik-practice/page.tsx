@@ -188,8 +188,8 @@ export default function TopikPracticePage() {
             <Card className="space-y-5 border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
               {/* 問題タイプ */}
               <div>
-                <div className="text-sm font-semibold text-[#BCC0E8]">
-                  問題タイプ <span className="ml-1 text-[#5C6199]">문제 유형</span>
+                <div className="text-sm font-semibold text-[#F0F0FF]">
+                  問題タイプ <span className="ml-1 text-xs font-normal text-[#5C6199]">문제 유형</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {TYPE_OPTIONS.map((o) => (
@@ -207,8 +207,8 @@ export default function TopikPracticePage() {
 
               {/* レベル */}
               <div>
-                <div className="text-sm font-semibold text-[#BCC0E8]">
-                  TOPIK レベル <span className="ml-1 text-[#5C6199]">토픽 레벨</span>
+                <div className="text-sm font-semibold text-[#F0F0FF]">
+                  TOPIK レベル <span className="ml-1 text-xs font-normal text-[#5C6199]">토픽 레벨</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {LEVEL_OPTIONS.map((o) => (
@@ -226,8 +226,8 @@ export default function TopikPracticePage() {
 
               {/* 問題数 */}
               <div>
-                <div className="text-sm font-semibold text-[#BCC0E8]">
-                  問題数 <span className="ml-1 text-[#5C6199]">문제 수</span>
+                <div className="text-sm font-semibold text-[#F0F0FF]">
+                  問題数 <span className="ml-1 text-xs font-normal text-[#5C6199]">문제 수</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {COUNT_OPTIONS.map((o) => (
