@@ -269,11 +269,11 @@ export default function QuizPage() {
           >
             <Card className="space-y-5 border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
               {/* 出題モード */}
-              <div>
-                <div className="border-b border-[rgba(255,255,255,0.08)] pb-2 text-sm font-semibold text-[#F0F0FF]">
+              <div className="overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)]">
+                <div className="border-b border-[rgba(255,255,255,0.08)] px-3 py-2 text-sm font-semibold text-[#F0F0FF]">
                   出題モード <span className="ml-1 text-xs font-normal text-[#5C6199]">출제 방향</span>
                 </div>
-                <div className="mt-2 flex gap-2">
+                <div className="flex flex-wrap gap-2 p-3">
                   <Chip
                     type="button"
                     selected={mode === "kr-to-ja"}
@@ -292,11 +292,11 @@ export default function QuizPage() {
               </div>
 
               {/* 出題元 */}
-              <div>
-                <div className="border-b border-[rgba(255,255,255,0.08)] pb-2 text-sm font-semibold text-[#F0F0FF]">
+              <div className="overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)]">
+                <div className="border-b border-[rgba(255,255,255,0.08)] px-3 py-2 text-sm font-semibold text-[#F0F0FF]">
                   出題元 <span className="ml-1 text-xs font-normal text-[#5C6199]">출제 범위</span>
                 </div>
-                <div className="mt-2 flex gap-2">
+                <div className="flex flex-wrap gap-2 p-3">
                   <Chip
                     type="button"
                     selected={source === "all"}
@@ -319,7 +319,7 @@ export default function QuizPage() {
                   </Chip>
                 </div>
                 {state.status === "guest" && source === "bookmarks" ? (
-                  <div className="mt-3 rounded-xl border border-[rgba(99,102,241,0.3)] bg-[rgba(99,102,241,0.08)] px-3 py-3 text-sm leading-relaxed text-[#BCC0E8]">
+                  <div className="mx-3 mb-3 rounded-xl border border-[rgba(99,102,241,0.3)] bg-[rgba(99,102,241,0.08)] px-3 py-3 text-sm leading-relaxed text-[#BCC0E8]">
                     <p className="font-semibold text-[#818cf8]">会員登録でご利用いただけます</p>
                     <p className="mt-1.5 text-[#BCC0E8]">
                       ブックマークに保存した語彙だけを出題するには、
@@ -341,11 +341,11 @@ export default function QuizPage() {
 
               {/* レベル絞り込み */}
               {source === "all" ? (
-                <div>
-                  <div className="border-b border-[rgba(255,255,255,0.08)] pb-2 text-sm font-semibold text-[#F0F0FF]">
+                <div className="overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)]">
+                  <div className="border-b border-[rgba(255,255,255,0.08)] px-3 py-2 text-sm font-semibold text-[#F0F0FF]">
                     TOPIK レベル <span className="ml-1 text-xs font-normal text-[#5C6199]">토픽 레벨</span>
                   </div>
-                  <div className="mt-2 flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 p-3">
                     {LEVEL_OPTIONS.map((o) => (
                       <Chip
                         key={o.value}
@@ -361,11 +361,11 @@ export default function QuizPage() {
               ) : null}
 
               {/* 問題数 */}
-              <div>
-                <div className="border-b border-[rgba(255,255,255,0.08)] pb-2 text-sm font-semibold text-[#F0F0FF]">
+              <div className="overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)]">
+                <div className="border-b border-[rgba(255,255,255,0.08)] px-3 py-2 text-sm font-semibold text-[#F0F0FF]">
                   問題数 <span className="ml-1 text-xs font-normal text-[#5C6199]">문제 수</span>
                 </div>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 p-3">
                   {COUNT_OPTIONS.map((o) => (
                     <Chip
                       key={o.value}
