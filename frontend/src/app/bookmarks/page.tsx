@@ -62,42 +62,42 @@ export default function BookmarksPage() {
 
   if (state.status === "loading") {
     return (
-      <div className="flex flex-1 items-center justify-center bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-10 text-white">
-        <div className="text-sm text-white/80">読み込み中...</div>
+      <div className="flex flex-1 items-center justify-center bg-[#08091A] px-4 py-10 text-[#F0F0FF]">
+        <div className="text-sm text-[#9499C4]">読み込み中...</div>
       </div>
     );
   }
 
   if (state.status === "guest") {
     return (
-      <div className="flex flex-1 items-center justify-center bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-10 text-white">
-        <Card className="w-full max-w-md space-y-4 border-white/10 bg-white/10 text-white backdrop-blur">
+      <div className="flex flex-1 items-center justify-center bg-[#08091A] px-4 py-10 text-[#F0F0FF]">
+        <Card className="w-full max-w-md space-y-4 border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-white drop-shadow-sm">
+            <h1 className="text-2xl font-extrabold tracking-tight text-[#F0F0FF]">
               ブックマークは会員の方のみ
-              <span className="mt-1 block text-base font-semibold text-white/85">
+              <span className="mt-1 block text-base font-semibold text-[#9499C4]">
                 북마크는 회원 전용이에요
               </span>
             </h1>
-            <p className="mt-3 text-sm leading-relaxed text-white/85">
+            <p className="mt-3 text-sm leading-relaxed text-[#BCC0E8]">
               ブックマークに語彙を保存したり、一覧で復習したりするには
-              <strong className="text-white">無料の会員登録（アカウント作成）</strong>
+              <strong className="text-[#F0F0FF]">無料の会員登録（アカウント作成）</strong>
               が必要です。登録後はいつでもログインしてご利用いただけます。
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-white/80">
+            <p className="mt-2 text-sm leading-relaxed text-[#9499C4]">
               まずはアカウントを作成して、自分だけの単語リストを作ってみましょう。
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
             <Link
               href="/register"
-              className="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2.5 text-center text-sm font-semibold text-zinc-900 hover:bg-white/90"
+              className="inline-flex items-center justify-center rounded-xl bg-[linear-gradient(135deg,#6366f1,#3b82f6)] px-4 py-2.5 text-center text-sm font-semibold text-white shadow-[0_4px_16px_rgba(99,102,241,0.3)] hover:opacity-90"
             >
               無料で会員登録
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center justify-center rounded-lg border border-white/40 bg-white/10 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-white/15"
+              className="inline-flex items-center justify-center rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-center text-sm font-semibold text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]"
             >
               ログイン
             </Link>
@@ -108,31 +108,36 @@ export default function BookmarksPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
-      <div className="mx-auto w-full max-w-5xl space-y-6">
+    <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+      <div
+        aria-hidden
+        className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.10)]"
+        style={{ width: 500, height: 350, top: -80, left: "50%", transform: "translateX(-50%)" }}
+      />
+      <div className="relative mx-auto w-full max-w-5xl space-y-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-sm sm:text-4xl">
-            ブックマーク
-            <span className="ml-2 align-baseline text-lg font-semibold text-white/85">
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            <span className="bg-[linear-gradient(135deg,#6366f1,#3b82f6)] bg-clip-text text-transparent">ブックマーク</span>
+            <span className="ml-2 align-baseline text-lg font-semibold text-[#9499C4]">
               북마크
             </span>
           </h1>
-          <p className="text-sm text-white/80">保存した語彙を確認できます。</p>
+          <p className="text-sm text-[#BCC0E8]">保存した語彙を確認できます。</p>
         </div>
 
         <Section
           title="保存済み語彙"
           subtitle="저장된 단어"
           description={loading ? "読み込み中..." : `件数: ${items?.length ?? 0}`}
-          right={error ? <div className="text-sm font-medium text-red-200">{error}</div> : null}
-          headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
-          titleClassName="text-white drop-shadow-sm"
-          descriptionClassName="text-white/80"
+          right={error ? <div className="text-sm font-medium text-[#fb7185]">{error}</div> : null}
+          headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
+          titleClassName="text-[#F0F0FF]"
+          descriptionClassName="text-[#9499C4]"
         >
           {loading ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Card key={i} className="border-white/10 bg-white/10 p-5 text-white backdrop-blur">
+                <Card key={i} className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] p-5 backdrop-blur-xl">
                   <Skeleton className="h-6 w-2/3" />
                   <Skeleton className="mt-3 h-4 w-5/6" />
                   <div className="mt-4 flex gap-2">
@@ -147,17 +152,17 @@ export default function BookmarksPage() {
           ) : null}
 
           {!loading && items && items.length === 0 ? (
-            <Card className="border-white/10 bg-white/10 text-center text-white backdrop-blur">
-              <div className="text-sm font-semibold text-white">
+            <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-center text-[#F0F0FF] backdrop-blur-xl">
+              <div className="text-sm font-semibold text-[#F0F0FF]">
                 ブックマークがありません
               </div>
-              <div className="mt-1 text-sm text-white/80">
+              <div className="mt-1 text-sm text-[#9499C4]">
                 語彙詳細ページからブックマークに追加できます。
               </div>
               <div className="mt-4">
                 <Link
                   href="/vocabularies"
-                  className="inline-flex items-center gap-1 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white ring-1 ring-white/25 hover:bg-white/15"
+                  className="inline-flex items-center gap-1 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-2 text-sm font-medium text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]"
                 >
                   語彙一覧へ
                 </Link>

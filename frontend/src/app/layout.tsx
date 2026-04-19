@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Noto_Sans_JP, Noto_Sans_KR } from "next/font/google";
+import { JetBrains_Mono, Noto_Sans_JP, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { AppHeader } from "@/components/nav/AppHeader";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 const notoSansJp = Noto_Sans_JP({
@@ -18,7 +19,7 @@ const notoSansJp = Noto_Sans_JP({
 const notoSansKr = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -38,7 +39,7 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${notoSansJp.variable} ${notoSansKr.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${notoSansJp.variable} ${notoSansKr.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <AuthProvider>

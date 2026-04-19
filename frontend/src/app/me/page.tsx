@@ -57,18 +57,18 @@ export default function MePage() {
 
   if (state.status === "guest") {
     return (
-      <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
+      <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
         <div className="mx-auto w-full max-w-2xl">
-          <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
-            <h1 className="text-2xl font-extrabold tracking-tight text-white drop-shadow-sm">
+          <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+            <h1 className="text-2xl font-extrabold tracking-tight text-[#F0F0FF]">
               未ログイン
-              <span className="ml-2 align-baseline text-base font-semibold text-white/85">
+              <span className="ml-2 align-baseline text-base font-semibold text-[#9499C4]">
                 로그인 필요
               </span>
             </h1>
-            <p className="mt-2 text-sm text-white/80">
+            <p className="mt-2 text-sm text-[#BCC0E8]">
               続けるには{" "}
-              <Link className="font-semibold underline" href="/login">
+              <Link className="font-semibold text-[#818cf8] underline underline-offset-2 hover:text-[#60a5fa]" href="/login">
                 ログイン
               </Link>
               してください。
@@ -81,8 +81,8 @@ export default function MePage() {
 
   if (state.status === "loading") {
     return (
-      <div className="flex flex-1 items-center justify-center bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-10 text-white">
-        <div className="text-sm text-white/80">読み込み中...</div>
+      <div className="flex flex-1 items-center justify-center bg-[#08091A] px-4 py-10 text-[#F0F0FF]">
+        <div className="text-sm text-[#9499C4]">読み込み中...</div>
       </div>
     );
   }
@@ -140,54 +140,72 @@ export default function MePage() {
     }
   };
 
+  // Derive initials/avatar character
+  const avatarChar = (state.user.nickname ?? state.user.name)?.[0] ?? "U";
+
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
-      <div className="mx-auto w-full max-w-2xl space-y-6">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-sm sm:text-4xl">
-            プロフィール
-            <span className="ml-2 align-baseline text-lg font-semibold text-white/85">프로필</span>
-          </h1>
-          <p className="text-sm text-white/80">アカウント情報の確認・編集ができます。</p>
+    <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+      <div
+        aria-hidden
+        className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.12)]"
+        style={{ width: 400, height: 300, top: -60, left: "50%", transform: "translateX(-50%)" }}
+      />
+      <div className="relative mx-auto w-full max-w-2xl space-y-6">
+        {/* Profile avatar */}
+        <div className="flex flex-col items-center gap-3 pb-2">
+          <div
+            className="flex h-20 w-20 items-center justify-center rounded-full text-3xl font-bold text-white shadow-[0_0_32px_rgba(99,102,241,0.4)]"
+            style={{ background: "linear-gradient(135deg,#6366f1,#3b82f6)" }}
+          >
+            {avatarChar}
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-[#F0F0FF]">
+              {state.user.nickname ?? state.user.name}
+            </div>
+            <div className="text-sm text-[#9499C4]">{state.user.email}</div>
+          </div>
+          <div>
+            <h1 className="sr-only">プロフィール</h1>
+          </div>
         </div>
 
         {!editing ? (
           <Section
             title="アカウント情報"
             subtitle="계정 정보"
-            headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
-            titleClassName="text-white drop-shadow-sm"
-            descriptionClassName="text-white/80"
+            headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
+            titleClassName="text-[#F0F0FF]"
             right={
-              <Button variant="secondary" type="button" onClick={handleEdit}>
+              <Button variant="ghost" type="button" onClick={handleEdit}>
                 編集
               </Button>
             }
           >
-            <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
+            <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
               <dl className="grid grid-cols-3 gap-3 text-sm">
-                <dt className="text-white/70">ID</dt>
-                <dd className="col-span-2 break-all text-white">{state.user.id}</dd>
-                <dt className="text-white/70">名前</dt>
-                <dd className="col-span-2 text-white">{state.user.name}</dd>
-                <dt className="text-white/70">ニックネーム</dt>
-                <dd className="col-span-2 text-white">
+                <dt className="text-[#9499C4]">ID</dt>
+                <dd className="col-span-2 break-all font-mono text-[#BCC0E8] text-xs">{state.user.id}</dd>
+                <dt className="text-[#9499C4]">名前</dt>
+                <dd className="col-span-2 text-[#F0F0FF]">{state.user.name}</dd>
+                <dt className="text-[#9499C4]">ニックネーム</dt>
+                <dd className="col-span-2 text-[#F0F0FF]">
                   {state.user.nickname ? (
                     state.user.nickname
                   ) : (
-                    <span className="text-white/50">未設定</span>
+                    <span className="text-[#5C6199]">未設定</span>
                   )}
                 </dd>
-                <dt className="text-white/70">メール</dt>
-                <dd className="col-span-2 text-white">{state.user.email}</dd>
+                <dt className="text-[#9499C4]">メール</dt>
+                <dd className="col-span-2 text-[#F0F0FF]">{state.user.email}</dd>
               </dl>
 
               {successMessage && (
-                <p className="mt-4 text-sm font-medium text-green-300">{successMessage}</p>
+                <p className="mt-4 text-sm font-medium text-[#34d399]">{successMessage}</p>
               )}
 
               <div className="mt-4 flex justify-end">
-                <Button type="button" onClick={() => logout()}>
+                <Button variant="danger" type="button" onClick={() => logout()}>
                   ログアウト
                 </Button>
               </div>
@@ -197,10 +215,10 @@ export default function MePage() {
           <Section
             title="プロフィール編集"
             subtitle="프로필 수정"
-            headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
-            titleClassName="text-white drop-shadow-sm"
+            headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
+            titleClassName="text-[#F0F0FF]"
           >
-            <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
+            <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <Input
                   label="名前"
@@ -230,8 +248,8 @@ export default function MePage() {
                   error={fieldErrors["email"]}
                 />
 
-                <div className="border-t border-white/10 pt-4">
-                  <p className="mb-3 text-xs text-white/60">
+                <div className="border-t border-[rgba(255,255,255,0.06)] pt-4">
+                  <p className="mb-3 text-xs text-[#5C6199]">
                     パスワードを変更する場合のみ入力してください
                   </p>
                   <div className="flex flex-col gap-4">
@@ -268,13 +286,13 @@ export default function MePage() {
                   </div>
                 </div>
 
-                {error && <p className="text-sm text-red-300">{error}</p>}
+                {error && <p className="text-sm text-[#fb7185]">{error}</p>}
 
                 <div className="flex gap-3">
                   <Button type="submit" disabled={submitting}>
                     {submitting ? "保存中..." : "保存"}
                   </Button>
-                  <Button variant="secondary" type="button" onClick={handleCancel}>
+                  <Button variant="ghost" type="button" onClick={handleCancel}>
                     キャンセル
                   </Button>
                 </div>

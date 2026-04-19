@@ -64,9 +64,9 @@ export default function VocabulariesPage() {
         <div
           role="status"
           aria-live="polite"
-          className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10"
+          className="flex flex-1 items-center justify-center bg-[#08091A] px-4 py-10"
         >
-          <div className="text-sm text-zinc-600">読み込み中...</div>
+          <div className="text-sm text-[#9499C4]">読み込み中...</div>
         </div>
       }
     >
@@ -170,21 +170,26 @@ function VocabulariesPageInner() {
 
   if (state.status === "loading") {
     return (
-      <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10">
-        <div className="text-sm text-zinc-600">読み込み中...</div>
+      <div className="flex flex-1 items-center justify-center bg-[#08091A] px-4 py-10">
+        <div className="text-sm text-[#9499C4]">読み込み中...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
-      <div className="mx-auto w-full max-w-5xl space-y-6">
+    <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+      <div
+        aria-hidden
+        className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.10)]"
+        style={{ width: 600, height: 400, top: -100, left: "50%", transform: "translateX(-50%)" }}
+      />
+      <div className="relative mx-auto w-full max-w-5xl space-y-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-sm sm:text-4xl">
-            語彙
-            <span className="ml-2 align-baseline text-lg font-semibold text-white/85">단어</span>
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            <span className="bg-[linear-gradient(135deg,#6366f1,#3b82f6)] bg-clip-text text-transparent">語彙</span>
+            <span className="ml-2 align-baseline text-lg font-semibold text-[#9499C4]">단어</span>
           </h1>
-          <p className="text-sm text-white/80">
+          <p className="text-sm text-[#BCC0E8]">
             目的の語を、レベルや品詞からさっと探して意味や例文を確認できます。
           </p>
         </div>
@@ -193,12 +198,12 @@ function VocabulariesPageInner() {
           title="絞り込み"
           subtitle="필터"
           description="タップで絞り込み。もう一度タップで解除できます。"
-          headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
-          titleClassName="text-white drop-shadow-sm"
-          descriptionClassName="text-white/80"
+          headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
+          titleClassName="text-[#F0F0FF]"
+          descriptionClassName="text-[#9499C4]"
           right={
             <Button
-              variant="secondary"
+              variant="ghost"
               type="button"
               onClick={() => {
                 setQInput("");
@@ -209,7 +214,7 @@ function VocabulariesPageInner() {
             </Button>
           }
         >
-          <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
+          <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
             <div className="space-y-4">
               <div>
                 <Input
@@ -224,8 +229,8 @@ function VocabulariesPageInner() {
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-white">
-                  TOPIK <span className="ml-1 font-semibold text-white/80">토픽</span>
+                <div className="text-sm font-semibold text-[#F0F0FF]">
+                  TOPIK <span className="ml-1 font-semibold text-[#9499C4]">토픽</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {LEVEL_OPTIONS.map((o) => (
@@ -244,8 +249,8 @@ function VocabulariesPageInner() {
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-white">
-                  種別 <span className="ml-1 font-semibold text-white/80">유형</span>
+                <div className="text-sm font-semibold text-[#F0F0FF]">
+                  種別 <span className="ml-1 font-semibold text-[#9499C4]">유형</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {ENTRY_TYPE_OPTIONS.map((o) => (
@@ -266,8 +271,8 @@ function VocabulariesPageInner() {
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-white">
-                  品詞 <span className="ml-1 font-semibold text-white/80">품사</span>
+                <div className="text-sm font-semibold text-[#F0F0FF]">
+                  品詞 <span className="ml-1 font-semibold text-[#9499C4]">품사</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {POS_OPTIONS.map((o) => (
@@ -292,15 +297,15 @@ function VocabulariesPageInner() {
           title="語彙一覧"
           subtitle="단어 목록"
           description={loading ? "読み込み中..." : `件数: ${items?.length ?? 0}`}
-          right={error ? <div className="text-sm font-medium text-red-200">{error}</div> : null}
-          headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
-          titleClassName="text-white drop-shadow-sm"
-          descriptionClassName="text-white/80"
+          right={error ? <div className="text-sm font-medium text-[#fb7185]">{error}</div> : null}
+          headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
+          titleClassName="text-[#F0F0FF]"
+          descriptionClassName="text-[#9499C4]"
         >
           {loading ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 9 }).map((_, i) => (
-                <Card key={i} className="border-white/10 bg-white/10 p-5 text-white backdrop-blur">
+                <Card key={i} className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] p-5 backdrop-blur-xl">
                   <Skeleton className="h-6 w-2/3" />
                   <Skeleton className="mt-3 h-4 w-5/6" />
                   <div className="mt-4 flex gap-2">
@@ -315,9 +320,9 @@ function VocabulariesPageInner() {
           ) : null}
 
           {!loading && items && items.length === 0 ? (
-            <Card className="border-white/10 bg-white/10 text-center text-white backdrop-blur">
-              <div className="text-sm font-semibold text-white">該当する語彙がありません</div>
-              <div className="mt-1 text-sm text-white/80">絞り込みをリセットしてみてください。</div>
+            <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-center text-[#F0F0FF] backdrop-blur-xl">
+              <div className="text-sm font-semibold text-[#F0F0FF]">該当する語彙がありません</div>
+              <div className="mt-1 text-sm text-[#9499C4]">絞り込みをリセットしてみてください。</div>
             </Card>
           ) : null}
         </Section>

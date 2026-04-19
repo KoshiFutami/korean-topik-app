@@ -28,8 +28,8 @@ function NavLink({
   const cls =
     tone === "dark"
       ? isActive
-        ? `${base} bg-white text-zinc-900`
-        : `${base} text-white/90 hover:bg-white/10`
+        ? `${base} bg-white/10 text-[#818cf8] border border-[rgba(99,102,241,0.3)]`
+        : `${base} text-[#BCC0E8] hover:bg-white/8 hover:text-[#F0F0FF]`
       : isActive
         ? `${base} bg-zinc-900 text-white`
         : `${base} text-zinc-700 hover:bg-zinc-100`;
@@ -63,8 +63,8 @@ function MobileNavLink({
   const cls =
     tone === "dark"
       ? isActive
-        ? `${base} bg-white text-zinc-900`
-        : `${base} text-white/90 hover:bg-white/10`
+        ? `${base} bg-[rgba(99,102,241,0.15)] text-[#818cf8]`
+        : `${base} text-[#9499C4] hover:bg-white/8 hover:text-[#BCC0E8]`
       : isActive
         ? `${base} bg-zinc-900 text-white`
         : `${base} text-zinc-700 hover:bg-zinc-100`;
@@ -102,9 +102,9 @@ export function AppHeader() {
         isLearnerGlass
           ? [
               "sticky top-0 z-20",
-              "border-b border-white/10",
-              "bg-gradient-to-r from-sky-700/70 via-teal-600/60 to-cyan-700/70",
-              "backdrop-blur",
+              "border-b border-white/[0.06]",
+              "bg-[rgba(8,9,26,0.85)]",
+              "backdrop-blur-xl",
             ].join(" ")
           : "border-b border-zinc-200 bg-white"
       }
@@ -115,11 +115,11 @@ export function AppHeader() {
             href="/"
             className={
               isLearnerGlass
-                ? "text-sm font-semibold text-white drop-shadow-sm"
+                ? "text-sm font-bold bg-[linear-gradient(135deg,#6366f1,#3b82f6)] bg-clip-text text-transparent"
                 : "text-sm font-semibold text-zinc-900"
             }
           >
-            Korean TOPIK App
+            Korean TOPIK
           </Link>
           <nav className="hidden items-center gap-1 sm:flex">
             <NavLink href="/vocabularies" label="語彙" tone={tone} />
@@ -136,13 +136,13 @@ export function AppHeader() {
               <div
                 className={
                   isLearnerGlass
-                    ? "hidden text-sm text-white/80 sm:block"
+                    ? "hidden text-sm text-[#9499C4] sm:block"
                     : "hidden text-sm text-zinc-600 sm:block"
                 }
               >
                 {state.user.nickname ?? state.user.name}
               </div>
-              <Button variant="secondary" type="button" onClick={() => logout()}>
+              <Button variant={isLearnerGlass ? "ghost" : "secondary"} type="button" onClick={() => logout()}>
                 ログアウト
               </Button>
             </>
@@ -151,7 +151,7 @@ export function AppHeader() {
               <Link
                 className={
                   isLearnerGlass
-                    ? "rounded-md px-3 py-2 text-sm font-medium text-white/90 hover:bg-white/10"
+                    ? "rounded-md px-3 py-2 text-sm font-medium text-[#BCC0E8] hover:bg-white/8 hover:text-[#F0F0FF]"
                     : "rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
                 }
                 href="/login"
@@ -161,7 +161,7 @@ export function AppHeader() {
               <Link
                 className={
                   isLearnerGlass
-                    ? "rounded-md bg-white px-3 py-2 text-sm font-semibold text-zinc-900 hover:bg-white/90"
+                    ? "rounded-md bg-[linear-gradient(135deg,#6366f1,#3b82f6)] px-3 py-2 text-sm font-semibold text-white shadow-[0_4px_16px_rgba(99,102,241,0.3)] hover:opacity-90"
                     : "rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800"
                 }
                 href="/register"
@@ -231,4 +231,3 @@ export function AppHeader() {
     </header>
   );
 }
-
