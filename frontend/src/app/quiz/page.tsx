@@ -261,16 +261,6 @@ export default function QuizPage() {
           style={{ width: 500, height: 300, top: -50, left: "50%", transform: "translateX(-50%)" }}
         />
         <div className="relative mx-auto w-full max-w-lg space-y-6">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-              フラッシュカード
-              <span className="ml-2 align-baseline text-lg font-semibold text-[#9499C4]">플래시카드</span>
-            </h1>
-            <p className="mt-1 text-sm text-[#9499C4]">
-              ランダム出題。答えを見てから「わからない」「わかった」で次へ進みます。
-            </p>
-          </div>
-
           <Section
             title="設定"
             subtitle="설정"

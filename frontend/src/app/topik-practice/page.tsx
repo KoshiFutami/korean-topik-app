@@ -179,16 +179,6 @@ export default function TopikPracticePage() {
           style={{ width: 500, height: 300, top: -60, left: "50%", transform: "translateX(-50%)" }}
         />
         <div className="relative mx-auto w-full max-w-lg space-y-6">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-              TOPIK 問題練習
-              <span className="ml-2 align-baseline text-lg font-semibold text-[#9499C4]">문제 연습</span>
-            </h1>
-            <p className="mt-1 text-sm text-[#9499C4]">
-              文法の空欄補充問題（TOPIK 1 の31〜37番形式）。選択肢から正解を選んでください。
-            </p>
-          </div>
-
           <Section
             title="設定"
             subtitle="설정"
