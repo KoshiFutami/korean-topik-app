@@ -115,16 +115,6 @@ export default function BookmarksPage() {
         style={{ width: 500, height: 350, top: -80, left: "50%", transform: "translateX(-50%)" }}
       />
       <div className="relative mx-auto w-full max-w-5xl space-y-6">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-            <span className="bg-[linear-gradient(135deg,#6366f1,#3b82f6)] bg-clip-text text-transparent">ブックマーク</span>
-            <span className="ml-2 align-baseline text-lg font-semibold text-[#9499C4]">
-              북마크
-            </span>
-          </h1>
-          <p className="text-sm text-[#BCC0E8]">保存した語彙を確認できます。</p>
-        </div>
-
         <Section
           title="保存済み語彙"
           subtitle="저장된 단어"
