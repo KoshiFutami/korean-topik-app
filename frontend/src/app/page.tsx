@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 
+import { GuestOnlyLoginPromo } from "@/components/home/GuestOnlyLoginPromo";
+
 import { listPublishedPlannedFeatures, type PlannedFeature } from "@/lib/api/planned-features";
 
 export const metadata: Metadata = {
@@ -204,16 +206,7 @@ export default async function Home() {
           </Link>
         </div>
 
-        <p className="mt-8 text-center text-sm text-[#5C6199]">
-          はじめての方は{" "}
-          <Link href="/register" className="font-semibold text-[#818cf8] underline decoration-[rgba(129,140,248,0.6)] underline-offset-2 hover:text-[#60a5fa]">
-            無料の会員登録
-          </Link>
-          {" · "}
-          <Link href="/login" className="font-semibold text-[#BCC0E8] underline decoration-[rgba(188,192,232,0.4)] underline-offset-2 hover:text-[#F0F0FF]">
-            ログイン
-          </Link>
-        </p>
+        <GuestOnlyLoginPromo />
       </div>
     </div>
   );
