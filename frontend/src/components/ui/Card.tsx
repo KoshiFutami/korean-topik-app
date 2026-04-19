@@ -13,7 +13,7 @@ export function Card({
 }) {
   const base = hasBackgroundUtility(className)
     ? "rounded-xl border p-6 shadow-sm"
-    : "rounded-xl border border-zinc-200 bg-white p-6 shadow-sm";
+    : "rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] p-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]";
 
   return (
     <div className={`${base} ${className}`}>
@@ -21,4 +21,3 @@ export function Card({
     </div>
   );
 }
-

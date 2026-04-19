@@ -151,20 +151,25 @@ export default function VocabularyDetailPage() {
 
   if (state.status === "loading") {
     return (
-      <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-10">
-        <div className="text-sm text-zinc-600">読み込み中...</div>
+      <div className="flex flex-1 items-center justify-center bg-[#08091A] px-4 py-10">
+        <div className="text-sm text-[#9499C4]">読み込み中...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
-      <div className="mx-auto w-full max-w-3xl space-y-6">
+    <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+      <div
+        aria-hidden
+        className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.10)]"
+        style={{ width: 500, height: 350, top: -80, left: "50%", transform: "translateX(-50%)" }}
+      />
+      <div className="relative mx-auto w-full max-w-3xl space-y-6">
         <div className="flex items-center justify-between">
           <button
             type="button"
             onClick={() => router.back()}
-            className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            className="inline-flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-3 py-1.5 text-sm font-medium text-[#BCC0E8] backdrop-blur-xl hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#08091A]"
           >
             <span aria-hidden="true">←</span>
             一覧に戻る
@@ -175,11 +180,9 @@ export default function VocabularyDetailPage() {
               disabled
               aria-disabled="true"
               title="会員登録が必要です"
-              className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white/60 ring-1 ring-white/20"
+              className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] px-3 py-1.5 text-sm font-medium text-[#5C6199]"
             >
-              <span aria-hidden="true" className="text-base leading-none">
-                🏷️
-              </span>
+              <span aria-hidden="true" className="text-base leading-none">🏷️</span>
               ブックマーク
             </button>
           ) : state.status === "authed" && bookmarked !== null ? (
@@ -188,10 +191,10 @@ export default function VocabularyDetailPage() {
               disabled={bookmarkBusy || loading}
               onClick={handleBookmarkToggle}
               className={[
-                "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1 transition-colors",
+                "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium border transition-colors",
                 bookmarked
-                  ? "bg-white/20 text-white ring-white/30 hover:bg-white/30"
-                  : "bg-white/10 text-white/80 ring-white/25 hover:bg-white/15",
+                  ? "bg-[rgba(99,102,241,0.15)] text-[#818cf8] border-[rgba(99,102,241,0.3)] hover:bg-[rgba(99,102,241,0.2)]"
+                  : "bg-[rgba(255,255,255,0.05)] text-[#BCC0E8] border-[rgba(255,255,255,0.08)] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]",
                 bookmarkBusy ? "opacity-60" : "",
               ].join(" ")}
             >
@@ -237,19 +240,22 @@ export default function VocabularyDetailPage() {
         ) : null}
 
         {state.status === "guest" ? (
-          <Card className="border-amber-300/30 bg-amber-500/15 text-white ring-1 ring-amber-200/25 backdrop-blur">
-            <p className="text-sm font-semibold text-amber-50">ブックマークは会員の方のみご利用いただけます</p>
-            <p className="mt-2 text-sm leading-relaxed text-white/85">
+          <Card className="border-[rgba(99,102,241,0.25)] bg-[rgba(99,102,241,0.08)] text-[#F0F0FF] backdrop-blur-xl">
+            <p className="text-sm font-semibold text-[#818cf8]">ブックマークは会員の方のみご利用いただけます</p>
+            <p className="mt-2 text-sm leading-relaxed text-[#BCC0E8]">
               語彙をブックマークに保存するには、
-              <strong className="text-white">無料の会員登録</strong>
+              <strong className="text-[#F0F0FF]">無料の会員登録</strong>
               が必要です。アカウントをお持ちの方はログインしてください。
             </p>
             <p className="mt-3 flex flex-wrap gap-x-3 gap-y-2 text-sm font-semibold">
-              <Link className="rounded-md bg-white px-3 py-1.5 text-zinc-900 hover:bg-white/90" href="/register">
+              <Link
+                className="rounded-xl bg-[linear-gradient(135deg,#6366f1,#3b82f6)] px-3 py-1.5 text-white hover:opacity-90"
+                href="/register"
+              >
                 無料で会員登録
               </Link>
               <Link
-                className="rounded-md border border-white/40 px-3 py-1.5 text-white hover:bg-white/10"
+                className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-3 py-1.5 text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]"
                 href="/login"
               >
                 ログイン
@@ -258,7 +264,7 @@ export default function VocabularyDetailPage() {
           </Card>
         ) : null}
 
-        <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
+        <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
@@ -269,14 +275,14 @@ export default function VocabularyDetailPage() {
                   </>
                 ) : (
                   <>
-                    <h1 className="truncate text-4xl font-extrabold tracking-tight text-white drop-shadow-sm sm:text-5xl">
+                    <h1 className="truncate text-4xl font-extrabold tracking-tight text-[#F0F0FF] sm:text-5xl">
                       {item?.term ?? "語彙"}
                     </h1>
-                    <p className="mt-2 text-lg font-semibold text-white/90">{item?.meaning_ja ?? ""}</p>
+                    <p className="mt-2 text-lg font-semibold text-[#BCC0E8]">{item?.meaning_ja ?? ""}</p>
                   </>
                 )}
               </div>
-              <div className="flex shrink-0 flex-col items-end gap-2 text-right text-xs text-white/80">
+              <div className="flex shrink-0 flex-col items-end gap-2 text-right text-xs text-[#9499C4]">
                 <div>
                   <div className="font-semibold">{item?.level_label_ja ?? ""}</div>
                   <div className="mt-1">{item?.pos_label_ja ?? ""}</div>
@@ -314,18 +320,18 @@ export default function VocabularyDetailPage() {
               ) : null}
             </div>
 
-            {error ? <div className="text-sm font-medium text-red-200">{error}</div> : null}
+            {error ? <div className="text-sm font-medium text-[#fb7185]">{error}</div> : null}
           </div>
         </Card>
 
         <Section
           title="例文"
           subtitle="예문"
-          headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
-          titleClassName="text-white drop-shadow-sm"
-          descriptionClassName="text-white/80"
+          headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
+          titleClassName="text-[#F0F0FF]"
+          descriptionClassName="text-[#9499C4]"
         >
-          <Card className="border-white/10 bg-white/10 text-white backdrop-blur">
+          <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
             <div className="grid gap-4 text-base leading-relaxed">
               {item?.example_sentence ? (
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -333,10 +339,10 @@ export default function VocabularyDetailPage() {
                     <div className="shrink-0 self-start text-lg leading-none" aria-hidden="true">
                       🇰🇷
                     </div>
-                    <div className="min-w-0 text-white/90">
+                    <div className="min-w-0 text-[#BCC0E8]">
                       <HighlightedExampleText
                         text={item.example_sentence}
-                        markClassName="font-semibold text-white underline decoration-amber-200/90 decoration-2 underline-offset-[0.22em]"
+                        markClassName="font-semibold text-[#818cf8] underline decoration-[rgba(99,102,241,0.5)] decoration-2 underline-offset-[0.22em]"
                       />
                     </div>
                   </div>
@@ -349,7 +355,7 @@ export default function VocabularyDetailPage() {
                   ) : null}
                 </div>
               ) : (
-                <div className="text-base text-white/70">例文は未登録です。</div>
+                <div className="text-base text-[#5C6199]">例文は未登録です。</div>
               )}
 
               {item?.example_translation_ja ? (
@@ -357,10 +363,10 @@ export default function VocabularyDetailPage() {
                   <div className="shrink-0 self-start text-lg leading-none" aria-hidden="true">
                     🇯🇵
                   </div>
-                  <div className="text-white/80">
+                  <div className="text-[#9499C4]">
                     <HighlightedExampleText
                       text={item.example_translation_ja}
-                      markClassName="font-semibold text-white/95 underline decoration-teal-200/85 decoration-2 underline-offset-[0.22em]"
+                      markClassName="font-semibold text-[#BCC0E8] underline decoration-[rgba(99,102,241,0.4)] decoration-2 underline-offset-[0.22em]"
                     />
                   </div>
                 </div>
@@ -372,4 +378,3 @@ export default function VocabularyDetailPage() {
     </div>
   );
 }
-

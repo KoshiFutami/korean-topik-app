@@ -1,27 +1,85 @@
 @import "tailwindcss";
 
+/* ── TOPIK Design System — Color & Typography Tokens ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* App background — deep navy */
+  --background: #08091A;
+  --foreground: #F0F0FF;
+
+  /* Base palette */
+  --color-base-900: #08091A;
+  --color-base-800: #0D0F26;
+  --color-base-700: #131530;
+  --color-base-600: #1A1D3D;
+  --color-base-500: #22264A;
+
+  /* Brand — Indigo × Blue */
+  --color-indigo: #6366f1;
+  --color-indigo-light: #818cf8;
+  --color-blue: #3b82f6;
+  --color-blue-light: #60a5fa;
+  --brand-gradient: linear-gradient(135deg, #6366f1, #3b82f6);
+
+  /* Glass surfaces */
+  --glass-1: rgba(255, 255, 255, 0.03);
+  --glass-2: rgba(255, 255, 255, 0.05);
+  --glass-3: rgba(255, 255, 255, 0.08);
+  --glass-4: rgba(255, 255, 255, 0.12);
+  --glass-5: rgba(255, 255, 255, 0.16);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-strong: rgba(255, 255, 255, 0.15);
+
+  /* Foreground hierarchy */
+  --fg-1: #F0F0FF;
+  --fg-2: #BCC0E8;
+  --fg-3: #9499C4;
+  --fg-4: #5C6199;
+
+  /* Status */
+  --color-success: #10b981;
+  --color-success-light: #34d399;
+  --color-error: #f43f5e;
+  --color-error-light: #fb7185;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fbbf24;
+
+  /* Shadows */
+  --shadow-glow-indigo: 0 0 24px rgba(99, 102, 241, 0.35);
+  --shadow-glow-blue: 0 0 24px rgba(59, 130, 246, 0.35);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-noto-sans-jp);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-noto-sans-kr), var(--font-noto-sans-jp);
+  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Brand utilities */
+  --color-topik-indigo: #6366f1;
+  --color-topik-indigo-light: #818cf8;
+  --color-topik-blue: #3b82f6;
+  --color-topik-blue-light: #60a5fa;
+  --color-topik-success: #10b981;
+  --color-topik-success-light: #34d399;
+  --color-topik-error: #f43f5e;
+  --color-topik-error-light: #fb7185;
+  --color-topik-warning: #f59e0b;
+
+  /* Foreground utilities */
+  --color-topik-fg1: #F0F0FF;
+  --color-topik-fg2: #BCC0E8;
+  --color-topik-fg3: #9499C4;
+  --color-topik-fg4: #5C6199;
+
+  /* Surface utilities */
+  --color-topik-surface: #0D0F26;
+  --color-topik-elevated: #131530;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), var(--font-noto-sans-kr), system-ui, -apple-system, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
+

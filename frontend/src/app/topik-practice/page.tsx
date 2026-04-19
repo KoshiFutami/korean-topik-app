@@ -38,7 +38,6 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-/** 問題文内の「( )」を強調スパンに変換する（文法問題用） */
 function renderGrammarQuestionText(text: string) {
   const parts = text.split("( )");
   return (
@@ -47,7 +46,7 @@ function renderGrammarQuestionText(text: string) {
         <span key={i}>
           {part}
           {i < parts.length - 1 && (
-            <span className="mx-0.5 inline-block min-w-[3rem] rounded border border-white/50 bg-white/20 px-3 py-0.5 text-center font-bold tracking-wider text-amber-200">
+            <span className="mx-0.5 inline-block min-w-[3rem] rounded border border-[rgba(99,102,241,0.4)] bg-[rgba(99,102,241,0.12)] px-3 py-0.5 text-center font-bold tracking-wider text-[#818cf8]">
               （　　）
             </span>
           )}
@@ -57,12 +56,10 @@ function renderGrammarQuestionText(text: string) {
   );
 }
 
-/** ブラウザが Web Speech API をサポートしているか確認する */
 function isSpeechSupported(): boolean {
   return typeof window !== "undefined" && typeof window.SpeechSynthesisUtterance !== "undefined";
 }
 
-/** 韓国語テキストを音声で読み上げる（Web Speech API 使用） */
 function speakKorean(text: string) {
   if (!isSpeechSupported()) return;
   window.speechSynthesis.cancel();
@@ -72,7 +69,6 @@ function speakKorean(text: string) {
   window.speechSynthesis.speak(utter);
 }
 
-/** 音声再生用のアイコン */
 function PlayGlyph({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -81,7 +77,6 @@ function PlayGlyph({ className }: { className?: string }) {
   );
 }
 
-/** 回答済みの場合は正解を含む読み上げテキストを、未回答の場合は問題文のみを返す */
 function buildSpeakText(q: TopikQuestion, answered: boolean): string {
   if (!answered) return q.question_text;
   const correctOpt = q.options.find((o) => o.option_number === q.correct_option_number);
@@ -93,14 +88,12 @@ function buildSpeakText(q: TopikQuestion, answered: boolean): string {
 }
 
 export default function TopikPracticePage() {
-  // ── setup state ──────────────────────────────────────────
   const [levelFilter, setLevelFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [count, setCount] = useState(10);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // ── quiz state ───────────────────────────────────────────
   const [phase, setPhase] = useState<Phase>("setup");
   const [questions, setQuestions] = useState<TopikQuestion[]>([]);
   const [index, setIndex] = useState(0);
@@ -179,14 +172,19 @@ export default function TopikPracticePage() {
   // ════════════════════════════════════════
   if (phase === "setup") {
     return (
-      <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-violet-700 via-purple-600 to-indigo-700 px-4 py-8 text-white">
-        <div className="mx-auto w-full max-w-lg space-y-6">
+      <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+        <div
+          aria-hidden
+          className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.12)]"
+          style={{ width: 500, height: 300, top: -60, left: "50%", transform: "translateX(-50%)" }}
+        />
+        <div className="relative mx-auto w-full max-w-lg space-y-6">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight drop-shadow-sm sm:text-4xl">
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
               TOPIK 問題練習
-              <span className="ml-2 align-baseline text-lg font-semibold text-white/85">문제 연습</span>
+              <span className="ml-2 align-baseline text-lg font-semibold text-[#9499C4]">문제 연습</span>
             </h1>
-            <p className="mt-1 text-sm text-white/80">
+            <p className="mt-1 text-sm text-[#9499C4]">
               文法の空欄補充問題（TOPIK 1 の31〜37番形式）。選択肢から正解を選んでください。
             </p>
           </div>
@@ -194,14 +192,14 @@ export default function TopikPracticePage() {
           <Section
             title="設定"
             subtitle="설정"
-            headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
-            titleClassName="text-white drop-shadow-sm"
+            headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
+            titleClassName="text-[#F0F0FF]"
           >
-            <Card className="space-y-5 border-white/10 bg-white/10 text-white backdrop-blur">
-              {/* 問題タイプ絞り込み */}
+            <Card className="space-y-5 border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+              {/* 問題タイプ */}
               <div>
-                <div className="text-sm font-semibold text-white">
-                  問題タイプ <span className="ml-1 text-white/70">문제 유형</span>
+                <div className="text-sm font-semibold text-[#BCC0E8]">
+                  問題タイプ <span className="ml-1 text-[#5C6199]">문제 유형</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {TYPE_OPTIONS.map((o) => (
@@ -217,10 +215,10 @@ export default function TopikPracticePage() {
                 </div>
               </div>
 
-              {/* レベル絞り込み */}
+              {/* レベル */}
               <div>
-                <div className="text-sm font-semibold text-white">
-                  TOPIK レベル <span className="ml-1 text-white/70">토픽 레벨</span>
+                <div className="text-sm font-semibold text-[#BCC0E8]">
+                  TOPIK レベル <span className="ml-1 text-[#5C6199]">토픽 레벨</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {LEVEL_OPTIONS.map((o) => (
@@ -238,8 +236,8 @@ export default function TopikPracticePage() {
 
               {/* 問題数 */}
               <div>
-                <div className="text-sm font-semibold text-white">
-                  問題数 <span className="ml-1 text-white/70">문제 수</span>
+                <div className="text-sm font-semibold text-[#BCC0E8]">
+                  問題数 <span className="ml-1 text-[#5C6199]">문제 수</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {COUNT_OPTIONS.map((o) => (
@@ -256,7 +254,7 @@ export default function TopikPracticePage() {
               </div>
 
               {loadError ? (
-                <div className="text-sm font-medium text-red-200">{loadError}</div>
+                <div className="text-sm font-medium text-[#fb7185]">{loadError}</div>
               ) : null}
 
               <Button className="w-full" type="button" disabled={loading} onClick={startQuiz}>
@@ -266,7 +264,7 @@ export default function TopikPracticePage() {
           </Section>
 
           <div className="text-center">
-            <Link href="/quiz" className="text-sm text-white/70 underline underline-offset-2 hover:text-white/90">
+            <Link href="/quiz" className="text-sm text-[#5C6199] underline underline-offset-2 hover:text-[#9499C4]">
               ← 語彙フラッシュカードへ
             </Link>
           </div>
@@ -285,70 +283,78 @@ export default function TopikPracticePage() {
     const isCorrect = isAnswered && selectedOption === q.correct_option_number;
 
     return (
-      <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-violet-700 via-purple-600 to-indigo-700 px-4 py-8 text-white">
-        <div className="mx-auto w-full max-w-lg space-y-5">
+      <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+        <div
+          aria-hidden
+          className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.12)]"
+          style={{ width: 400, height: 250, top: -60, left: "40%", transform: "translateX(-50%)" }}
+        />
+        <div className="relative mx-auto w-full max-w-lg space-y-5">
           {/* ヘッダー */}
           <div className="flex items-center justify-between">
             <button
               type="button"
               onClick={() => setPhase("setup")}
-              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium ring-1 ring-white/25 hover:bg-white/15"
+              className="inline-flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-3 py-1.5 text-sm font-medium text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]"
             >
               <span aria-hidden="true">←</span>
               設定に戻る
             </button>
-            <div className="text-sm font-semibold text-white/80">
+            <div className="font-mono text-sm font-semibold text-[#5C6199]">
               {index + 1} / {questions.length}
             </div>
           </div>
 
           {/* プログレスバー */}
-          <div className="h-2 w-full overflow-hidden rounded-full bg-white/20">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-[rgba(255,255,255,0.08)]">
             <div
-              className="h-full rounded-full bg-white/70 transition-all duration-300"
-              style={{ width: `${progress}%` }}
+              className="h-full rounded-full transition-all duration-300"
+              style={{
+                width: `${progress}%`,
+                background: "linear-gradient(90deg, #6366f1, #3b82f6)",
+              }}
             />
           </div>
 
           {/* 問題カード */}
-          <Card className="border-white/20 bg-white/10 backdrop-blur-md">
-            <div className="space-y-4 p-2">
+          <div className="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] p-5 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <div className="text-xs font-semibold text-white/55">
+                <div className="font-mono text-xs text-[#5C6199]">
                   {q.level_label_ja} · {q.question_type_label_ja}
                 </div>
                 <button
                   type="button"
                   onClick={() => speakKorean(buildSpeakText(q, isAnswered))}
                   disabled={!isSpeechSupported()}
-                  className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-white/80 ring-1 ring-white/20 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-1 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-2.5 py-1 text-xs font-medium text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.1)] disabled:cursor-not-allowed disabled:opacity-40"
                   aria-label="韓国語を音声で聞く"
                 >
                   <PlayGlyph className="h-[0.9rem] w-[0.9rem] shrink-0" />
                   <span>音声</span>
                 </button>
               </div>
-              <div className="text-xl font-bold leading-relaxed text-white sm:text-2xl">
+              <div className="text-xl font-bold leading-relaxed text-[#F0F0FF] sm:text-2xl">
                 {q.question_type === "grammar"
                   ? renderGrammarQuestionText(q.question_text)
                   : q.question_text}
               </div>
               {isAnswered && q.question_text_ja ? (
                 <div
-                  className="rounded-lg bg-white/10 px-3 py-2 text-sm text-white/80"
+                  className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-sm text-[#9499C4]"
                   role="note"
                   aria-label="日本語訳"
                 >
                   {q.question_text_ja}
                 </div>
               ) : null}
-              <p className="text-sm text-white/60">
+              <p className="text-sm text-[#5C6199]">
                 {q.question_type === "grammar"
                   ? "（　）に入る最も適切なものを選んでください。"
                   : "무엇에 대한 내용입니까？　何についての内容ですか？"}
               </p>
             </div>
-          </Card>
+          </div>
 
           {/* 選択肢 */}
           <div className="grid grid-cols-2 gap-3">
@@ -356,18 +362,28 @@ export default function TopikPracticePage() {
               const isSelected = selectedOption === opt.option_number;
               const isThisCorrect = opt.option_number === q.correct_option_number;
 
-              let btnClass =
-                "relative w-full rounded-xl border px-4 py-3 text-base font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
+              let bg = "rgba(255,255,255,0.05)";
+              let border = "rgba(255,255,255,0.08)";
+              let color = "#BCC0E8";
 
-              if (!isAnswered) {
-                btnClass +=
-                  " border-white/25 bg-white/10 text-white hover:bg-white/20 hover:border-white/40 ring-1 ring-white/10";
-              } else if (isThisCorrect) {
-                btnClass += " border-emerald-300/60 bg-emerald-500/30 text-emerald-100 ring-1 ring-emerald-300/40";
-              } else if (isSelected && !isThisCorrect) {
-                btnClass += " border-red-300/60 bg-red-500/30 text-red-100 ring-1 ring-red-300/40";
-              } else {
-                btnClass += " border-white/10 bg-white/5 text-white/50";
+              if (isAnswered) {
+                if (isThisCorrect) {
+                  bg = "rgba(16,185,129,0.12)";
+                  border = "rgba(16,185,129,0.35)";
+                  color = "#34d399";
+                } else if (isSelected && !isThisCorrect) {
+                  bg = "rgba(244,63,94,0.1)";
+                  border = "rgba(244,63,94,0.3)";
+                  color = "#fb7185";
+                } else {
+                  bg = "rgba(255,255,255,0.02)";
+                  border = "rgba(255,255,255,0.05)";
+                  color = "#5C6199";
+                }
+              } else if (isSelected) {
+                bg = "rgba(99,102,241,0.12)";
+                border = "rgba(99,102,241,0.4)";
+                color = "#818cf8";
               }
 
               return (
@@ -376,22 +392,19 @@ export default function TopikPracticePage() {
                   type="button"
                   disabled={isAnswered}
                   onClick={() => handleAnswer(opt.option_number)}
-                  className={btnClass}
+                  className="relative w-full rounded-xl border px-4 py-3 text-base font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(99,102,241,0.7)] backdrop-blur-xl"
+                  style={{ background: bg, borderColor: border, color }}
                 >
-                  <span className="mr-1.5 text-xs font-bold opacity-60">{opt.option_number}.</span>
+                  <span className="font-mono mr-1.5 text-xs font-bold opacity-60">{opt.option_number}.</span>
                   {opt.text}
                   {isAnswered && opt.text_ja ? (
                     <span className="ml-1.5 text-xs font-normal opacity-70">（{opt.text_ja}）</span>
                   ) : null}
                   {isAnswered && isThisCorrect && (
-                    <span className="ml-1.5 text-emerald-300" aria-hidden="true">
-                      ✓
-                    </span>
+                    <span className="ml-1.5 text-[#34d399]" aria-hidden="true">✓</span>
                   )}
                   {isAnswered && isSelected && !isThisCorrect && (
-                    <span className="ml-1.5 text-red-300" aria-hidden="true">
-                      ✗
-                    </span>
+                    <span className="ml-1.5 text-[#fb7185]" aria-hidden="true">✗</span>
                   )}
                 </button>
               );
@@ -402,16 +415,18 @@ export default function TopikPracticePage() {
           {isAnswered ? (
             <div
               className={[
-                "rounded-xl border px-4 py-3 text-sm leading-relaxed",
+                "rounded-xl border px-4 py-3 text-sm leading-relaxed backdrop-blur-xl",
                 isCorrect
-                  ? "border-emerald-300/40 bg-emerald-900/40 text-emerald-100"
-                  : "border-red-300/40 bg-red-900/40 text-red-100",
+                  ? "border-[rgba(16,185,129,0.3)] bg-[rgba(16,185,129,0.08)] text-[#34d399]"
+                  : "border-[rgba(244,63,94,0.3)] bg-[rgba(244,63,94,0.08)] text-[#fb7185]",
               ].join(" ")}
             >
               <p className="font-bold">
-                {isCorrect ? "✓ 正解！ 정답!" : `✗ 不正解。正解は「${q.options.find((o) => o.option_number === q.correct_option_number)?.text}」です。`}
+                {isCorrect
+                  ? "✓ 正解！ 정답!"
+                  : `✗ 不正解。正解は「${q.options.find((o) => o.option_number === q.correct_option_number)?.text}」です。`}
               </p>
-              {q.explanation_ja ? <p className="mt-1.5 text-white/80">{q.explanation_ja}</p> : null}
+              {q.explanation_ja ? <p className="mt-1.5 text-[#BCC0E8]">{q.explanation_ja}</p> : null}
             </div>
           ) : null}
 
@@ -433,14 +448,29 @@ export default function TopikPracticePage() {
   const scorePercent = Math.round((correctCount / results.length) * 100);
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-violet-700 via-purple-600 to-indigo-700 px-4 py-8 text-white">
-      <div className="mx-auto w-full max-w-lg space-y-6">
+    <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+      <div
+        aria-hidden
+        className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.12)]"
+        style={{ width: 500, height: 300, top: -80, left: "50%", transform: "translateX(-50%)" }}
+      />
+      <div className="relative mx-auto w-full max-w-lg space-y-6">
         {/* スコア */}
-        <div className="rounded-2xl border border-white/20 bg-white/10 px-6 py-8 text-center backdrop-blur-md ring-1 ring-white/10">
-          <div className="text-lg font-semibold text-white/70">結果 결과</div>
-          <div className="mt-2 text-6xl font-extrabold text-white drop-shadow-md">{scorePercent}%</div>
-          <div className="mt-2 text-base text-white/80">
-            {results.length} 問中 <span className="font-bold text-emerald-300">{correctCount} 問</span> 正解
+        <div
+          className="rounded-2xl border border-[rgba(99,102,241,0.25)] p-8 text-center backdrop-blur-xl shadow-[0_0_24px_rgba(99,102,241,0.15),0_8px_32px_rgba(0,0,0,0.4)]"
+          style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.1), rgba(59,130,246,0.06))" }}
+        >
+          <div className="text-lg font-semibold text-[#9499C4]">結果 결과</div>
+          <div
+            className="mt-2 text-6xl font-extrabold"
+            style={{ background: "linear-gradient(135deg,#6366f1,#3b82f6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}
+          >
+            {scorePercent}%
+          </div>
+          <div className="mt-2 text-base text-[#BCC0E8]">
+            {results.length} 問中{" "}
+            <span className="font-bold text-[#34d399]">{correctCount} 問</span>{" "}
+            正解
           </div>
         </div>
 
@@ -460,8 +490,8 @@ export default function TopikPracticePage() {
         <Section
           title="問題別結果"
           subtitle="문제별 결과"
-          headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
-          titleClassName="text-white drop-shadow-sm"
+          headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
+          titleClassName="text-[#F0F0FF]"
         >
           <div className="space-y-3">
             {results.map((r, i) => {
@@ -472,14 +502,14 @@ export default function TopikPracticePage() {
                 <div
                   key={r.question.id}
                   className={[
-                    "rounded-xl border px-4 py-3 text-sm",
+                    "rounded-xl border px-4 py-3 text-sm backdrop-blur-xl",
                     r.correct
-                      ? "border-emerald-300/30 bg-emerald-900/30 text-white"
-                      : "border-red-300/30 bg-red-900/30 text-white",
+                      ? "border-[rgba(16,185,129,0.25)] bg-[rgba(16,185,129,0.06)] text-[#F0F0FF]"
+                      : "border-[rgba(244,63,94,0.25)] bg-[rgba(244,63,94,0.06)] text-[#F0F0FF]",
                   ].join(" ")}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <span className="font-bold text-white/60">Q{i + 1}.</span>
+                    <span className="font-mono font-bold text-[#5C6199]">Q{i + 1}.</span>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-medium leading-relaxed">{r.question.question_text}</span>
@@ -487,31 +517,31 @@ export default function TopikPracticePage() {
                           type="button"
                           onClick={() => speakKorean(buildSpeakText(r.question, true))}
                           disabled={!isSpeechSupported()}
-                          className="shrink-0 inline-flex items-center justify-center rounded-full bg-white/10 px-1.5 py-1 text-white/70 ring-1 ring-white/20 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+                          className="shrink-0 inline-flex items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-1.5 py-1 text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.1)] disabled:cursor-not-allowed disabled:opacity-40"
                           aria-label="韓国語を音声で聞く"
                         >
                           <PlayGlyph className="h-[0.9rem] w-[0.9rem] shrink-0" />
                         </button>
                       </div>
                       {r.question.question_text_ja ? (
-                        <div className="mt-0.5 text-xs text-white/55" role="note" aria-label="日本語訳">
+                        <div className="mt-0.5 text-xs text-[#5C6199]" role="note" aria-label="日本語訳">
                           {r.question.question_text_ja}
                         </div>
                       ) : null}
                     </div>
                     <span
-                      className={["font-bold", r.correct ? "text-emerald-300" : "text-red-300"].join(" ")}
+                      className={["font-bold", r.correct ? "text-[#34d399]" : "text-[#fb7185]"].join(" ")}
                       aria-label={r.correct ? "正解" : "不正解"}
                     >
                       {r.correct ? "✓" : "✗"}
                     </span>
                   </div>
                   {!r.correct ? (
-                    <p className="mt-1 text-white/70">
+                    <p className="mt-1 text-[#9499C4]">
                       正解:{" "}
-                      <span className="font-semibold text-emerald-200">{correctOpt?.text}</span>
+                      <span className="font-semibold text-[#34d399]">{correctOpt?.text}</span>
                       {correctOpt?.text_ja ? (
-                        <span className="ml-1 text-emerald-200/70">（{correctOpt.text_ja}）</span>
+                        <span className="ml-1 text-[rgba(52,211,153,0.7)]">（{correctOpt.text_ja}）</span>
                       ) : null}
                     </p>
                   ) : null}
@@ -525,13 +555,13 @@ export default function TopikPracticePage() {
           <button
             type="button"
             onClick={() => setPhase("setup")}
-            className="flex-1 rounded-xl border border-white/30 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/20"
+            className="flex-1 rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-sm font-semibold text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]"
           >
             ← 設定に戻る
           </button>
           <Link
             href="/quiz"
-            className="flex-1 rounded-xl border border-white/30 bg-white/10 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-white/20"
+            className="flex-1 rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-center text-sm font-semibold text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]"
           >
             語彙クイズへ →
           </Link>

@@ -39,6 +39,27 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
+function LevelBadge({ level }: { level?: number | null }) {
+  if (!level) return null;
+  const colors: Record<number, { bg: string; text: string; border: string }> = {
+    1: { bg: "rgba(16,185,129,0.15)", text: "#34d399", border: "rgba(16,185,129,0.25)" },
+    2: { bg: "rgba(59,130,246,0.15)", text: "#60a5fa", border: "rgba(59,130,246,0.25)" },
+    3: { bg: "rgba(99,102,241,0.15)", text: "#818cf8", border: "rgba(99,102,241,0.25)" },
+    4: { bg: "rgba(99,102,241,0.15)", text: "#818cf8", border: "rgba(99,102,241,0.25)" },
+    5: { bg: "rgba(245,158,11,0.15)", text: "#fbbf24", border: "rgba(245,158,11,0.25)" },
+    6: { bg: "rgba(244,63,94,0.15)", text: "#fb7185", border: "rgba(244,63,94,0.25)" },
+  };
+  const c = colors[level] ?? colors[3];
+  return (
+    <span
+      className="font-mono text-[11px] font-bold uppercase tracking-[0.05em] px-2.5 py-0.5 rounded-full"
+      style={{ background: c.bg, color: c.text, border: `1px solid ${c.border}` }}
+    >
+      LEVEL {level}
+    </span>
+  );
+}
+
 export default function QuizPage() {
   const { state, refreshMe } = useAuth();
 
@@ -53,14 +74,11 @@ export default function QuizPage() {
   // ── quiz state ───────────────────────────────────────────
   const [phase, setPhase] = useState<Phase>("setup");
   const [cards, setCards] = useState<UserVocabulary[]>([]);
-  /** スタート／「もう一度（全問）」時のデッキ。「わからなかっただけ」後も上書きしない */
   const [fullRoundDeck, setFullRoundDeck] = useState<UserVocabulary[]>([]);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [results, setResults] = useState<{ card: UserVocabulary; correct: boolean }[]>([]);
-  /** カードインデックスごとの自己評価。前後ナビゲーション時も保持する */
   const [cardAnswers, setCardAnswers] = useState<Record<number, boolean>>({});
-  /** めくり済みカードのインデックスセット。前後ナビ時に状態を復元するために使用 */
   const [cardFlipped, setCardFlipped] = useState<Set<number>>(new Set());
 
   // ── bookmark state (results screen) ─────────────────────
@@ -71,7 +89,6 @@ export default function QuizPage() {
     if (state.status === "loading") refreshMe().catch(() => undefined);
   }, [refreshMe, state.status]);
 
-  // 結果画面表示時にブックマーク済み語彙を取得する
   useEffect(() => {
     if (phase !== "finished" || state.status !== "authed") return;
     const run = async () => {
@@ -79,7 +96,7 @@ export default function QuizPage() {
         const res = await listBookmarks(state.token);
         setBookmarkedIds(new Set(res.bookmarks.map((b) => b.id)));
       } catch {
-        // ブックマーク状態の取得失敗は無視（ボタン表示には影響しない）
+        // ignore
       }
     };
     run().catch(() => undefined);
@@ -226,8 +243,8 @@ export default function QuizPage() {
 
   if (state.status === "loading") {
     return (
-      <div className="flex flex-1 items-center justify-center bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-10">
-        <div className="text-sm text-white/80">読み込み中...</div>
+      <div className="flex flex-1 items-center justify-center bg-[#08091A] px-4 py-10">
+        <div className="text-sm text-[#9499C4]">読み込み中...</div>
       </div>
     );
   }
@@ -237,14 +254,19 @@ export default function QuizPage() {
   // ════════════════════════════════════════
   if (phase === "setup") {
     return (
-      <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
-        <div className="mx-auto w-full max-w-lg space-y-6">
+      <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+        <div
+          aria-hidden
+          className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.12)]"
+          style={{ width: 500, height: 300, top: -50, left: "50%", transform: "translateX(-50%)" }}
+        />
+        <div className="relative mx-auto w-full max-w-lg space-y-6">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight drop-shadow-sm sm:text-4xl">
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
               フラッシュカード
-              <span className="ml-2 align-baseline text-lg font-semibold text-white/85">플래시카드</span>
+              <span className="ml-2 align-baseline text-lg font-semibold text-[#9499C4]">플래시카드</span>
             </h1>
-            <p className="mt-1 text-sm text-white/80">
+            <p className="mt-1 text-sm text-[#9499C4]">
               ランダム出題。答えを見てから「わからない」「わかった」で次へ進みます。
             </p>
           </div>
@@ -252,14 +274,14 @@ export default function QuizPage() {
           <Section
             title="設定"
             subtitle="설정"
-            headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
-            titleClassName="text-white drop-shadow-sm"
+            headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
+            titleClassName="text-[#F0F0FF]"
           >
-            <Card className="space-y-5 border-white/10 bg-white/10 text-white backdrop-blur">
+            <Card className="space-y-5 border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
               {/* 出題モード */}
               <div>
-                <div className="text-sm font-semibold text-white">
-                  出題モード <span className="ml-1 text-white/70">출제 방향</span>
+                <div className="text-sm font-semibold text-[#BCC0E8]">
+                  出題モード <span className="ml-1 text-[#5C6199]">출제 방향</span>
                 </div>
                 <div className="mt-2 flex gap-2">
                   <Chip
@@ -281,8 +303,8 @@ export default function QuizPage() {
 
               {/* 出題元 */}
               <div>
-                <div className="text-sm font-semibold text-white">
-                  出題元 <span className="ml-1 text-white/70">출제 범위</span>
+                <div className="text-sm font-semibold text-[#BCC0E8]">
+                  出題元 <span className="ml-1 text-[#5C6199]">출제 범위</span>
                 </div>
                 <div className="mt-2 flex gap-2">
                   <Chip
@@ -307,19 +329,19 @@ export default function QuizPage() {
                   </Chip>
                 </div>
                 {state.status === "guest" && source === "bookmarks" ? (
-                  <div className="mt-3 rounded-xl border border-amber-300/35 bg-amber-500/15 px-3 py-3 text-sm leading-relaxed text-white/95 ring-1 ring-amber-200/20">
-                    <p className="font-semibold text-amber-50">会員登録でご利用いただけます</p>
-                    <p className="mt-1.5 text-white/85">
+                  <div className="mt-3 rounded-xl border border-[rgba(99,102,241,0.3)] bg-[rgba(99,102,241,0.08)] px-3 py-3 text-sm leading-relaxed text-[#BCC0E8]">
+                    <p className="font-semibold text-[#818cf8]">会員登録でご利用いただけます</p>
+                    <p className="mt-1.5 text-[#BCC0E8]">
                       ブックマークに保存した語彙だけを出題するには、
-                      <strong className="text-white">無料の会員登録</strong>
+                      <strong className="text-[#F0F0FF]">無料の会員登録</strong>
                       が必要です。登録後はログインしてお楽しみください。
                     </p>
                     <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
-                      <Link className="font-semibold text-white underline underline-offset-2" href="/register">
+                      <Link className="font-semibold text-[#818cf8] underline underline-offset-2" href="/register">
                         会員登録（無料）
                       </Link>
-                      <span className="text-white/50">|</span>
-                      <Link className="font-semibold text-white/90 underline underline-offset-2" href="/login">
+                      <span className="text-[#5C6199]">|</span>
+                      <Link className="font-semibold text-[#BCC0E8] underline underline-offset-2" href="/login">
                         ログイン
                       </Link>
                     </p>
@@ -327,11 +349,11 @@ export default function QuizPage() {
                 ) : null}
               </div>
 
-              {/* レベル絞り込み（全語彙のみ） */}
+              {/* レベル絞り込み */}
               {source === "all" ? (
                 <div>
-                  <div className="text-sm font-semibold text-white">
-                    TOPIK レベル <span className="ml-1 text-white/70">토픽 레벨</span>
+                  <div className="text-sm font-semibold text-[#BCC0E8]">
+                    TOPIK レベル <span className="ml-1 text-[#5C6199]">토픽 레벨</span>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {LEVEL_OPTIONS.map((o) => (
@@ -350,8 +372,8 @@ export default function QuizPage() {
 
               {/* 問題数 */}
               <div>
-                <div className="text-sm font-semibold text-white">
-                  問題数 <span className="ml-1 text-white/70">문제 수</span>
+                <div className="text-sm font-semibold text-[#BCC0E8]">
+                  問題数 <span className="ml-1 text-[#5C6199]">문제 수</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {COUNT_OPTIONS.map((o) => (
@@ -368,7 +390,7 @@ export default function QuizPage() {
               </div>
 
               {loadError ? (
-                <div className="text-sm font-medium text-red-200">{loadError}</div>
+                <div className="text-sm font-medium text-[#fb7185]">{loadError}</div>
               ) : null}
 
               <Button
@@ -396,28 +418,37 @@ export default function QuizPage() {
     const answer1 = mode === "kr-to-ja" ? card.meaning_ja : card.term;
 
     return (
-      <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
-        <div className="mx-auto w-full max-w-lg space-y-5">
+      <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+        <div
+          aria-hidden
+          className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.12)]"
+          style={{ width: 400, height: 300, top: -80, left: "30%", transform: "translateX(-50%)" }}
+        />
+        <div className="relative mx-auto w-full max-w-lg space-y-5">
           {/* ヘッダー */}
           <div className="flex items-center justify-between">
             <button
               type="button"
               onClick={() => setPhase("setup")}
-              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium ring-1 ring-white/25 hover:bg-white/15"
+              className="inline-flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-3 py-1.5 text-sm font-medium text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]"
             >
               <span aria-hidden="true">←</span>
               設定に戻る
             </button>
-            <div className="text-sm font-semibold text-white/80">
-              {index + 1} / {cards.length}
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-xs text-[#5C6199]">{index + 1} / {cards.length}</span>
+              <LevelBadge level={card.level} />
             </div>
           </div>
 
           {/* プログレスバー */}
-          <div className="h-2 w-full overflow-hidden rounded-full bg-white/20">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-[rgba(255,255,255,0.08)]">
             <div
-              className="h-full rounded-full bg-white/70 transition-all duration-300"
-              style={{ width: `${progress}%` }}
+              className="h-full rounded-full transition-all duration-300"
+              style={{
+                width: `${progress}%`,
+                background: "linear-gradient(90deg, #6366f1, #3b82f6)",
+              }}
             />
           </div>
 
@@ -433,80 +464,70 @@ export default function QuizPage() {
               aria-pressed={flipped}
               aria-label={flipped ? "答え表示済み" : "カードをめくって答えを表示"}
               className={[
-                "group relative block w-full min-h-[13.5rem] rounded-2xl p-0 text-left",
-                "outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-600/80",
+                "group relative block w-full min-h-[14rem] rounded-2xl p-0 text-left",
+                "outline-none focus-visible:ring-2 focus-visible:ring-[rgba(99,102,241,0.7)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#08091A]",
                 flipped ? "cursor-default" : "cursor-pointer",
               ].join(" ")}
             >
               <div
                 key={card.id}
-                className="relative min-h-[13.5rem] w-full [transform-style:preserve-3d] will-change-transform"
+                className="relative min-h-[14rem] w-full [transform-style:preserve-3d] will-change-transform"
                 style={{
                   transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
-                  transition: "transform 0.65s cubic-bezier(0.4, 0.15, 0.2, 1)",
+                  transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
               >
                 {/* 表面（問題） */}
                 <div
                   className={[
-                    "absolute inset-0 flex min-h-[13.5rem] flex-col items-center justify-center gap-4 overflow-hidden rounded-2xl px-4 py-8 text-center",
-                    "border border-white/20 bg-gradient-to-br from-white/20 via-white/10 to-teal-900/30",
-                    "shadow-[0_22px_48px_-12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]",
-                    "backdrop-blur-md [backface-visibility:hidden] [transform:translateZ(0.1px)]",
-                    "ring-1 ring-white/10",
+                    "absolute inset-0 flex min-h-[14rem] flex-col items-center justify-center gap-4 overflow-hidden rounded-2xl px-4 py-8 text-center",
+                    "border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)]",
+                    "shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
+                    "backdrop-blur-xl [backface-visibility:hidden] [transform:translateZ(0.1px)]",
                   ].join(" ")}
                 >
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/20 opacity-70"
-                  />
-                  <div className="relative text-xs font-semibold tracking-wide text-white/55">
+                  <div className="text-xs font-semibold tracking-wide text-[#5C6199]">
                     {card.level_label_ja}
                   </div>
-                  <div className="relative text-4xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-5xl">
+                  <div className="text-4xl font-extrabold tracking-tight text-[#F0F0FF] sm:text-5xl">
                     {question}
                   </div>
-                  <div className="relative px-2" onClick={(e) => e.stopPropagation()}>
+                  <div className="px-2" onClick={(e) => e.stopPropagation()}>
                     <VocabularyAudioPlayButton
                       vocabularyId={card.id}
                       initialAudioUrl={card.audio_url}
                       avoidNestedButton
                     />
                   </div>
-                  <div className="relative text-sm text-white/65">
+                  <div className="text-sm text-[#5C6199]">
                     タップでめくる
-                    <span className="mt-1 block text-xs text-white/45">탭하여 뒤집기</span>
+                    <span className="mt-1 block text-xs text-[#5C6199]">탭하여 뒤집기</span>
                   </div>
                 </div>
+
                 {/* 裏面（答え） */}
                 <div
                   className={[
-                    "absolute inset-0 flex min-h-[13.5rem] flex-col items-center justify-center gap-3 overflow-y-auto rounded-2xl px-4 py-8 text-center",
-                    "border border-emerald-200/25 bg-gradient-to-br from-teal-900/85 via-teal-800/70 to-sky-900/80",
-                    "shadow-[0_22px_48px_-12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.12)]",
-                    "backdrop-blur-md [backface-visibility:hidden] [transform:rotateY(180deg)_translateZ(0.1px)]",
-                    "ring-1 ring-emerald-300/15",
+                    "absolute inset-0 flex min-h-[14rem] flex-col items-center justify-center gap-3 overflow-y-auto rounded-2xl px-4 py-8 text-center",
+                    "border border-[rgba(99,102,241,0.25)] backdrop-blur-xl",
+                    "[backface-visibility:hidden] [transform:rotateY(180deg)_translateZ(0.1px)]",
+                    "shadow-[0_0_24px_rgba(99,102,241,0.2),0_8px_32px_rgba(0,0,0,0.4)]",
                   ].join(" ")}
+                  style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.12), rgba(59,130,246,0.08))" }}
                 >
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-bl from-white/10 via-transparent to-black/20"
-                  />
-                  <div className="relative text-xs font-semibold text-emerald-100/70">
+                  <div className="text-xs font-semibold text-[#9499C4]">
                     {card.level_label_ja}
                   </div>
-                  <div className="relative text-2xl font-bold text-white/80">{question}</div>
-                  <div className="relative text-3xl font-extrabold text-white drop-shadow-md sm:text-4xl">
-                    {answer1}
-                  </div>
+                  <div className="text-xl font-bold text-[#BCC0E8]">{question}</div>
+                  <div className="text-3xl font-extrabold text-[#F0F0FF] sm:text-4xl">{answer1}</div>
                   {card.example_sentence ? (
-                    <div className="relative mt-1 max-w-xs space-y-1.5 text-base leading-snug text-white/80">
+                    <div className="mt-1 max-w-xs space-y-1.5 text-base leading-snug text-[#BCC0E8]">
                       <div className="flex gap-1.5">
                         <span aria-hidden>🇰🇷</span>
                         <span>
                           <HighlightedExampleText
                             text={card.example_sentence}
-                            markClassName="font-semibold text-white underline decoration-amber-200/90 decoration-2 underline-offset-[0.2em]"
+                            markClassName="font-semibold text-[#F0F0FF] underline decoration-[#818cf8]/90 decoration-2 underline-offset-[0.2em]"
                           />
                         </span>
                       </div>
@@ -516,7 +537,7 @@ export default function QuizPage() {
                           <span>
                             <HighlightedExampleText
                               text={card.example_translation_ja}
-                              markClassName="font-semibold text-white/95 underline decoration-emerald-200/85 decoration-2 underline-offset-[0.2em]"
+                              markClassName="font-semibold text-[#F0F0FF]/95 underline decoration-[#60a5fa]/85 decoration-2 underline-offset-[0.2em]"
                             />
                           </span>
                         </div>
@@ -528,26 +549,24 @@ export default function QuizPage() {
             </button>
           </div>
 
-          {/* 自己評価（次のカードへ） */}
+          {/* 自己評価 */}
           {flipped ? (
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => answer(false)}
-                className="rounded-xl bg-red-500/30 px-4 py-4 text-center font-semibold text-white ring-1 ring-red-400/40 transition-colors hover:bg-red-500/40"
+                className="rounded-xl border border-[rgba(244,63,94,0.25)] bg-[rgba(244,63,94,0.12)] px-4 py-4 text-center font-semibold text-[#fb7185] transition-colors hover:bg-[rgba(244,63,94,0.2)]"
               >
-                <div className="text-xl">🤔</div>
-                <div className="mt-1 text-sm">わからない</div>
-                <div className="text-xs text-white/70">모르겠어요</div>
+                <div className="text-sm">몰랐어요</div>
+                <div className="mt-0.5 text-xs text-[rgba(251,113,133,0.7)]">わからない</div>
               </button>
               <button
                 type="button"
                 onClick={() => answer(true)}
-                className="rounded-xl bg-emerald-500/30 px-4 py-4 text-center font-semibold text-white ring-1 ring-emerald-400/40 transition-colors hover:bg-emerald-500/40"
+                className="rounded-xl border border-[rgba(16,185,129,0.25)] bg-[rgba(16,185,129,0.12)] px-4 py-4 text-center font-semibold text-[#34d399] transition-colors hover:bg-[rgba(16,185,129,0.2)]"
               >
-                <div className="text-xl">✅</div>
-                <div className="mt-1 text-sm">わかった</div>
-                <div className="text-xs text-white/70">알겠어요</div>
+                <div className="text-sm">알겠어요!</div>
+                <div className="mt-0.5 text-xs text-[rgba(52,211,153,0.7)]">わかった</div>
               </button>
             </div>
           ) : (
@@ -561,10 +580,10 @@ export default function QuizPage() {
               onClick={goBack}
               disabled={index === 0}
               className={[
-                "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1 transition-colors",
+                "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium border transition-colors",
                 index === 0
-                  ? "cursor-not-allowed bg-white/5 text-white/30 ring-white/10"
-                  : "bg-white/10 text-white ring-white/25 hover:bg-white/15",
+                  ? "cursor-not-allowed border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.02)] text-[#5C6199]"
+                  : "border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]",
               ].join(" ")}
             >
               <span aria-hidden="true">←</span>
@@ -574,7 +593,7 @@ export default function QuizPage() {
               <button
                 type="button"
                 onClick={goForward}
-                className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium ring-1 ring-white/25 transition-colors hover:bg-white/15"
+                className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-3 py-1.5 text-sm font-medium text-[#BCC0E8] transition-colors hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]"
               >
                 次の問題
                 <span aria-hidden="true">→</span>
@@ -595,55 +614,71 @@ export default function QuizPage() {
   const scorePercent = Math.round((correctCount / results.length) * 100);
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-sky-600 via-teal-500 to-cyan-700 px-4 py-8 text-white">
-      <div className="mx-auto w-full max-w-lg space-y-6">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight drop-shadow-sm">
-            結果
-            <span className="ml-2 align-baseline text-lg font-semibold text-white/85">결과</span>
-          </h1>
-        </div>
+    <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+      <div
+        aria-hidden
+        className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.12)]"
+        style={{ width: 500, height: 300, top: -80, left: "50%", transform: "translateX(-50%)" }}
+      />
+      <div className="relative mx-auto w-full max-w-lg space-y-6">
+        <h1 className="text-3xl font-extrabold tracking-tight">
+          結果
+          <span className="ml-2 align-baseline text-lg font-semibold text-[#9499C4]">결과</span>
+        </h1>
 
         {/* スコア */}
-        <Card className="border-white/10 bg-white/10 text-center text-white backdrop-blur">
-          <div className="py-4">
-            <div className="text-6xl font-extrabold drop-shadow-sm">{scorePercent}%</div>
-            <div className="mt-2 text-lg font-semibold text-white/80">
-              {results.length}問中「わかった」{correctCount}問
-            </div>
-            <div className="text-sm text-white/60">
-              {results.length}문제 중 「알겠어요」 {correctCount}문제
-            </div>
+        <div
+          className="rounded-2xl border border-[rgba(99,102,241,0.25)] p-8 text-center backdrop-blur-xl shadow-[0_0_24px_rgba(99,102,241,0.15),0_8px_32px_rgba(0,0,0,0.4)]"
+          style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.1), rgba(59,130,246,0.06))" }}
+        >
+          <div
+            className="text-6xl font-extrabold"
+            style={{ background: "linear-gradient(135deg,#6366f1,#3b82f6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}
+          >
+            {scorePercent}%
           </div>
-        </Card>
+          <div className="mt-2 text-lg font-semibold text-[#BCC0E8]">
+            {results.length}問中「わかった」{correctCount}問
+          </div>
+          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-[rgba(255,255,255,0.08)]">
+            <div
+              className="h-full rounded-full"
+              style={{
+                width: `${scorePercent}%`,
+                background: "linear-gradient(90deg, #6366f1, #3b82f6)",
+                transition: "width 400ms ease-out",
+              }}
+            />
+          </div>
+        </div>
 
         {/* アクションボタン */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <button
             type="button"
             onClick={() => retry(false)}
-            className="rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white ring-1 ring-white/25 hover:bg-white/15"
+            className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 text-sm font-semibold text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]"
           >
             🔄 もう一度
-            <div className="text-xs font-normal text-white/70">처음부터</div>
+            <div className="text-xs font-normal text-[#5C6199]">처음부터</div>
           </button>
           {wrongCards.length > 0 ? (
             <button
               type="button"
               onClick={() => retry(true)}
-              className="rounded-xl bg-red-500/20 px-4 py-3 text-sm font-semibold text-white ring-1 ring-red-400/30 hover:bg-red-500/30"
+              className="rounded-xl border border-[rgba(244,63,94,0.25)] bg-[rgba(244,63,94,0.1)] px-4 py-3 text-sm font-semibold text-[#fb7185] hover:bg-[rgba(244,63,94,0.15)]"
             >
-              🤔 わからなかった {wrongCards.length}問
-              <div className="text-xs font-normal text-white/70">모르겠던 것만</div>
+              わからなかった {wrongCards.length}問
+              <div className="text-xs font-normal text-[rgba(251,113,133,0.7)]">모르겠던 것만</div>
             </button>
           ) : null}
           <button
             type="button"
             onClick={() => setPhase("setup")}
-            className="rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white ring-1 ring-white/25 hover:bg-white/15"
+            className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 text-sm font-semibold text-[#BCC0E8] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]"
           >
-            ⚙️ 設定に戻る
-            <div className="text-xs font-normal text-white/70">설정으로</div>
+            設定に戻る
+            <div className="text-xs font-normal text-[#5C6199]">설정으로</div>
           </button>
         </div>
 
@@ -652,19 +687,22 @@ export default function QuizPage() {
           <Section
             title="わからなかった語彙"
             subtitle="모르겠던 단어"
-            headerClassName="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur"
-            titleClassName="text-white drop-shadow-sm"
+            headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
+            titleClassName="text-[#F0F0FF]"
           >
             <div className="space-y-2">
               {wrongCards.map(({ card }) => (
-                <Card key={card.id} className="border-white/10 bg-white/10 text-white backdrop-blur">
+                <div
+                  key={card.id}
+                  className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] p-4 backdrop-blur-xl"
+                >
                   <div className="flex items-center justify-between gap-3">
                     <Link href={`/vocabularies/${card.id}`} className="min-w-0 flex-1">
-                      <div className="font-bold hover:underline">{card.term}</div>
-                      <div className="text-sm text-white/70">{card.meaning_ja}</div>
+                      <div className="font-bold text-[#F0F0FF] hover:text-[#818cf8] hover:underline">{card.term}</div>
+                      <div className="text-sm text-[#9499C4]">{card.meaning_ja}</div>
                     </Link>
                     <div className="flex shrink-0 items-center gap-2">
-                      <div className="text-xs text-white/60">{card.level_label_ja}</div>
+                      <span className="font-mono text-xs text-[#5C6199]">{card.level_label_ja}</span>
                       {state.status === "authed" ? (
                         <button
                           type="button"
@@ -672,10 +710,10 @@ export default function QuizPage() {
                           onClick={() => handleBookmarkToggle(card.id)}
                           title={bookmarkedIds.has(card.id) ? "ブックマーク解除" : "ブックマークに追加"}
                           className={[
-                            "inline-flex items-center rounded-full px-2.5 py-1 text-sm ring-1 transition-colors",
+                            "inline-flex items-center rounded-full px-2.5 py-1 text-sm border transition-colors",
                             bookmarkedIds.has(card.id)
-                              ? "bg-white/20 ring-white/30 hover:bg-white/30"
-                              : "bg-white/10 ring-white/20 hover:bg-white/15",
+                              ? "border-[rgba(99,102,241,0.3)] bg-[rgba(99,102,241,0.15)] hover:bg-[rgba(99,102,241,0.25)]"
+                              : "border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)]",
                             bookmarkBusy.has(card.id) ? "opacity-50" : "",
                           ].join(" ")}
                         >
@@ -686,19 +724,19 @@ export default function QuizPage() {
                           type="button"
                           disabled
                           title="会員登録が必要です"
-                          className="inline-flex cursor-not-allowed items-center rounded-full bg-white/10 px-2.5 py-1 text-sm text-white/40 ring-1 ring-white/15"
+                          className="inline-flex cursor-not-allowed items-center rounded-full border border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.03)] px-2.5 py-1 text-sm text-[#5C6199]"
                         >
                           🏷️
                         </button>
                       ) : null}
                     </div>
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
             {state.status === "guest" ? (
-              <p className="mt-3 text-center text-xs text-white/65">
-                <Link href="/login" className="underline underline-offset-2 hover:text-white/90">
+              <p className="mt-3 text-center text-xs text-[#5C6199]">
+                <Link href="/login" className="text-[#818cf8] underline underline-offset-2 hover:text-[#60a5fa]">
                   ログイン
                 </Link>
                 するとブックマークに即時保存できます
@@ -706,9 +744,9 @@ export default function QuizPage() {
             ) : null}
           </Section>
         ) : (
-          <Card className="border-white/10 bg-emerald-500/20 text-center text-white backdrop-blur ring-1 ring-emerald-400/30">
-            <div className="py-2 text-sm font-semibold">🎉 すべて「わかった」です！완벽해요!</div>
-          </Card>
+          <div className="rounded-xl border border-[rgba(16,185,129,0.25)] bg-[rgba(16,185,129,0.1)] p-4 text-center text-sm font-semibold text-[#34d399] backdrop-blur-xl">
+            🎉 すべて「わかった」です！완벽해요!
+          </div>
         )}
       </div>
     </div>

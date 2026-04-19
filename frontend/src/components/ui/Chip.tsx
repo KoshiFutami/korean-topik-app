@@ -6,10 +6,9 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export function Chip({ className = "", selected = false, ...props }: Props) {
   const base =
-    "inline-flex items-center justify-center rounded-full px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ring-1 ring-inset";
+    "inline-flex items-center justify-center rounded-lg px-3.5 py-1.5 text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed border";
   const styles = selected
-    ? "bg-white text-zinc-900 ring-white/40"
-    : "bg-white/10 text-white ring-white/25 hover:bg-white/15";
+    ? "bg-[rgba(99,102,241,0.15)] text-[#818cf8] border-[rgba(99,102,241,0.3)]"
+    : "bg-[rgba(255,255,255,0.05)] text-[#BCC0E8] border-[rgba(255,255,255,0.08)] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#F0F0FF]";
   return <button className={`${base} ${styles} ${className}`} {...props} />;
 }
-
