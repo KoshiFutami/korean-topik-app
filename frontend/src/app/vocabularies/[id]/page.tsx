@@ -9,7 +9,6 @@ import { HighlightedExampleText } from "@/components/vocabulary/HighlightedExamp
 import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAudioPlayButton";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
-import { Section } from "@/components/ui/Section";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { addBookmark, listBookmarks, removeBookmark } from "@/lib/api/bookmarks";
 import { ApiError } from "@/lib/api/http";
@@ -324,14 +323,10 @@ export default function VocabularyDetailPage() {
           </div>
         </Card>
 
-        <Section
-          title="例文"
-          subtitle="예문"
-          headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
-          titleClassName="text-[#F0F0FF]"
-          descriptionClassName="text-[#9499C4]"
-        >
-          <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+        <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+          <div className="mb-4 flex items-center border-b border-[rgba(255,255,255,0.06)] pb-4">
+            <h2 className="text-sm font-semibold text-[#F0F0FF]">例文 <span className="ml-1.5 text-xs font-medium text-[#9499C4]">예문</span></h2>
+          </div>
             <div className="grid gap-4 text-base leading-relaxed">
               {item?.example_sentence ? (
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -372,8 +367,7 @@ export default function VocabularyDetailPage() {
                 </div>
               ) : null}
             </div>
-          </Card>
-        </Section>
+        </Card>
       </div>
     </div>
   );

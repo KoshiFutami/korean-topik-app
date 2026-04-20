@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Card } from "@/components/ui/Card";
-import { Section } from "@/components/ui/Section";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { BookmarkListVirtualGrid } from "@/components/vocabulary/BookmarkListVirtualGrid";
 import {
@@ -115,15 +114,14 @@ export default function BookmarksPage() {
         style={{ width: 500, height: 350, top: -80, left: "50%", transform: "translateX(-50%)" }}
       />
       <div className="relative mx-auto w-full max-w-5xl space-y-6">
-        <Section
-          title="保存済み語彙"
-          subtitle="저장된 단어"
-          description={loading ? "読み込み中..." : `件数: ${items?.length ?? 0}`}
-          right={error ? <div className="text-sm font-medium text-[#fb7185]">{error}</div> : null}
-          headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
-          titleClassName="text-[#F0F0FF]"
-          descriptionClassName="text-[#9499C4]"
-        >
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-sm font-semibold text-[#F0F0FF]">保存済み語彙 <span className="ml-1.5 text-xs font-medium text-[#9499C4]">저장된 단어</span></h2>
+            <div className="flex items-center gap-3">
+              {error ? <span className="text-xs font-medium text-[#fb7185]">{error}</span> : null}
+              <span className="text-xs text-[#9499C4]">{loading ? "読み込み中..." : `${items?.length ?? 0}件`}</span>
+            </div>
+          </div>
           {loading ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -159,7 +157,7 @@ export default function BookmarksPage() {
               </div>
             </Card>
           ) : null}
-        </Section>
+        </div>
       </div>
     </div>
   );

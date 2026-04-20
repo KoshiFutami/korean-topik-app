@@ -8,7 +8,6 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { Section } from "@/components/ui/Section";
 
 function parseApiError(err: unknown): { message: string; fieldErrors?: Record<string, string> } {
   if (!(err instanceof ApiError)) return { message: "更新に失敗しました。" };
@@ -171,18 +170,11 @@ export default function MePage() {
         </div>
 
         {!editing ? (
-          <Section
-            title="アカウント情報"
-            subtitle="계정 정보"
-            headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
-            titleClassName="text-[#F0F0FF]"
-            right={
-              <Button variant="ghost" type="button" onClick={handleEdit}>
-                編集
-              </Button>
-            }
-          >
-            <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+          <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+            <div className="mb-4 flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-4">
+              <h2 className="text-sm font-semibold text-[#F0F0FF]">アカウント情報 <span className="ml-1.5 text-xs font-medium text-[#9499C4]">계정 정보</span></h2>
+              <Button variant="ghost" type="button" onClick={handleEdit}>編集</Button>
+            </div>
               <dl className="grid grid-cols-3 gap-3 text-sm">
                 <dt className="text-[#9499C4]">ID</dt>
                 <dd className="col-span-2 break-all font-mono text-[#BCC0E8] text-xs">{state.user.id}</dd>
@@ -209,16 +201,12 @@ export default function MePage() {
                   ログアウト
                 </Button>
               </div>
-            </Card>
-          </Section>
+          </Card>
         ) : (
-          <Section
-            title="プロフィール編集"
-            subtitle="프로필 수정"
-            headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
-            titleClassName="text-[#F0F0FF]"
-          >
-            <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+          <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+            <div className="mb-4 flex items-center border-b border-[rgba(255,255,255,0.06)] pb-4">
+              <h2 className="text-sm font-semibold text-[#F0F0FF]">プロフィール編集 <span className="ml-1.5 text-xs font-medium text-[#9499C4]">프로필 수정</span></h2>
+            </div>
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <Input
                   label="名前"
@@ -297,8 +285,7 @@ export default function MePage() {
                   </Button>
                 </div>
               </form>
-            </Card>
-          </Section>
+          </Card>
         )}
       </div>
     </div>
