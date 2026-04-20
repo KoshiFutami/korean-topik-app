@@ -9,7 +9,6 @@ import { VocabularyAudioPlayButton } from "@/components/vocabulary/VocabularyAud
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
-import { Section } from "@/components/ui/Section";
 import { addBookmark, listBookmarks, removeBookmark } from "@/lib/api/bookmarks";
 import { ApiError } from "@/lib/api/http";
 import { listVocabularies, type UserVocabulary } from "@/lib/api/vocabularies";
@@ -261,13 +260,10 @@ export default function QuizPage() {
           style={{ width: 500, height: 300, top: -50, left: "50%", transform: "translateX(-50%)" }}
         />
         <div className="relative mx-auto w-full max-w-lg space-y-6">
-          <Section
-            title="設定"
-            subtitle="설정"
-            headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
-            titleClassName="text-[#F0F0FF]"
-          >
-            <Card className="space-y-5 border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+          <Card className="space-y-5 border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+            <div className="flex items-center border-b border-[rgba(255,255,255,0.06)] pb-4">
+              <h2 className="text-sm font-semibold text-[#F0F0FF]">設定 <span className="ml-1.5 text-xs font-medium text-[#9499C4]">설정</span></h2>
+            </div>
               {/* 出題モード */}
               <div>
                 <div className="text-sm font-semibold text-[#BCC0E8]">
@@ -391,8 +387,7 @@ export default function QuizPage() {
               >
                 {loading ? "読み込み中..." : "スタート 시작"}
               </Button>
-            </Card>
-          </Section>
+          </Card>
         </div>
       </div>
     );
@@ -674,12 +669,8 @@ export default function QuizPage() {
 
         {/* 間違えた単語一覧 */}
         {wrongCards.length > 0 ? (
-          <Section
-            title="わからなかった語彙"
-            subtitle="모르겠던 단어"
-            headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
-            titleClassName="text-[#F0F0FF]"
-          >
+          <div className="space-y-3">
+            <h2 className="px-1 text-sm font-semibold text-[#F0F0FF]">わからなかった語彙 <span className="ml-1.5 text-xs font-medium text-[#9499C4]">모르겠던 단어</span></h2>
             <div className="space-y-2">
               {wrongCards.map(({ card }) => (
                 <div
@@ -732,7 +723,7 @@ export default function QuizPage() {
                 するとブックマークに即時保存できます
               </p>
             ) : null}
-          </Section>
+          </div>
         ) : (
           <div className="rounded-xl border border-[rgba(16,185,129,0.25)] bg-[rgba(16,185,129,0.1)] p-4 text-center text-sm font-semibold text-[#34d399] backdrop-blur-xl">
             🎉 すべて「わかった」です！완벽해요!

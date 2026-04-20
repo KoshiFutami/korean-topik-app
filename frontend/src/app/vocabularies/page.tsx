@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Input } from "@/components/ui/Input";
-import { Section } from "@/components/ui/Section";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { VocabularyListVirtualGrid } from "@/components/vocabulary/VocabularyListVirtualGrid";
 import { ApiError } from "@/lib/api/http";
@@ -184,14 +183,9 @@ function VocabulariesPageInner() {
         style={{ width: 600, height: 400, top: -100, left: "50%", transform: "translateX(-50%)" }}
       />
       <div className="relative mx-auto w-full max-w-5xl space-y-6">
-        <Section
-          title="絞り込み"
-          subtitle="필터"
-          description="タップで絞り込み。もう一度タップで解除できます。"
-          headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
-          titleClassName="text-[#F0F0FF]"
-          descriptionClassName="text-[#9499C4]"
-          right={
+        <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+          <div className="mb-4 flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-4">
+            <h2 className="text-sm font-semibold text-[#F0F0FF]">絞り込み <span className="ml-1.5 text-xs font-medium text-[#9499C4]">필터</span></h2>
             <Button
               variant="ghost"
               type="button"
@@ -202,9 +196,7 @@ function VocabulariesPageInner() {
             >
               リセット
             </Button>
-          }
-        >
-          <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+          </div>
             <div className="space-y-4">
               <div>
                 <Input
@@ -280,18 +272,16 @@ function VocabulariesPageInner() {
                 </div>
               </div>
             </div>
-          </Card>
-        </Section>
+        </Card>
 
-        <Section
-          title="語彙一覧"
-          subtitle="단어 목록"
-          description={loading ? "読み込み中..." : `件数: ${items?.length ?? 0}`}
-          right={error ? <div className="text-sm font-medium text-[#fb7185]">{error}</div> : null}
-          headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
-          titleClassName="text-[#F0F0FF]"
-          descriptionClassName="text-[#9499C4]"
-        >
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-sm font-semibold text-[#F0F0FF]">語彙一覧 <span className="ml-1.5 text-xs font-medium text-[#9499C4]">단어 목록</span></h2>
+            <div className="flex items-center gap-3">
+              {error ? <span className="text-xs font-medium text-[#fb7185]">{error}</span> : null}
+              <span className="text-xs text-[#9499C4]">{loading ? "読み込み中..." : `${items?.length ?? 0}件`}</span>
+            </div>
+          </div>
           {loading ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 9 }).map((_, i) => (
@@ -315,7 +305,7 @@ function VocabulariesPageInner() {
               <div className="mt-1 text-sm text-[#9499C4]">絞り込みをリセットしてみてください。</div>
             </Card>
           ) : null}
-        </Section>
+        </div>
       </div>
     </div>
   );

@@ -6,7 +6,6 @@ import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
-import { Section } from "@/components/ui/Section";
 import { ApiError } from "@/lib/api/http";
 import { listQuestions, type TopikQuestion } from "@/lib/api/questions";
 
@@ -179,13 +178,10 @@ export default function TopikPracticePage() {
           style={{ width: 500, height: 300, top: -60, left: "50%", transform: "translateX(-50%)" }}
         />
         <div className="relative mx-auto w-full max-w-lg space-y-6">
-          <Section
-            title="設定"
-            subtitle="설정"
-            headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
-            titleClassName="text-[#F0F0FF]"
-          >
-            <Card className="space-y-5 border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+          <Card className="space-y-5 border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
+            <div className="flex items-center border-b border-[rgba(255,255,255,0.06)] pb-4">
+              <h2 className="text-sm font-semibold text-[#F0F0FF]">設定 <span className="ml-1.5 text-xs font-medium text-[#9499C4]">설정</span></h2>
+            </div>
               {/* 問題タイプ */}
               <div>
                 <div className="text-sm font-semibold text-[#BCC0E8]">
@@ -250,8 +246,7 @@ export default function TopikPracticePage() {
               <Button className="w-full" type="button" disabled={loading} onClick={startQuiz}>
                 {loading ? "読み込み中..." : "スタート 시작"}
               </Button>
-            </Card>
-          </Section>
+          </Card>
 
           <div className="text-center">
             <Link href="/quiz" className="text-sm text-[#5C6199] underline underline-offset-2 hover:text-[#9499C4]">
@@ -477,12 +472,8 @@ export default function TopikPracticePage() {
         </div>
 
         {/* 問題別結果 */}
-        <Section
-          title="問題別結果"
-          subtitle="문제별 결과"
-          headerClassName="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-4 py-3 backdrop-blur-xl"
-          titleClassName="text-[#F0F0FF]"
-        >
+        <div className="space-y-3">
+          <h2 className="px-1 text-sm font-semibold text-[#F0F0FF]">問題別結果 <span className="ml-1.5 text-xs font-medium text-[#9499C4]">문제별 결과</span></h2>
           <div className="space-y-3">
             {results.map((r, i) => {
               const correctOpt = r.question.options.find(
@@ -539,7 +530,7 @@ export default function TopikPracticePage() {
               );
             })}
           </div>
-        </Section>
+        </div>
 
         <div className="flex flex-col gap-2 sm:flex-row">
           <button
