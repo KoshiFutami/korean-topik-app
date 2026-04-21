@@ -56,6 +56,7 @@ final class ProfileImageUrl
             $disk = Storage::disk($diskName);
             $url = $disk->url($stored);
         } catch (Throwable) {
+            // GCS Flysystem adapter may not support url(); silently fall back to manual URL construction.
             $url = '';
         }
 

@@ -190,7 +190,6 @@ export default function MePage() {
                   alt="プロフィール画像"
                   fill
                   className="object-cover"
-                  unoptimized
                 />
               </div>
             ) : (
