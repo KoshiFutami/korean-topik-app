@@ -310,6 +310,47 @@
           }
         },
         {
+          "name": "User Upload Profile Image",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "",
+                  "description": "プロフィール画像（JPEG, PNG, GIF, WebP, 5MB以下）"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me/profile-image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me",
+                "profile-image"
+              ]
+            },
+            "description": "プロフィール画像をアップロード・更新する。GCS バケット korean-topik-app-prod-profile-image に保存される。"
+          }
+        },
+        {
           "name": "User Logout",
           "request": {
             "method": "POST",

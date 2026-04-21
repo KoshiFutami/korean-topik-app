@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { ApiError } from "@/lib/api/http";
-import { loginUser, logoutUser, me as meApi, registerUser, updateMyProfile as updateMyProfileApi, type User } from "@/lib/api/auth";
+import { loginUser, logoutUser, me as meApi, registerUser, updateMyProfile as updateMyProfileApi, uploadProfileImage as uploadProfileImageApi, type User } from "@/lib/api/auth";
 
 type AuthState =
   | { status: "loading"; token: string | null; user: User | null }
@@ -30,6 +30,7 @@ type AuthContextValue = {
     new_password?: string;
     new_password_confirmation?: string;
   }) => Promise<void>;
+  uploadProfileImage: (file: File) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -141,9 +142,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [state]
   );
 
+  const uploadProfileImage = useCallback(
+    async (file: File) => {
+      const token =
+        state.status === "authed"
+          ? state.token
+          : typeof window === "undefined"
+            ? null
+            : window.localStorage.getItem(TOKEN_KEY);
+
+      if (!token) throw new Error("Not authenticated");
+
+      const res = await uploadProfileImageApi(token, file);
+      setState((prev) =>
+        prev.status === "authed"
+          ? { ...prev, user: { ...prev.user, profile_image_url: res.profile_image_url } }
+          : prev
+      );
+    },
+    [state]
+  );
+
   const value = useMemo<AuthContextValue>(
-    () => ({ state, register, login, logout, refreshMe, updateProfile }),
-    [state, register, login, logout, refreshMe, updateProfile]
+    () => ({ state, register, login, logout, refreshMe, updateProfile, uploadProfileImage }),
+    [state, register, login, logout, refreshMe, updateProfile, uploadProfileImage]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

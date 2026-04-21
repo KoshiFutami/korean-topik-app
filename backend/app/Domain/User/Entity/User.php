@@ -6,6 +6,7 @@ namespace App\Domain\User\Entity;
 
 use App\Domain\Shared\ValueObject\Email;
 use App\Domain\Shared\ValueObject\HashedPassword;
+use App\Domain\User\ValueObject\ProfileImagePath;
 use App\Domain\User\ValueObject\UserId;
 use App\Domain\User\ValueObject\UserName;
 use App\Domain\User\ValueObject\UserNickname;
@@ -17,6 +18,7 @@ final class User
         private readonly UserId $id,
         private readonly UserName $name,
         private readonly ?UserNickname $nickname,
+        private readonly ?ProfileImagePath $profileImagePath,
         private readonly Email $email,
         private readonly HashedPassword $password,
         private readonly DateTimeImmutable $createdAt,
@@ -31,6 +33,7 @@ final class User
             id: UserId::generate(),
             name: $name,
             nickname: null,
+            profileImagePath: null,
             email: $email,
             password: $password,
             createdAt: new DateTimeImmutable,
@@ -44,11 +47,13 @@ final class User
         Email $email,
         HashedPassword $password,
         DateTimeImmutable $createdAt,
+        ?ProfileImagePath $profileImagePath = null,
     ): self {
         return new self(
             id: $id,
             name: $name,
             nickname: $nickname,
+            profileImagePath: $profileImagePath,
             email: $email,
             password: $password,
             createdAt: $createdAt,
@@ -68,6 +73,11 @@ final class User
     public function nickname(): ?UserNickname
     {
         return $this->nickname;
+    }
+
+    public function profileImagePath(): ?ProfileImagePath
+    {
+        return $this->profileImagePath;
     }
 
     public function email(): Email
