@@ -18,6 +18,7 @@ final class TopikQuestion
         private QuestionType $questionType,
         private string $questionText,
         private ?string $questionTextJa,
+        private ?string $questionTextJaFilled,
         private ?string $explanationJa,
         private QuestionStatus $status,
         private array $options,
@@ -30,6 +31,7 @@ final class TopikQuestion
         QuestionType $questionType,
         string $questionText,
         ?string $questionTextJa,
+        ?string $questionTextJaFilled,
         ?string $explanationJa,
         QuestionStatus $status,
         array $options,
@@ -40,6 +42,7 @@ final class TopikQuestion
             questionType: $questionType,
             questionText: $questionText,
             questionTextJa: $questionTextJa,
+            questionTextJaFilled: $questionTextJaFilled,
             explanationJa: $explanationJa,
             status: $status,
             options: $options,
@@ -54,6 +57,7 @@ final class TopikQuestion
         QuestionType $questionType,
         string $questionText,
         ?string $questionTextJa,
+        ?string $questionTextJaFilled,
         ?string $explanationJa,
         QuestionStatus $status,
         array $options,
@@ -65,6 +69,7 @@ final class TopikQuestion
             questionType: $questionType,
             questionText: $questionText,
             questionTextJa: $questionTextJa,
+            questionTextJaFilled: $questionTextJaFilled,
             explanationJa: $explanationJa,
             status: $status,
             options: $options,
@@ -78,6 +83,7 @@ final class TopikQuestion
         QuestionType $questionType,
         string $questionText,
         ?string $questionTextJa,
+        ?string $questionTextJaFilled,
         ?string $explanationJa,
         QuestionStatus $status,
         array $options,
@@ -86,6 +92,7 @@ final class TopikQuestion
         $this->questionType = $questionType;
         $this->questionText = $questionText;
         $this->questionTextJa = $questionTextJa;
+        $this->questionTextJaFilled = $questionTextJaFilled;
         $this->explanationJa = $explanationJa;
         $this->status = $status;
         $this->options = $options;
@@ -114,6 +121,11 @@ final class TopikQuestion
     public function questionTextJa(): ?string
     {
         return $this->questionTextJa;
+    }
+
+    public function questionTextJaFilled(): ?string
+    {
+        return $this->questionTextJaFilled;
     }
 
     public function explanationJa(): ?string

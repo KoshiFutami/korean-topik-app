@@ -15,6 +15,7 @@ final class ListQuestionsQuestion
         public readonly string $questionTypeLabelJa,
         public readonly string $questionText,
         public readonly ?string $questionTextJa,
+        public readonly ?string $questionTextJaFilled,
         public readonly ?string $explanationJa,
         public readonly array $options,
         public readonly int $correctOptionNumber,

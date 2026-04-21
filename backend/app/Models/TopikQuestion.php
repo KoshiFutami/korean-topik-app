@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'question_type',
     'question_text',
     'question_text_ja',
+    'question_text_ja_filled',
     'explanation_ja',
     'status',
 ])]

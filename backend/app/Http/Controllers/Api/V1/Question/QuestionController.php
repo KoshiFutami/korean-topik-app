@@ -29,6 +29,7 @@ class QuestionController
                 'question_type_label_ja' => $q->questionTypeLabelJa,
                 'question_text' => $q->questionText,
                 'question_text_ja' => $q->questionTextJa,
+                'question_text_ja_filled' => $q->questionTextJaFilled,
                 'explanation_ja' => $q->explanationJa,
                 'options' => array_map(static fn ($o) => [
                     'option_number' => $o->optionNumber,

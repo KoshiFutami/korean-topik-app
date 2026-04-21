@@ -32,6 +32,7 @@ final class CreateAdminQuestionUseCase
             questionType: QuestionType::from($input->questionType),
             questionText: $input->questionText,
             questionTextJa: $input->questionTextJa,
+            questionTextJaFilled: null,
             explanationJa: $input->explanationJa,
             status: QuestionStatus::from($input->status),
             options: $options,

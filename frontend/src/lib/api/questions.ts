@@ -14,6 +14,7 @@ export type TopikQuestion = {
   question_type_label_ja: string;
   question_text: string;
   question_text_ja: string | null;
+  question_text_ja_filled: string | null;
   explanation_ja: string | null;
   options: QuestionOption[];
   correct_option_number: number;
