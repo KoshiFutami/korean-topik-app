@@ -81,9 +81,33 @@ function buildSpeakText(q: TopikQuestion, answered: boolean): string {
   const correctOpt = q.options.find((o) => o.option_number === q.correct_option_number);
   if (!correctOpt) return q.question_text;
   if (q.question_type === "grammar") {
-    return q.question_text.replace("( )", correctOpt.text);
+    return q.question_text.replaceAll("( )", correctOpt.text);
   }
   return q.question_text;
+}
+
+function renderGrammarQuestionTextFilled(text: string, answer: string) {
+  const parts = text.split("( )");
+  return (
+    <>
+      {parts.map((part, i) => (
+        <span key={i}>
+          {part}
+          {i < parts.length - 1 && (
+            <span className="font-bold text-[#34d399]">{answer}</span>
+          )}
+        </span>
+      ))}
+    </>
+  );
+}
+
+function fillJaBlank(text: string, answer: string): string {
+  return text.replace(/（[　\s]+）/g, answer);
+}
+
+function fillKoBlank(text: string, answer: string): string {
+  return text.replaceAll("( )", answer);
 }
 
 export default function TopikPracticePage() {
@@ -266,6 +290,7 @@ export default function TopikPracticePage() {
     const progress = Math.round(((index + 1) / questions.length) * 100);
     const isAnswered = selectedOption !== null;
     const isCorrect = isAnswered && selectedOption === q.correct_option_number;
+    const correctOpt = q.options.find((o) => o.option_number === q.correct_option_number);
 
     return (
       <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
@@ -321,7 +346,9 @@ export default function TopikPracticePage() {
               </div>
               <div className="text-xl font-bold leading-relaxed text-[#F0F0FF] sm:text-2xl">
                 {q.question_type === "grammar"
-                  ? renderGrammarQuestionText(q.question_text)
+                  ? isAnswered
+                    ? renderGrammarQuestionTextFilled(q.question_text, correctOpt?.text ?? "")
+                    : renderGrammarQuestionText(q.question_text)
                   : q.question_text}
               </div>
               {isAnswered && q.question_text_ja ? (
@@ -330,7 +357,9 @@ export default function TopikPracticePage() {
                   role="note"
                   aria-label="日本語訳"
                 >
-                  {q.question_text_ja}
+                  {q.question_type === "grammar"
+                    ? fillJaBlank(q.question_text_ja, correctOpt?.text_ja ?? "")
+                    : q.question_text_ja}
                 </div>
               ) : null}
               <p className="text-sm text-[#5C6199]">
@@ -493,7 +522,11 @@ export default function TopikPracticePage() {
                     <span className="font-mono font-bold text-[#5C6199]">Q{i + 1}.</span>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium leading-relaxed">{r.question.question_text}</span>
+                        <span className="font-medium leading-relaxed">
+                          {r.question.question_type === "grammar"
+                            ? fillKoBlank(r.question.question_text, correctOpt?.text ?? "")
+                            : r.question.question_text}
+                        </span>
                         <button
                           type="button"
                           onClick={() => speakKorean(buildSpeakText(r.question, true))}
@@ -506,7 +539,9 @@ export default function TopikPracticePage() {
                       </div>
                       {r.question.question_text_ja ? (
                         <div className="mt-0.5 text-xs text-[#5C6199]" role="note" aria-label="日本語訳">
-                          {r.question.question_text_ja}
+                          {r.question.question_type === "grammar"
+                            ? fillJaBlank(r.question.question_text_ja, correctOpt?.text_ja ?? "")
+                            : r.question.question_text_ja}
                         </div>
                       ) : null}
                     </div>
