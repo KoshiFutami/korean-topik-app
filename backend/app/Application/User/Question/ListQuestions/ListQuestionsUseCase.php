@@ -42,6 +42,7 @@ final class ListQuestionsUseCase
                     questionTypeLabelJa: $q->questionType()->labelJa(),
                     questionText: $q->questionText(),
                     questionTextJa: $q->questionTextJa(),
+                    questionTextJaFilled: $q->questionTextJaFilled(),
                     explanationJa: $q->explanationJa(),
                     options: $options,
                     correctOptionNumber: $q->correctOptionNumber(),

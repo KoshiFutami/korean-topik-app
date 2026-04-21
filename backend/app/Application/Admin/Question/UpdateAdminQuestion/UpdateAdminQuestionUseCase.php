@@ -39,6 +39,7 @@ final class UpdateAdminQuestionUseCase
             questionType: QuestionType::from($input->questionType),
             questionText: $input->questionText,
             questionTextJa: $input->questionTextJa,
+            questionTextJaFilled: $question->questionTextJaFilled(),
             explanationJa: $input->explanationJa,
             status: QuestionStatus::from($input->status),
             options: $options,

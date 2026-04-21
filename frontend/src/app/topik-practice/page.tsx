@@ -102,10 +102,6 @@ function renderGrammarQuestionTextFilled(text: string, answer: string) {
   );
 }
 
-function fillJaBlank(text: string, answer: string): string {
-  return text.replace(/（[　\s]+）/g, answer);
-}
-
 function fillKoBlank(text: string, answer: string): string {
   return text.replaceAll("( )", answer);
 }
@@ -358,7 +354,7 @@ export default function TopikPracticePage() {
                   aria-label="日本語訳"
                 >
                   {q.question_type === "grammar"
-                    ? fillJaBlank(q.question_text_ja, correctOpt?.text_ja ?? "")
+                    ? (q.question_text_ja_filled ?? q.question_text_ja)
                     : q.question_text_ja}
                 </div>
               ) : null}
@@ -540,7 +536,7 @@ export default function TopikPracticePage() {
                       {r.question.question_text_ja ? (
                         <div className="mt-0.5 text-xs text-[#5C6199]" role="note" aria-label="日本語訳">
                           {r.question.question_type === "grammar"
-                            ? fillJaBlank(r.question.question_text_ja, correctOpt?.text_ja ?? "")
+                            ? (r.question.question_text_ja_filled ?? r.question.question_text_ja)
                             : r.question.question_text_ja}
                         </div>
                       ) : null}

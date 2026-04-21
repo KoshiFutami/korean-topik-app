@@ -34,6 +34,7 @@ class TopikQuestionBulkSeeder extends Seeder
                     'question_type' => $q['question_type'],
                     'question_text' => $q['question_text'],
                     'question_text_ja' => $q['question_text_ja'] ?? null,
+                    'question_text_ja_filled' => $q['question_text_ja_filled'] ?? null,
                     'explanation_ja' => $q['explanation_ja'] ?? null,
                     'status' => 'published',
                 ],
@@ -174,6 +175,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '( )에 갑니다. 책을 삽니다.',
                 'question_text_ja' => '（　）に行きます。本を買います。',
+                'question_text_ja_filled' => '本屋に行きます。本を買います。',
                 'explanation_ja' => '「책을 삽니다（本を買います）」から、本を売っている場所「서점（本屋）」が正解です。「은행（銀行）」「극장（劇場）」「식당（食堂）」は本を買う場所ではありません。',
                 'options' => [
                     ['option_number' => 1, 'text' => '은행', 'text_ja' => '銀行', 'is_correct' => false],
@@ -187,6 +189,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '신발이 ( ). 발이 아픕니다.',
                 'question_text_ja' => '靴が（　　）。足が痛いです。',
+                'question_text_ja_filled' => '靴が小さいです。足が痛いです。',
                 'explanation_ja' => '「발이 아픕니다（足が痛いです）」から、靴が「작습니다（小さいです）」ために足が痛いという文脈が自然です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '같습니다', 'text_ja' => '同じです', 'is_correct' => false],
@@ -200,6 +203,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '오후에 약속이 있습니다. 민수 씨를 ( ).',
                 'question_text_ja' => '午後に約束があります。ミンスさんを（　　）。',
+                'question_text_ja_filled' => '午後に約束があります。ミンスさんに会います。',
                 'explanation_ja' => '「약속이 있습니다（約束があります）」から、민수 씨と「만납니다（会います）」が自然な流れです。',
                 'options' => [
                     ['option_number' => 1, 'text' => '찍습니다', 'text_ja' => '撮ります', 'is_correct' => false],
@@ -213,6 +217,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '이것은 제 가방이 아닙니다. 동생( ) 가방입니다.',
                 'question_text_ja' => 'これは私のかばんではありません。弟・妹（　）かばんです。',
+                'question_text_ja_filled' => 'これは私のかばんではありません。弟・妹のかばんです。',
                 'explanation_ja' => '「동생（弟/妹）」に所有を表す助詞「의」がついて「동생의 가방（弟/妹のかばん）」となります。',
                 'options' => [
                     ['option_number' => 1, 'text' => '도', 'text_ja' => 'も', 'is_correct' => false],
@@ -226,6 +231,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '회사에 일이 많습니다. ( ) 바쁩니다.',
                 'question_text_ja' => '会社に仕事が多いです。（　　）忙しいです。',
+                'question_text_ja_filled' => '会社に仕事が多いです。とても忙しいです。',
                 'explanation_ja' => '「아주（とても）」は形容詞・副詞を修飾します。仕事がたくさんあるので「とても忙しい」という文脈が自然です。「빨리（早く）」「아까（さっき）」「먼저（先に）」は文意に合いません。',
                 'options' => [
                     ['option_number' => 1, 'text' => '빨리', 'text_ja' => '早く', 'is_correct' => false],
@@ -239,6 +245,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저는 학교( ) 가요.',
                 'question_text_ja' => '私は学校（　）行きます。',
+                'question_text_ja_filled' => '私は学校に行きます。',
                 'explanation_ja' => '「에」は目的地・方向を表す助詞です。「에서」は行為が行われる場所、「에게」は人に対する助詞、「으로」は方向・手段を表します。',
                 'options' => [
                     ['option_number' => 1, 'text' => '에', 'text_ja' => 'に', 'is_correct' => true],
@@ -252,6 +259,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저는 회사( ) 일해요.',
                 'question_text_ja' => '私は会社（　）働きます。',
+                'question_text_ja_filled' => '私は会社で働きます。',
                 'explanation_ja' => '「에서」は行為が行われる場所を表す助詞です。「에」は目的地・時間・存在場所、「에게」は人への助詞、「이」は主語を表します。',
                 'options' => [
                     ['option_number' => 1, 'text' => '에', 'text_ja' => 'に', 'is_correct' => false],
@@ -265,6 +273,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저는 지금 밥을 먹( ) 있어요.',
                 'question_text_ja' => '私は今ご飯を食べ（　）います。',
+                'question_text_ja_filled' => '私は今ご飯を食べています。',
                 'explanation_ja' => '「고 있다」は進行形「〜している」を表す表現です。動詞の語幹に「고」をつけます。「아/어 있다」は状態の継続を表します。',
                 'options' => [
                     ['option_number' => 1, 'text' => '아', 'text_ja' => 'て（아）', 'is_correct' => false],
@@ -278,6 +287,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '날씨가 더워( ) 에어컨을 켰어요.',
                 'question_text_ja' => '天気が暑く（　）エアコンをつけました。',
+                'question_text_ja_filled' => '天気が暑くてエアコンをつけました。',
                 'explanation_ja' => '「서」は理由・原因を表す接続語尾です。「〜だから〜した」という意味になります。「지만」は逆接（〜だけど）、「면」は条件（〜なら）、「고」は並列（〜して）を表します。',
                 'options' => [
                     ['option_number' => 1, 'text' => '지만', 'text_ja' => 'が・けど', 'is_correct' => false],
@@ -291,6 +301,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저는 밥을 먹( ) 싶어요.',
                 'question_text_ja' => '私はご飯を食べ（　）です。',
+                'question_text_ja_filled' => '私はご飯を食べたいです。',
                 'explanation_ja' => '「고 싶다」は「〜したい」という願望を表す表現です。動詞の語幹に「고」をつけます。「서」は理由・継続、「지만」は逆接、「면」は条件を表します。',
                 'options' => [
                     ['option_number' => 1, 'text' => '서', 'text_ja' => 'て・から', 'is_correct' => false],
@@ -384,6 +395,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저는 음악( ) 좋아해요.',
                 'question_text_ja' => '私は音楽（　）好きです。',
+                'question_text_ja_filled' => '私は音楽が好きです。',
                 'explanation_ja' => '「을/를」は目的格助詞です。음악(音楽)は받침（パッチム）があるので「을」を使います。',
                 'options' => [
                     ['option_number' => 1, 'text' => '이', 'text_ja' => 'が', 'is_correct' => false],
@@ -397,6 +409,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저기 고양이( ) 있어요.',
                 'question_text_ja' => 'あそこに猫（　）います。',
+                'question_text_ja_filled' => 'あそこに猫がいます。',
                 'explanation_ja' => '「이/가」は主格助詞です。고양이(猫)は받침がないので「가」を使います。',
                 'options' => [
                     ['option_number' => 1, 'text' => '가', 'text_ja' => 'が', 'is_correct' => true],
@@ -410,6 +423,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저는 한국어를 배워요. 중국어( ) 배워요.',
                 'question_text_ja' => '私は韓国語を学びます。中国語（　）学びます。',
+                'question_text_ja_filled' => '私は韓国語を学びます。中国語も学びます。',
                 'explanation_ja' => '「도」は「も」を表す助詞です。前の文に続いて「中国語も学ぶ」という意味になります。',
                 'options' => [
                     ['option_number' => 1, 'text' => '만', 'text_ja' => 'だけ', 'is_correct' => false],
@@ -423,6 +437,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '여기에 앉( )세요. 잠깐 기다려 주세요.',
                 'question_text_ja' => 'ここにお座り（　）ください。少々お待ちください。',
+                'question_text_ja_filled' => 'ここにお座りください。少々お待ちください。',
                 'explanation_ja' => '「앉다」の語幹「앉」は받침があるので、「-(으)세요」は「으세요」になります。「앉으세요」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '아', 'text_ja' => 'あ（語尾）', 'is_correct' => false],
@@ -436,6 +451,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저는 피아노를 칠 ( ) 있어요.',
                 'question_text_ja' => '私はピアノを弾く（　）できます。',
+                'question_text_ja_filled' => '私はピアノを弾くことができます。',
                 'explanation_ja' => '「-(으)ㄹ 수 있다」は「〜することができる」を表す表現です。「수」が空欄に入ります。',
                 'options' => [
                     ['option_number' => 1, 'text' => '수', 'text_ja' => 'こと（수）', 'is_correct' => true],
@@ -449,6 +465,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저는 고기를 먹( ) 않아요. 채소를 좋아해요.',
                 'question_text_ja' => '私は肉を食べ（　）ません。野菜が好きです。',
+                'question_text_ja_filled' => '私は肉を食べません。野菜が好きです。',
                 'explanation_ja' => '「-지 않다」は「〜しない」を表す否定表現です。動詞の語幹に「지」をつけます。',
                 'options' => [
                     ['option_number' => 1, 'text' => '고', 'text_ja' => 'て・して', 'is_correct' => false],
@@ -462,6 +479,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저는 수영을 ( ) 해요. 배운 적이 없어요.',
                 'question_text_ja' => '私は水泳が（　）できません。習ったことがありません。',
+                'question_text_ja_filled' => '私は水泳ができません。習ったことがありません。',
                 'explanation_ja' => '「못」は「〜できない」を表す副詞で、能力がないことを表します。「안」は意志的な否定です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '잘', 'text_ja' => 'うまく', 'is_correct' => false],
@@ -475,6 +493,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '내일 꼭 전화할( )요.',
                 'question_text_ja' => '明日必ず電話し（　）ます。',
+                'question_text_ja_filled' => '明日必ず電話します。',
                 'explanation_ja' => '「-(으)ㄹ게요」は「〜します（意志・約束）」を表す語尾です。「전화할게요」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '거', 'text_ja' => 'こと・もの', 'is_correct' => false],
@@ -503,6 +522,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '회의가 끝나( ) 연락할게요.',
                 'question_text_ja' => '会議が終わ（　）連絡します。',
+                'question_text_ja_filled' => '会議が終わったら連絡します。',
                 'explanation_ja' => '「(으)면」は条件「〜たら・〜なら」を表す接続語尾です。끝나다（終わる）の語幹「끝나」に「면」がつきます。「서」は理由・順序、「지만」は逆接、「고」は並列を表します。',
                 'options' => [
                     ['option_number' => 1, 'text' => '서', 'text_ja' => 'て・から', 'is_correct' => false],
@@ -516,6 +536,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '시간이 없( ) 택시를 탔어요.',
                 'question_text_ja' => '時間がな（　）タクシーに乗りました。',
+                'question_text_ja_filled' => '時間がなくてタクシーに乗りました。',
                 'explanation_ja' => '「아서/어서」は理由・原因を表す接続語尾です。없다（ない）は「없어서」になります。「지만」は逆接、「면」は条件、「고」は並列を表します。',
                 'options' => [
                     ['option_number' => 1, 'text' => '어서', 'text_ja' => 'て・から', 'is_correct' => true],
@@ -529,6 +550,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '내일까지 제출해야 하( ) 지금 해야 해요.',
                 'question_text_ja' => '明日までに提出しなければなら（　）今やらなければなりません。',
+                'question_text_ja_filled' => '明日までに提出しなければならないので今やらなければなりません。',
                 'explanation_ja' => '「(으)니까」は理由・根拠を表す接続語尾です。「〜だから〜しなければならない」という文脈に合います。「지만」は逆接、「면」は条件、「고」は並列を表します。',
                 'options' => [
                     ['option_number' => 1, 'text' => '지만', 'text_ja' => 'が・けど', 'is_correct' => false],
@@ -674,6 +696,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '다음 달에 한국 여행을 가( ) 해요. 지금 계획을 세우고 있어요.',
                 'question_text_ja' => '来月韓国旅行に行（　）います。今計画を立てています。',
+                'question_text_ja_filled' => '来月韓国旅行に行こうとしています。今計画を立てています。',
                 'explanation_ja' => '「-(으)려고 하다」は「〜しようとする・〜するつもりだ」という意図を表す表現です。「가려고 하다」になります。',
                 'options' => [
                     ['option_number' => 1, 'text' => '려고', 'text_ja' => '〜しようと', 'is_correct' => true],
@@ -687,6 +710,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저 사람은 학생인 ( ) 같아요. 가방을 들고 있어요.',
                 'question_text_ja' => 'あの人は学生（　）ようです。カバンを持っています。',
+                'question_text_ja_filled' => 'あの人は学生のようです。カバンを持っています。',
                 'explanation_ja' => '「-(으)ㄴ/는 것 같다」は「〜のようだ」という推測を表す表現です。「것」が空欄に入ります。',
                 'options' => [
                     ['option_number' => 1, 'text' => '것', 'text_ja' => 'こと・もの', 'is_correct' => true],
@@ -700,6 +724,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '여기서 담배를 피우( ) 안 돼요.',
                 'question_text_ja' => 'ここでタバコを吸っ（　）いけません。',
+                'question_text_ja_filled' => 'ここでタバコを吸ってはいけません。',
                 'explanation_ja' => '「-(으)면 안 되다」は「〜してはいけない」という禁止を表す表現です。「피우면 안 돼요」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '어서', 'text_ja' => 'て・から', 'is_correct' => false],
@@ -713,6 +738,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '여기에 앉아( ) 돼요? 자리가 있어요?',
                 'question_text_ja' => 'ここに座っ（　）いいですか？席はありますか？',
+                'question_text_ja_filled' => 'ここに座ってもいいですか？席はありますか？',
                 'explanation_ja' => '「-(아/어)도 되다」は「〜してもよい」という許可を表す表現です。「앉아도 돼요?」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '도', 'text_ja' => 'ても', 'is_correct' => true],
@@ -726,6 +752,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '내일 시험이 있어서 공부해( ) 해요.',
                 'question_text_ja' => '明日試験があるので勉強し（　）なりません。',
+                'question_text_ja_filled' => '明日試験があるので勉強しなければなりません。',
                 'explanation_ja' => '「-(아/어)야 하다」は「〜しなければならない」という義務を表す表現です。「공부해야 해요」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '서', 'text_ja' => 'て・から', 'is_correct' => false],
@@ -739,6 +766,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '밥을 먹은 ( ) 커피를 마셔요.',
                 'question_text_ja' => 'ご飯を食べた（　）コーヒーを飲みます。',
+                'question_text_ja_filled' => 'ご飯を食べた後にコーヒーを飲みます。',
                 'explanation_ja' => '「-(으)ㄴ 후에」は「〜した後に」を表す表現です。「먹은 후에」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '후에', 'text_ja' => '後に', 'is_correct' => true],
@@ -752,6 +780,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '시간이 있을 ( ) 책을 읽어요.',
                 'question_text_ja' => '時間があると（　）本を読みます。',
+                'question_text_ja_filled' => '時間があるとき本を読みます。',
                 'explanation_ja' => '「-(으)ㄹ 때」は「〜するとき」を表す表現です。「있을 때」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '때', 'text_ja' => 'とき', 'is_correct' => true],
@@ -765,6 +794,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '바쁘( ) 때문에 연락을 못 했어요.',
                 'question_text_ja' => '忙し（　）ため連絡できませんでした。',
+                'question_text_ja_filled' => '忙しいため連絡できませんでした。',
                 'explanation_ja' => '「-기 때문에」は「〜だから・〜のために（理由）」を表す表現です。「바쁘기 때문에」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '기', 'text_ja' => 'こと（名詞形）', 'is_correct' => true],
@@ -778,6 +808,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '밥을 먹( ) 텔레비전을 봐요.',
                 'question_text_ja' => 'ご飯を食べ（　）テレビを見ます。',
+                'question_text_ja_filled' => 'ご飯を食べながらテレビを見ます。',
                 'explanation_ja' => '「-(으)면서」は「〜しながら」という同時進行を表す接続語尾です。「먹으면서」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '으면서', 'text_ja' => 'ながら', 'is_correct' => true],
@@ -791,6 +822,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '한국어를 배우다가 한국 문화에도 관심을 갖( ) 됐어요.',
                 'question_text_ja' => '韓国語を学んでいるうちに、韓国文化にも関心を持つように（　）なりました。',
+                'question_text_ja_filled' => '韓国語を学んでいるうちに、韓国文化にも関心を持つようになりました。',
                 'explanation_ja' => '「-게 되다」は「〜するようになる」という変化を表す表現です。「갖게 됐어요」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '게', 'text_ja' => '〜ように（変化）', 'is_correct' => true],
@@ -804,6 +836,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '방학 ( ) 한국 여행을 갔어요.',
                 'question_text_ja' => '休暇（　）韓国旅行に行きました。',
+                'question_text_ja_filled' => '休暇の間韓国旅行に行きました。',
                 'explanation_ja' => '「-는 동안」は「〜している間」を表す表現です。「방학 동안」で「休暇の間」という意味になります。',
                 'options' => [
                     ['option_number' => 1, 'text' => '동안', 'text_ja' => '間・あいだ', 'is_correct' => true],
@@ -817,6 +850,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '오늘 같이 영화를 볼( )요?',
                 'question_text_ja' => '今日一緒に映画を見ませ（　）か？',
+                'question_text_ja_filled' => '今日一緒に映画を見ませんか？',
                 'explanation_ja' => '「-(으)ㄹ까요?」は「〜しましょうか・〜しませんか」という提案や勧誘を表す表現です。「볼까요?」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '까', 'text_ja' => 'か（提案）', 'is_correct' => true],
@@ -830,6 +864,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '저는 한국에서 살기( ) 했어요.',
                 'question_text_ja' => '私は韓国に住む（　）決めました。',
+                'question_text_ja_filled' => '私は韓国に住むことに決めました。',
                 'explanation_ja' => '「-기로 하다」は「〜することにする・〜すると決める」という決定を表す表現です。「살기로 했어요」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '로', 'text_ja' => '〜することに（決定）', 'is_correct' => true],
@@ -843,6 +878,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '열심히 연습한( ) 대회에서 1등을 했어요.',
                 'question_text_ja' => '一生懸命練習した（　）大会で1位になりました。',
+                'question_text_ja_filled' => '一生懸命練習したおかげで大会で1位になりました。',
                 'explanation_ja' => '「-(으)ㄴ 덕분에」は「〜したおかげで」というポジティブな原因・理由を表す表現です。「연습한 덕분에」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '덕분에', 'text_ja' => 'おかげで', 'is_correct' => true],
@@ -856,6 +892,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '오늘은 날씨가 좋은( ) 같이 산책할까요?',
                 'question_text_ja' => '今日は天気がいい（　）一緒に散歩しませんか？',
+                'question_text_ja_filled' => '今日は天気がいいので一緒に散歩しませんか？',
                 'explanation_ja' => '「-(으)ㄴ데/는데」は背景や状況を述べて提案・依頼につなげる接続語尾です。「좋은데」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '데', 'text_ja' => 'けど・が（背景）', 'is_correct' => true],
@@ -869,6 +906,7 @@ class TopikQuestionBulkSeeder extends Seeder
                 'question_type' => 'grammar',
                 'question_text' => '아이가 아이스크림을 먹( ) 싶어해요.',
                 'question_text_ja' => '子供がアイスクリームを食べ（　）がっています。',
+                'question_text_ja_filled' => '子供がアイスクリームを食べたがっています。',
                 'explanation_ja' => '「-고 싶어하다」は第三者の願望「〜したがっている」を表す表現です。「먹고 싶어해요」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '고', 'text_ja' => 'て・して（連結）', 'is_correct' => true],
