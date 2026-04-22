@@ -132,9 +132,9 @@ class TopikQuestionBulkSeeder extends Seeder
             [
                 'level' => 1,
                 'question_type' => 'topic',
-                'question_text' => '저는 축구를 합니다. 주말마다 친구들과 운동장에 갑니다.',
-                'question_text_ja' => '私はサッカーをします。毎週末友達とグラウンドに行きます。',
-                'explanation_ja' => '「축구（サッカー）」「운동장（グラウンド）」など運動・スポーツに関する内容なので、「운동（運動）」が正解です。',
+                'question_text' => '저는 수영을 좋아합니다. 매일 아침 달리기도 합니다.',
+                'question_text_ja' => '私は水泳が好きです。毎朝ランニングもします。',
+                'explanation_ja' => '「수영（水泳）」「달리기（ランニング）」などスポーツ・運動に関する内容なので、「운동（運動）」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '음식', 'text_ja' => '食べ物', 'is_correct' => false],
                     ['option_number' => 2, 'text' => '날씨', 'text_ja' => '天気', 'is_correct' => false],
@@ -158,9 +158,9 @@ class TopikQuestionBulkSeeder extends Seeder
             [
                 'level' => 1,
                 'question_type' => 'topic',
-                'question_text' => '저는 한국어를 배웁니다. 학교에서 공부합니다.',
-                'question_text_ja' => '私は韓国語を学びます。学校で勉強します。',
-                'explanation_ja' => '「한국어를 배웁니다（韓国語を学びます）」「학교에서 공부합니다（学校で勉強します）」など勉強に関する内容なので、「공부（勉強）」が正解です。',
+                'question_text' => '저는 매일 책을 읽습니다. 모르는 단어는 사전에서 찾습니다.',
+                'question_text_ja' => '私は毎日本を読みます。わからない単語は辞書で調べます。',
+                'explanation_ja' => '「책을 읽습니다（本を読みます）」「사전에서 찾습니다（辞書で調べます）」など勉強・学習に関する内容なので、「공부（勉強）」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '여행', 'text_ja' => '旅行', 'is_correct' => false],
                     ['option_number' => 2, 'text' => '음식', 'text_ja' => '食べ物', 'is_correct' => false],
@@ -353,9 +353,9 @@ class TopikQuestionBulkSeeder extends Seeder
             [
                 'level' => 1,
                 'question_type' => 'topic',
-                'question_text' => '오늘은 제 생일입니다. 친구들이 케이크를 사 줬습니다.',
-                'question_text_ja' => '今日は私の誕生日です。友達がケーキを買ってくれました。',
-                'explanation_ja' => '「생일（誕生日）」「케이크（ケーキ）」など誕生日に関する内容なので、「생일（誕生日）」が正解です。',
+                'question_text' => '친구들이 선물을 가져왔습니다. 케이크도 있었습니다.',
+                'question_text_ja' => '友達がプレゼントを持ってきてくれました。ケーキもありました。',
+                'explanation_ja' => '「선물（プレゼント）」「케이크（ケーキ）」など誕生日のお祝いに関する内容なので、「생일（誕生日）」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '날씨', 'text_ja' => '天気', 'is_correct' => false],
                     ['option_number' => 2, 'text' => '공부', 'text_ja' => '勉強', 'is_correct' => false],
@@ -379,9 +379,9 @@ class TopikQuestionBulkSeeder extends Seeder
             [
                 'level' => 1,
                 'question_type' => 'topic',
-                'question_text' => '저는 주말에 영화를 봤습니다. 정말 재미있었습니다.',
-                'question_text_ja' => '私は週末に映画を見ました。とても面白かったです。',
-                'explanation_ja' => '「영화（映画）」「재미있었습니다（面白かったです）」などエンタメに関する内容なので、「영화（映画）」が正解です。',
+                'question_text' => '저는 주말에 극장에 갔습니다. 정말 재미있었습니다.',
+                'question_text_ja' => '私は週末に映画館に行きました。とても面白かったです。',
+                'explanation_ja' => '「극장（映画館）」「재미있었습니다（面白かったです）」など映画・エンタメに関する内容なので、「영화（映画）」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '날씨', 'text_ja' => '天気', 'is_correct' => false],
                     ['option_number' => 2, 'text' => '음식', 'text_ja' => '食べ物', 'is_correct' => false],
@@ -563,9 +563,9 @@ class TopikQuestionBulkSeeder extends Seeder
             [
                 'level' => 2,
                 'question_type' => 'topic',
-                'question_text' => '저는 건강을 위해 매일 아침 운동합니다. 규칙적인 생활이 중요하다고 생각합니다.',
-                'question_text_ja' => '私は健康のために毎朝運動します。規則正しい生活が大切だと思います。',
-                'explanation_ja' => '「건강（健康）」「규칙적인 생활（規則正しい生活）」など健康に関する内容なので、「건강（健康）」が正解です。',
+                'question_text' => '저는 매일 아침 일찍 일어나서 운동합니다. 규칙적인 생활이 중요하다고 생각합니다.',
+                'question_text_ja' => '私は毎朝早く起きて運動します。規則正しい生活が大切だと思います。',
+                'explanation_ja' => '「매일 아침 운동（毎朝運動）」「규칙적인 생활（規則正しい生活）」など健康に関する内容なので、「건강（健康）」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '여행', 'text_ja' => '旅行', 'is_correct' => false],
                     ['option_number' => 2, 'text' => '건강', 'text_ja' => '健康', 'is_correct' => true],
@@ -576,9 +576,9 @@ class TopikQuestionBulkSeeder extends Seeder
             [
                 'level' => 2,
                 'question_type' => 'topic',
-                'question_text' => '요즘 스마트폰 사용 시간이 늘고 있습니다. 특히 젊은 사람들 사이에서 많이 사용합니다.',
-                'question_text_ja' => '最近スマートフォンの使用時間が増えています。特に若者の間でよく使われています。',
-                'explanation_ja' => '「스마트폰（スマートフォン）」「사용 시간（使用時間）」など技術・スマートフォンに関する内容なので、「스마트폰（スマートフォン）」が正解です。',
+                'question_text' => '요즘 손 안의 작은 기기로 무엇이든 할 수 있습니다. 특히 젊은 사람들 사이에서 인기가 많습니다.',
+                'question_text_ja' => '最近、手の中の小さな機器で何でもできます。特に若者の間で人気があります。',
+                'explanation_ja' => '「손 안의 작은 기기（手の中の小さな機器）」「무엇이든 할 수 있습니다（何でもできます）」などスマートフォンに関する内容なので、「스마트폰（スマートフォン）」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '건강', 'text_ja' => '健康', 'is_correct' => false],
                     ['option_number' => 2, 'text' => '여행', 'text_ja' => '旅行', 'is_correct' => false],
@@ -602,8 +602,8 @@ class TopikQuestionBulkSeeder extends Seeder
             [
                 'level' => 2,
                 'question_type' => 'topic',
-                'question_text' => '한국 음식 중에서 김치가 세계적으로 유명합니다. 발효 식품으로 건강에도 좋습니다.',
-                'question_text_ja' => '韓国料理の中でキムチが世界的に有名です。発酵食品として健康にも良いです。',
+                'question_text' => '김치는 세계적으로 유명합니다. 발효 식품으로 건강에도 좋습니다.',
+                'question_text_ja' => 'キムチは世界的に有名です。発酵食品として健康にも良いです。',
                 'explanation_ja' => '「김치（キムチ）」「발효 식품（発酵食品）」など食べ物に関する内容なので、「음식（食べ物）」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '음식', 'text_ja' => '食べ物', 'is_correct' => true],
@@ -615,9 +615,9 @@ class TopikQuestionBulkSeeder extends Seeder
             [
                 'level' => 2,
                 'question_type' => 'topic',
-                'question_text' => '저는 서울에서 부산으로 여행을 갔습니다. 기차로 2시간 반이 걸렸습니다.',
-                'question_text_ja' => '私はソウルから釜山へ旅行に行きました。電車で2時間半かかりました。',
-                'explanation_ja' => '「서울에서 부산으로（ソウルから釜山へ）」「기차（電車）」など旅行・移動に関する内容なので、「여행（旅行）」が正解です。',
+                'question_text' => '저는 서울에서 부산까지 기차를 탔습니다. 2시간 반이 걸렸습니다.',
+                'question_text_ja' => '私はソウルから釜山まで電車に乗りました。2時間半かかりました。',
+                'explanation_ja' => '「서울에서 부산까지（ソウルから釜山まで）」「기차를 탔습니다（電車に乗りました）」など旅行・移動に関する内容なので、「여행（旅行）」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '여행', 'text_ja' => '旅行', 'is_correct' => true],
                     ['option_number' => 2, 'text' => '교통', 'text_ja' => '交通', 'is_correct' => false],
@@ -628,9 +628,9 @@ class TopikQuestionBulkSeeder extends Seeder
             [
                 'level' => 2,
                 'question_type' => 'topic',
-                'question_text' => '한국에서는 설날과 추석이 중요한 명절입니다. 가족이 모여서 음식을 만들고 이야기를 나눕니다.',
-                'question_text_ja' => '韓国ではソルラル（旧正月）とチュソクが重要な祝日です。家族が集まって料理を作り話をします。',
-                'explanation_ja' => '「설날（旧正月）」「추석（チュソク）」「명절（祝日）」など伝統行事に関する内容なので、「명절（祝日）」が正解です。',
+                'question_text' => '한국에서는 설날과 추석을 소중히 여깁니다. 가족이 모여서 음식을 만들고 이야기를 나눕니다.',
+                'question_text_ja' => '韓国ではソルラル（旧正月）とチュソクが大切にされています。家族が集まって料理を作り話をします。',
+                'explanation_ja' => '「설날（旧正月）」「추석（チュソク）」「가족이 모여서（家族が集まって）」など伝統的な祝日・行事に関する内容なので、「명절（祝日）」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '명절', 'text_ja' => '祝日・行事', 'is_correct' => true],
                     ['option_number' => 2, 'text' => '날씨', 'text_ja' => '天気', 'is_correct' => false],
@@ -680,9 +680,9 @@ class TopikQuestionBulkSeeder extends Seeder
             [
                 'level' => 2,
                 'question_type' => 'topic',
-                'question_text' => '저는 환경 문제에 관심이 많습니다. 쓰레기를 줄이기 위해 노력합니다.',
-                'question_text_ja' => '私は環境問題に関心が高いです。ゴミを減らすために努力しています。',
-                'explanation_ja' => '「환경 문제（環境問題）」「쓰레기를 줄이기（ゴミを減らす）」など環境に関する内容なので、「환경（環境）」が正解です。',
+                'question_text' => '저는 쓰레기를 줄이기 위해 노력합니다. 재활용도 열심히 합니다.',
+                'question_text_ja' => '私はゴミを減らすために努力しています。リサイクルも熱心にしています。',
+                'explanation_ja' => '「쓰레기를 줄이기（ゴミを減らす）」「재활용（リサイクル）」など環境に関する内容なので、「환경（環境）」が正解です。',
                 'options' => [
                     ['option_number' => 1, 'text' => '취미', 'text_ja' => '趣味', 'is_correct' => false],
                     ['option_number' => 2, 'text' => '환경', 'text_ja' => '環境', 'is_correct' => true],
