@@ -28,6 +28,8 @@ final class GetMyProfileUseCase
             email: $user->email()->value(),
             createdAt: $user->createdAt(),
             profileImageUrl: ProfileImageUrl::resolve($user->profileImagePath()?->value()),
+            profileImageOffsetX: $user->profileImageOffsetX(),
+            profileImageOffsetY: $user->profileImageOffsetY(),
         );
     }
 }

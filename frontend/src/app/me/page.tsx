@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { ApiError } from "@/lib/api/http";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { ProfileImagePositionModal } from "@/components/profile/ProfileImagePositionModal";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -26,7 +27,7 @@ function parseApiError(err: unknown): { message: string; fieldErrors?: Record<st
 }
 
 export default function MePage() {
-  const { state, logout, refreshMe, updateProfile, uploadProfileImage } = useAuth();
+  const { state, logout, refreshMe, updateProfile, uploadProfileImage, updateProfileImagePosition } = useAuth();
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
@@ -43,6 +44,9 @@ export default function MePage() {
   const [imageUploading, setImageUploading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [showPositionModal, setShowPositionModal] = useState(false);
+  const [positionError, setPositionError] = useState<string | null>(null);
 
   useEffect(() => {
     if (state.status === "guest") return;
@@ -171,6 +175,19 @@ export default function MePage() {
   // Derive initials/avatar character
   const avatarChar = (state.user.nickname ?? state.user.name)?.[0] ?? "U";
   const profileImageUrl = state.user.profile_image_url;
+  const profileImageOffsetX = state.user.profile_image_offset_x ?? 50;
+  const profileImageOffsetY = state.user.profile_image_offset_y ?? 50;
+
+  const handleSavePosition = async (offsetX: number, offsetY: number) => {
+    setPositionError(null);
+    try {
+      await updateProfileImagePosition(offsetX, offsetY);
+    } catch (err) {
+      const { message } = parseApiError(err);
+      setPositionError(message);
+      throw err;
+    }
+  };
 
   return (
     <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
@@ -190,6 +207,7 @@ export default function MePage() {
                   alt="プロフィール画像"
                   fill
                   className="object-cover"
+                  style={{ objectPosition: `${profileImageOffsetX}% ${profileImageOffsetY}%` }}
                 />
               </div>
             ) : (
@@ -223,6 +241,20 @@ export default function MePage() {
           />
           {imageError && (
             <p className="text-xs text-[#fb7185]">{imageError}</p>
+          )}
+          {profileImageUrl && (
+            <div className="flex flex-col items-center gap-1">
+              <button
+                type="button"
+                onClick={() => { setPositionError(null); setShowPositionModal(true); }}
+                className="text-xs text-[#818cf8] underline underline-offset-2 hover:text-[#60a5fa]"
+              >
+                表示位置を調整
+              </button>
+              {positionError && (
+                <p className="text-xs text-[#fb7185]">{positionError}</p>
+              )}
+            </div>
           )}
           <div className="text-center">
             <div className="text-xl font-bold text-[#F0F0FF]">
@@ -354,6 +386,15 @@ export default function MePage() {
           </Card>
         )}
       </div>
+      {showPositionModal && profileImageUrl && (
+        <ProfileImagePositionModal
+          imageUrl={profileImageUrl}
+          initialOffsetX={profileImageOffsetX}
+          initialOffsetY={profileImageOffsetY}
+          onSave={handleSavePosition}
+          onClose={() => setShowPositionModal(false)}
+        />
+      )}
     </div>
   );
 }

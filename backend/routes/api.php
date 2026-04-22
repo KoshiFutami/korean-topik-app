@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/me', [UserAuthController::class, 'me']);
             Route::patch('/me', [UserAuthController::class, 'updateProfile']);
             Route::post('/me/profile-image', [UserAuthController::class, 'uploadProfileImage']);
+            Route::patch('/me/profile-image/position', [UserAuthController::class, 'updateProfileImagePosition']);
         });
     });
 

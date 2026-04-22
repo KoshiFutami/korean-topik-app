@@ -6,6 +6,8 @@ export type User = {
   nickname: string | null;
   email: string;
   profile_image_url: string | null;
+  profile_image_offset_x: number | null;
+  profile_image_offset_y: number | null;
   created_at?: string;
 };
 
@@ -66,13 +68,25 @@ export async function updateMyProfile(
 export async function uploadProfileImage(
   token: string,
   file: File
-): Promise<{ profile_image_url: string }> {
+): Promise<{ profile_image_url: string; profile_image_offset_x: number | null; profile_image_offset_y: number | null }> {
   const formData = new FormData();
   formData.append("image", file);
   return apiFetch("/api/v1/auth/me/profile-image", {
     method: "POST",
     token,
     body: formData,
+  });
+}
+
+export async function updateProfileImagePosition(
+  token: string,
+  offsetX: number,
+  offsetY: number
+): Promise<{ profile_image_offset_x: number; profile_image_offset_y: number }> {
+  return apiFetch("/api/v1/auth/me/profile-image/position", {
+    method: "PATCH",
+    token,
+    body: JSON.stringify({ offset_x: offsetX, offset_y: offsetY }),
   });
 }
 

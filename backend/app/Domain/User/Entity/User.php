@@ -19,6 +19,8 @@ final class User
         private readonly UserName $name,
         private readonly ?UserNickname $nickname,
         private readonly ?ProfileImagePath $profileImagePath,
+        private readonly ?float $profileImageOffsetX,
+        private readonly ?float $profileImageOffsetY,
         private readonly Email $email,
         private readonly HashedPassword $password,
         private readonly DateTimeImmutable $createdAt,
@@ -34,6 +36,8 @@ final class User
             name: $name,
             nickname: null,
             profileImagePath: null,
+            profileImageOffsetX: null,
+            profileImageOffsetY: null,
             email: $email,
             password: $password,
             createdAt: new DateTimeImmutable,
@@ -48,12 +52,16 @@ final class User
         HashedPassword $password,
         DateTimeImmutable $createdAt,
         ?ProfileImagePath $profileImagePath = null,
+        ?float $profileImageOffsetX = null,
+        ?float $profileImageOffsetY = null,
     ): self {
         return new self(
             id: $id,
             name: $name,
             nickname: $nickname,
             profileImagePath: $profileImagePath,
+            profileImageOffsetX: $profileImageOffsetX,
+            profileImageOffsetY: $profileImageOffsetY,
             email: $email,
             password: $password,
             createdAt: $createdAt,
@@ -78,6 +86,16 @@ final class User
     public function profileImagePath(): ?ProfileImagePath
     {
         return $this->profileImagePath;
+    }
+
+    public function profileImageOffsetX(): ?float
+    {
+        return $this->profileImageOffsetX;
+    }
+
+    public function profileImageOffsetY(): ?float
+    {
+        return $this->profileImageOffsetY;
     }
 
     public function email(): Email

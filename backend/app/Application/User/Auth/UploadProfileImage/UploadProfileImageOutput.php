@@ -8,5 +8,7 @@ final class UploadProfileImageOutput
 {
     public function __construct(
         public readonly string $profileImageUrl,
+        public readonly ?float $profileImageOffsetX = null,
+        public readonly ?float $profileImageOffsetY = null,
     ) {}
 }

@@ -31,6 +31,8 @@ final class UserMapper
             password: new HashedPassword((string) $model->password),
             createdAt: new DateTimeImmutable($model->created_at?->toISOString() ?? 'now'),
             profileImagePath: $profileImagePath,
+            profileImageOffsetX: $model->profile_image_offset_x !== null ? (float) $model->profile_image_offset_x : null,
+            profileImageOffsetY: $model->profile_image_offset_y !== null ? (float) $model->profile_image_offset_y : null,
         );
     }
 }

@@ -12,6 +12,8 @@ use App\Application\User\Auth\RegisterUser\RegisterUserInput;
 use App\Application\User\Auth\RegisterUser\RegisterUserUseCase;
 use App\Application\User\Auth\UpdateMyProfile\UpdateMyProfileInput;
 use App\Application\User\Auth\UpdateMyProfile\UpdateMyProfileUseCase;
+use App\Application\User\Auth\UpdateProfileImagePosition\UpdateProfileImagePositionInput;
+use App\Application\User\Auth\UpdateProfileImagePosition\UpdateProfileImagePositionUseCase;
 use App\Application\User\Auth\UploadProfileImage\UploadProfileImageInput;
 use App\Application\User\Auth\UploadProfileImage\UploadProfileImageUseCase;
 use App\Domain\User\Exception\InvalidCredentialsException;
@@ -20,6 +22,7 @@ use App\Domain\User\Exception\UserNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RegisterRequest;
+use App\Http\Requests\Api\V1\Auth\UpdateProfileImagePositionRequest;
 use App\Http\Requests\Api\V1\Auth\UpdateProfileRequest;
 use App\Http\Requests\Api\V1\Auth\UploadProfileImageRequest;
 use Illuminate\Http\JsonResponse;
@@ -35,6 +38,7 @@ class UserAuthController extends Controller
         private readonly GetMyProfileUseCase $getMyProfile,
         private readonly UpdateMyProfileUseCase $updateMyProfile,
         private readonly UploadProfileImageUseCase $uploadProfileImage,
+        private readonly UpdateProfileImagePositionUseCase $updateProfileImagePosition,
     ) {}
 
     public function register(RegisterRequest $request): JsonResponse
@@ -122,6 +126,8 @@ class UserAuthController extends Controller
                     'nickname' => $output->nickname,
                     'email' => $output->email,
                     'profile_image_url' => $output->profileImageUrl,
+                    'profile_image_offset_x' => $output->profileImageOffsetX,
+                    'profile_image_offset_y' => $output->profileImageOffsetY,
                     'created_at' => $output->createdAt->format(DATE_ATOM),
                 ],
             ]);
@@ -150,6 +156,8 @@ class UserAuthController extends Controller
                     'nickname' => $output->nickname,
                     'email' => $output->email,
                     'profile_image_url' => $output->profileImageUrl,
+                    'profile_image_offset_x' => $output->profileImageOffsetX,
+                    'profile_image_offset_y' => $output->profileImageOffsetY,
                     'created_at' => $output->createdAt->format(DATE_ATOM),
                 ],
             ]);
@@ -173,6 +181,27 @@ class UserAuthController extends Controller
 
             return response()->json([
                 'profile_image_url' => $output->profileImageUrl,
+                'profile_image_offset_x' => $output->profileImageOffsetX,
+                'profile_image_offset_y' => $output->profileImageOffsetY,
+            ]);
+        } catch (UserNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function updateProfileImagePosition(UpdateProfileImagePositionRequest $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $output = $this->updateProfileImagePosition->execute(new UpdateProfileImagePositionInput(
+                userId: (string) $user?->getAuthIdentifier(),
+                offsetX: (float) $request->input('offset_x'),
+                offsetY: (float) $request->input('offset_y'),
+            ));
+
+            return response()->json([
+                'profile_image_offset_x' => $output->profileImageOffsetX,
+                'profile_image_offset_y' => $output->profileImageOffsetY,
             ]);
         } catch (UserNotFoundException $e) {
             return response()->json(['message' => $e->getMessage()], 404);

@@ -15,5 +15,7 @@ final class GetMyProfileOutput
         public readonly string $email,
         public readonly DateTimeImmutable $createdAt,
         public readonly ?string $profileImageUrl = null,
+        public readonly ?float $profileImageOffsetX = null,
+        public readonly ?float $profileImageOffsetY = null,
     ) {}
 }

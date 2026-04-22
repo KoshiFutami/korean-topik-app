@@ -55,6 +55,8 @@ final class UpdateMyProfileUseCase
             password: $hashedPassword,
             createdAt: $user->createdAt(),
             profileImagePath: $user->profileImagePath(),
+            profileImageOffsetX: $user->profileImageOffsetX(),
+            profileImageOffsetY: $user->profileImageOffsetY(),
         );
 
         $this->users->save($updated);
@@ -66,6 +68,8 @@ final class UpdateMyProfileUseCase
             email: $updated->email()->value(),
             createdAt: $updated->createdAt(),
             profileImageUrl: ProfileImageUrl::resolve($updated->profileImagePath()?->value()),
+            profileImageOffsetX: $updated->profileImageOffsetX(),
+            profileImageOffsetY: $updated->profileImageOffsetY(),
         );
     }
 }

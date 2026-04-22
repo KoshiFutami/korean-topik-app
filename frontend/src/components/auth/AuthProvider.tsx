@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { ApiError } from "@/lib/api/http";
-import { loginUser, logoutUser, me as meApi, registerUser, updateMyProfile as updateMyProfileApi, uploadProfileImage as uploadProfileImageApi, type User } from "@/lib/api/auth";
+import { loginUser, logoutUser, me as meApi, registerUser, updateMyProfile as updateMyProfileApi, updateProfileImagePosition as updateProfileImagePositionApi, uploadProfileImage as uploadProfileImageApi, type User } from "@/lib/api/auth";
 
 type AuthState =
   | { status: "loading"; token: string | null; user: User | null }
@@ -31,6 +31,7 @@ type AuthContextValue = {
     new_password_confirmation?: string;
   }) => Promise<void>;
   uploadProfileImage: (file: File) => Promise<void>;
+  updateProfileImagePosition: (offsetX: number, offsetY: number) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -156,7 +157,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await uploadProfileImageApi(token, file);
       setState((prev) =>
         prev.status === "authed"
-          ? { ...prev, user: { ...prev.user, profile_image_url: res.profile_image_url } }
+          ? {
+              ...prev,
+              user: {
+                ...prev.user,
+                profile_image_url: res.profile_image_url,
+                profile_image_offset_x: res.profile_image_offset_x,
+                profile_image_offset_y: res.profile_image_offset_y,
+              },
+            }
+          : prev
+      );
+    },
+    [state]
+  );
+
+  const updateProfileImagePosition = useCallback(
+    async (offsetX: number, offsetY: number) => {
+      const token =
+        state.status === "authed"
+          ? state.token
+          : typeof window === "undefined"
+            ? null
+            : window.localStorage.getItem(TOKEN_KEY);
+
+      if (!token) throw new Error("Not authenticated");
+
+      const res = await updateProfileImagePositionApi(token, offsetX, offsetY);
+      setState((prev) =>
+        prev.status === "authed"
+          ? {
+              ...prev,
+              user: {
+                ...prev.user,
+                profile_image_offset_x: res.profile_image_offset_x,
+                profile_image_offset_y: res.profile_image_offset_y,
+              },
+            }
           : prev
       );
     },
@@ -164,8 +201,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo<AuthContextValue>(
-    () => ({ state, register, login, logout, refreshMe, updateProfile, uploadProfileImage }),
-    [state, register, login, logout, refreshMe, updateProfile, uploadProfileImage]
+    () => ({ state, register, login, logout, refreshMe, updateProfile, uploadProfileImage, updateProfileImagePosition }),
+    [state, register, login, logout, refreshMe, updateProfile, uploadProfileImage, updateProfileImagePosition]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

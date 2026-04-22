@@ -43,6 +43,8 @@ final class UploadProfileImageUseCase
             password: $user->password(),
             createdAt: $user->createdAt(),
             profileImagePath: new ProfileImagePath($newPath),
+            profileImageOffsetX: null,
+            profileImageOffsetY: null,
         );
 
         $this->users->save($updated);
@@ -51,6 +53,8 @@ final class UploadProfileImageUseCase
 
         return new UploadProfileImageOutput(
             profileImageUrl: $url ?? '',
+            profileImageOffsetX: null,
+            profileImageOffsetY: null,
         );
     }
 }
