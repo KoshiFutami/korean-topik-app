@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { ApiError } from "@/lib/api/http";
+import { compressImage } from "@/lib/compressImage";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -156,7 +157,8 @@ export default function MePage() {
     setImageError(null);
 
     try {
-      await uploadProfileImage(file);
+      const compressed = await compressImage(file);
+      await uploadProfileImage(compressed);
     } catch (err) {
       const { message } = parseApiError(err);
       setImageError(message);
