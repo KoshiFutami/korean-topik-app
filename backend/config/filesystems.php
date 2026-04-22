@@ -29,6 +29,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Profile Image Storage Disk
+    |--------------------------------------------------------------------------
+    |
+    | プロフィール画像の保存先ディスク。ローカル開発は 'public'（デフォルト）、
+    | 本番環境では 'profile_image_gcs'（GCS）を推奨。
+    | 環境変数 PROFILE_IMAGE_STORAGE_DISK で切り替える。
+    |
+    */
+    'profile_image_disk' => env('PROFILE_IMAGE_STORAGE_DISK', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |
@@ -85,6 +97,18 @@ return [
             // UBLA（Uniform bucket-level access）有効なバケットでは object ACL（legacy ACL）が禁止される。
             // Flysystem 側で visibility=public が legacy ACL を要求して 400 になることがあるため、
             // ここでは visibility を指定しない（公開アクセスはバケット IAM で制御する）。
+            'throw' => false,
+            'report' => false,
+        ],
+
+        // プロフィール画像の本番用 GCS ディスク（PROFILE_IMAGE_STORAGE_DISK=profile_image_gcs で有効化）
+        // バケット名: korean-topik-app-prod-profile-image
+        'profile_image_gcs' => [
+            'driver' => 'gcs',
+            'key_file_path' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+            'bucket' => env('GCS_PROFILE_IMAGE_BUCKET', 'korean-topik-app-prod-profile-image'),
+            'path_prefix' => env('GCS_PROFILE_IMAGE_PATH_PREFIX', ''),
+            // NOTE: UBLA 有効バケットでは visibility を指定しない（バケット IAM で制御する）。
             'throw' => false,
             'report' => false,
         ],

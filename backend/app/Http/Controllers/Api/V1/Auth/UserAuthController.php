@@ -12,6 +12,8 @@ use App\Application\User\Auth\RegisterUser\RegisterUserInput;
 use App\Application\User\Auth\RegisterUser\RegisterUserUseCase;
 use App\Application\User\Auth\UpdateMyProfile\UpdateMyProfileInput;
 use App\Application\User\Auth\UpdateMyProfile\UpdateMyProfileUseCase;
+use App\Application\User\Auth\UploadProfileImage\UploadProfileImageInput;
+use App\Application\User\Auth\UploadProfileImage\UploadProfileImageUseCase;
 use App\Domain\User\Exception\InvalidCredentialsException;
 use App\Domain\User\Exception\UserAlreadyExistsException;
 use App\Domain\User\Exception\UserNotFoundException;
@@ -19,6 +21,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RegisterRequest;
 use App\Http\Requests\Api\V1\Auth\UpdateProfileRequest;
+use App\Http\Requests\Api\V1\Auth\UploadProfileImageRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -31,6 +34,7 @@ class UserAuthController extends Controller
         private readonly LogoutUserUseCase $logoutUser,
         private readonly GetMyProfileUseCase $getMyProfile,
         private readonly UpdateMyProfileUseCase $updateMyProfile,
+        private readonly UploadProfileImageUseCase $uploadProfileImage,
     ) {}
 
     public function register(RegisterRequest $request): JsonResponse
@@ -117,6 +121,7 @@ class UserAuthController extends Controller
                     'name' => $output->name,
                     'nickname' => $output->nickname,
                     'email' => $output->email,
+                    'profile_image_url' => $output->profileImageUrl,
                     'created_at' => $output->createdAt->format(DATE_ATOM),
                 ],
             ]);
@@ -144,6 +149,7 @@ class UserAuthController extends Controller
                     'name' => $output->name,
                     'nickname' => $output->nickname,
                     'email' => $output->email,
+                    'profile_image_url' => $output->profileImageUrl,
                     'created_at' => $output->createdAt->format(DATE_ATOM),
                 ],
             ]);
@@ -153,6 +159,23 @@ class UserAuthController extends Controller
             return response()->json(['message' => $e->getMessage()], 409);
         } catch (InvalidCredentialsException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
+        }
+    }
+
+    public function uploadProfileImage(UploadProfileImageRequest $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $output = $this->uploadProfileImage->execute(new UploadProfileImageInput(
+                userId: (string) $user?->getAuthIdentifier(),
+                file: $request->file('image'),
+            ));
+
+            return response()->json([
+                'profile_image_url' => $output->profileImageUrl,
+            ]);
+        } catch (UserNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
         }
     }
 }

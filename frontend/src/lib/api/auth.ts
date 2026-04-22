@@ -5,6 +5,7 @@ export type User = {
   name: string;
   nickname: string | null;
   email: string;
+  profile_image_url: string | null;
   created_at?: string;
 };
 
@@ -59,6 +60,19 @@ export async function updateMyProfile(
     method: "PATCH",
     token,
     body: JSON.stringify(input),
+  });
+}
+
+export async function uploadProfileImage(
+  token: string,
+  file: File
+): Promise<{ profile_image_url: string }> {
+  const formData = new FormData();
+  formData.append("image", file);
+  return apiFetch("/api/v1/auth/me/profile-image", {
+    method: "POST",
+    token,
+    body: formData,
   });
 }
 

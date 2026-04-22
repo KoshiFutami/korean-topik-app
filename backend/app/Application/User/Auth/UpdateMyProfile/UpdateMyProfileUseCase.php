@@ -14,6 +14,7 @@ use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\ValueObject\UserId;
 use App\Domain\User\ValueObject\UserName;
 use App\Domain\User\ValueObject\UserNickname;
+use App\Support\ProfileImageUrl;
 
 final class UpdateMyProfileUseCase
 {
@@ -53,6 +54,7 @@ final class UpdateMyProfileUseCase
             email: $newEmail,
             password: $hashedPassword,
             createdAt: $user->createdAt(),
+            profileImagePath: $user->profileImagePath(),
         );
 
         $this->users->save($updated);
@@ -63,6 +65,7 @@ final class UpdateMyProfileUseCase
             nickname: $updated->nickname()?->value(),
             email: $updated->email()->value(),
             createdAt: $updated->createdAt(),
+            profileImageUrl: ProfileImageUrl::resolve($updated->profileImagePath()?->value()),
         );
     }
 }

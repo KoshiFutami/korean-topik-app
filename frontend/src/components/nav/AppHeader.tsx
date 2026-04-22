@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import type { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -134,15 +135,34 @@ export function AppHeader() {
         <div className="flex items-center gap-2">
           {state.status === "authed" ? (
             <>
-              <div
-                className={
-                  isLearnerGlass
-                    ? "hidden text-sm text-[#9499C4] sm:block"
-                    : "hidden text-sm text-zinc-600 sm:block"
-                }
-              >
-                {state.user.nickname ?? state.user.name}
-              </div>
+              <Link href="/me" aria-label="プロフィール" className="flex items-center gap-2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]">
+                {state.user.profile_image_url ? (
+                  <div className="relative h-8 w-8 overflow-hidden rounded-full ring-2 ring-[rgba(99,102,241,0.5)]">
+                    <Image
+                      src={state.user.profile_image_url}
+                      alt="プロフィール画像"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white ring-2 ring-[rgba(99,102,241,0.5)]"
+                    style={{ background: "linear-gradient(135deg,#6366f1,#3b82f6)" }}
+                  >
+                    {(state.user.nickname ?? state.user.name)?.[0] ?? "U"}
+                  </div>
+                )}
+                <span
+                  className={
+                    isLearnerGlass
+                      ? "hidden text-sm text-[#9499C4] sm:block"
+                      : "hidden text-sm text-zinc-600 sm:block"
+                  }
+                >
+                  {state.user.nickname ?? state.user.name}
+                </span>
+              </Link>
               <Button variant={isLearnerGlass ? "ghost" : "secondary"} type="button" onClick={() => logout()}>
                 ログアウト
               </Button>

@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ApiError } from "@/lib/api/http";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -25,7 +26,7 @@ function parseApiError(err: unknown): { message: string; fieldErrors?: Record<st
 }
 
 export default function MePage() {
-  const { state, logout, refreshMe, updateProfile } = useAuth();
+  const { state, logout, refreshMe, updateProfile, uploadProfileImage } = useAuth();
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
@@ -38,6 +39,10 @@ export default function MePage() {
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (state.status === "guest") return;
@@ -139,8 +144,33 @@ export default function MePage() {
     }
   };
 
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageUploading(true);
+    setImageError(null);
+
+    try {
+      await uploadProfileImage(file);
+    } catch (err) {
+      const { message } = parseApiError(err);
+      setImageError(message);
+    } finally {
+      setImageUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   // Derive initials/avatar character
   const avatarChar = (state.user.nickname ?? state.user.name)?.[0] ?? "U";
+  const profileImageUrl = state.user.profile_image_url;
 
   return (
     <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
@@ -152,12 +182,48 @@ export default function MePage() {
       <div className="relative mx-auto w-full max-w-2xl space-y-6">
         {/* Profile avatar */}
         <div className="flex flex-col items-center gap-3 pb-2">
-          <div
-            className="flex h-20 w-20 items-center justify-center rounded-full text-3xl font-bold text-white shadow-[0_0_32px_rgba(99,102,241,0.4)]"
-            style={{ background: "linear-gradient(135deg,#6366f1,#3b82f6)" }}
-          >
-            {avatarChar}
+          <div className="relative group">
+            {profileImageUrl ? (
+              <div className="relative h-20 w-20 overflow-hidden rounded-full shadow-[0_0_32px_rgba(99,102,241,0.4)]">
+                <Image
+                  src={profileImageUrl}
+                  alt="プロフィール画像"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <div
+                className="flex h-20 w-20 items-center justify-center rounded-full text-3xl font-bold text-white shadow-[0_0_32px_rgba(99,102,241,0.4)]"
+                style={{ background: "linear-gradient(135deg,#6366f1,#3b82f6)" }}
+              >
+                {avatarChar}
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={handleImageClick}
+              disabled={imageUploading}
+              className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 disabled:cursor-not-allowed"
+              aria-label="プロフィール画像を変更"
+            >
+              {imageUploading ? (
+                <span className="text-xs text-white">...</span>
+              ) : (
+                <span className="text-xs font-medium text-white">変更</span>
+              )}
+            </button>
           </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+          {imageError && (
+            <p className="text-xs text-[#fb7185]">{imageError}</p>
+          )}
           <div className="text-center">
             <div className="text-xl font-bold text-[#F0F0FF]">
               {state.user.nickname ?? state.user.name}

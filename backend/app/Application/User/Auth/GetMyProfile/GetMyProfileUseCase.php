@@ -7,6 +7,7 @@ namespace App\Application\User\Auth\GetMyProfile;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\ValueObject\UserId;
+use App\Support\ProfileImageUrl;
 
 final class GetMyProfileUseCase
 {
@@ -26,6 +27,7 @@ final class GetMyProfileUseCase
             nickname: $user->nickname()?->value(),
             email: $user->email()->value(),
             createdAt: $user->createdAt(),
+            profileImageUrl: ProfileImageUrl::resolve($user->profileImagePath()?->value()),
         );
     }
 }

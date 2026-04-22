@@ -14,5 +14,6 @@ final class GetMyProfileOutput
         public readonly ?string $nickname,
         public readonly string $email,
         public readonly DateTimeImmutable $createdAt,
+        public readonly ?string $profileImageUrl = null,
     ) {}
 }
