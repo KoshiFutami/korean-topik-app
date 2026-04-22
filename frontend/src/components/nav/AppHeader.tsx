@@ -7,7 +7,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
-import { Button } from "@/components/ui/Button";
 
 function NavLink({
   href,
@@ -79,7 +78,7 @@ function MobileNavLink({
 }
 
 export function AppHeader() {
-  const { state, logout } = useAuth();
+  const { state } = useAuth();
   const pathname = usePathname();
 
   if (pathname?.startsWith("/admin")) {
@@ -163,9 +162,6 @@ export function AppHeader() {
                   {state.user.nickname ?? state.user.name}
                 </span>
               </Link>
-              <Button variant={isLearnerGlass ? "ghost" : "secondary"} type="button" onClick={() => logout()}>
-                ログアウト
-              </Button>
             </>
           ) : (
             <>
