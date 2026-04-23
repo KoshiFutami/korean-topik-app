@@ -458,8 +458,8 @@ export default function NumbersQuizPage() {
     const progress = Math.round(((index + 1) / cards.length) * 100);
 
     // In ja-to-kr: question is Japanese, answer is Korean reading
-    // In kr-to-ja: question is Korean digit form, answer is Japanese
-    const question = mode === "ja-to-kr" ? card.displayJa : card.displayKr;
+    // In kr-to-ja: question is Korean reading (ハングル), answer is Japanese
+    const question = mode === "ja-to-kr" ? card.displayJa : card.readingKr;
     const answerPrimary = mode === "ja-to-kr" ? card.readingKr : card.displayJa;
     // Secondary always shows Korean digit form and reading
     const answerReading = card.readingKr;
@@ -607,10 +607,10 @@ export default function NumbersQuizPage() {
                         {answerDigit}
                       </div>
                     ) : (
-                      /* kr-to-ja: answerPrimary is displayJa, show Korean reading */
+                      /* kr-to-ja: question was readingKr, show digit form as ref */
                       <div className="text-[#9499C4]">
-                        <span className="text-[#5C6199]">읽기 </span>
-                        {answerReading}
+                        <span className="text-[#5C6199]">표기 </span>
+                        {answerDigit}
                       </div>
                     )}
                   </div>
