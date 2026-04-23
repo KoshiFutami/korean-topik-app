@@ -507,10 +507,11 @@ export default function NumbersQuizPage() {
             <button
               type="button"
               onClick={() => {
-                setFlipped(true);
-                setCardFlipped((prev) => new Set([...prev, index]));
+                if (!flipped) {
+                  setFlipped(true);
+                  setCardFlipped((prev) => new Set([...prev, index]));
+                }
               }}
-              disabled={flipped}
               aria-pressed={flipped}
               aria-label={flipped ? "答え表示済み" : "カードをめくって答えを表示"}
               className={[
