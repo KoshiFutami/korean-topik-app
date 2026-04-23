@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 
-type NumberCategory = "year" | "month" | "day" | "hour" | "minute" | "won";
+type NumberCategory = "year" | "month" | "day" | "hour" | "minute" | "won" | "age" | "item" | "cup";
 type QuizMode = "ja-to-kr" | "kr-to-ja";
 type Phase = "setup" | "playing" | "finished";
 
@@ -33,6 +33,9 @@ const CATEGORY_OPTIONS: { value: NumberCategory | "all"; labelJa: string; labelK
   { value: "hour", labelJa: "時", labelKr: "시" },
   { value: "minute", labelJa: "分", labelKr: "분" },
   { value: "won", labelJa: "ウォン", labelKr: "원" },
+  { value: "age", labelJa: "年齢", labelKr: "살" },
+  { value: "item", labelJa: "個", labelKr: "개" },
+  { value: "cup", labelJa: "杯", labelKr: "잔" },
 ];
 
 const COUNT_OPTIONS = [
@@ -87,6 +90,22 @@ function nativeKoreanHour(n: number): string {
     "여섯", "일곱", "여덟", "아홉", "열", "열한", "열두",
   ];
   return hours[n] ?? "";
+}
+
+/**
+ * Native Korean number in the contracted form used immediately before a counter word
+ * (살, 개, 잔, etc.).  Handles 1–99.
+ * Contraction rules: 하나→한, 둘→두, 셋→세, 넷→네, 스물(20)→스무.
+ */
+function nativeKoreanCounter(n: number): string {
+  if (n <= 0 || n > 99) return "";
+  const ones = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉"];
+  const tens = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"];
+  const t = Math.floor(n / 10);
+  const o = n % 10;
+  // 스물(20) contracts to 스무 only when it stands alone before the counter (n === 20)
+  const tensStr = t === 2 && o === 0 ? "스무" : (tens[t] ?? "");
+  return tensStr + (ones[o] ?? "");
 }
 
 /**
@@ -195,6 +214,48 @@ function generateCards(): NumberCard[] {
       displayJa: `${formatWithCommas(w)}ウォン`,
       displayKr: `${formatWithCommas(w)}원`,
       readingKr: `${sinoKorean(w)} 원`,
+    });
+  }
+
+  // Age 1–99 (native Korean + 살)
+  for (let a = 1; a <= 99; a++) {
+    cards.push({
+      id: `age-${a}`,
+      category: "age",
+      categoryLabelJa: "年齢",
+      categoryLabelKr: "살",
+      number: a,
+      displayJa: `${a}歳`,
+      displayKr: `${a}살`,
+      readingKr: `${nativeKoreanCounter(a)} 살`,
+    });
+  }
+
+  // Individual items 1–30 (native Korean + 개)
+  for (let i = 1; i <= 30; i++) {
+    cards.push({
+      id: `item-${i}`,
+      category: "item",
+      categoryLabelJa: "個",
+      categoryLabelKr: "개",
+      number: i,
+      displayJa: `${i}個`,
+      displayKr: `${i}개`,
+      readingKr: `${nativeKoreanCounter(i)} 개`,
+    });
+  }
+
+  // Cups / glasses 1–20 (native Korean + 잔)
+  for (let c = 1; c <= 20; c++) {
+    cards.push({
+      id: `cup-${c}`,
+      category: "cup",
+      categoryLabelJa: "杯",
+      categoryLabelKr: "잔",
+      number: c,
+      displayJa: `${c}杯`,
+      displayKr: `${c}잔`,
+      readingKr: `${nativeKoreanCounter(c)} 잔`,
     });
   }
 
