@@ -91,6 +91,7 @@ export function AppHeader() {
     pathname.startsWith("/vocabularies") ||
     pathname.startsWith("/bookmarks") ||
     pathname.startsWith("/quiz") ||
+    pathname.startsWith("/numbers-quiz") ||
     pathname.startsWith("/topik-practice") ||
     pathname === "/login" ||
     pathname === "/register" ||

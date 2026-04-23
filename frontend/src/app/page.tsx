@@ -161,6 +161,15 @@ export default async function Home() {
           >
             文法の空欄補充問題（TOPIK 1 の31〜37番形式）を1問ずつ解いて答えを確認できます。
           </FeatureCard>
+          <FeatureCard
+            href="/numbers-quiz"
+            icon="🔢"
+            title="数字クイズ"
+            titleKo="숫자 퀴즈"
+            cta="数字を練習する"
+          >
+            年・月・日・時・分・ウォンの韓国語数字をフラッシュカードで練習。音声で発音も確認。
+          </FeatureCard>
         </div>
 
         {/* Coming soon */}
