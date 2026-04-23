@@ -543,19 +543,21 @@ export default function NumbersQuizPage() {
                   <div className="text-4xl font-extrabold tracking-tight text-[#F0F0FF] sm:text-5xl">
                     {question}
                   </div>
-                  {/* 音声ボタン — 常に韓国語読みを再生 */}
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <button
-                      type="button"
-                      onClick={() => speakKorean(card.readingKr)}
-                      aria-label="韓国語の発音を再生"
-                      title="韓国語の発音を再生"
-                      className="inline-flex items-center justify-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-sm font-semibold text-white ring-1 ring-white/30 transition-colors hover:bg-white/25"
-                    >
-                      <PlayGlyph className="h-[1.1rem] w-[1.1rem] shrink-0" />
-                      <span className="text-xs">再生</span>
-                    </button>
-                  </div>
+                  {/* 音声ボタン — 韓国語表示のとき (kr-to-ja) のみ表面に表示 */}
+                  {mode === "kr-to-ja" ? (
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={() => speakKorean(card.readingKr)}
+                        aria-label="韓国語の発音を再生"
+                        title="韓国語の発音を再生"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-sm font-semibold text-white ring-1 ring-white/30 transition-colors hover:bg-white/25"
+                      >
+                        <PlayGlyph className="h-[1.1rem] w-[1.1rem] shrink-0" />
+                        <span className="text-xs">再生</span>
+                      </button>
+                    </div>
+                  ) : null}
                   <div className="text-sm text-[#5C6199]">
                     タップでめくる
                     <span className="mt-1 block text-xs text-[#5C6199]">탭하여 뒤집기</span>
@@ -581,6 +583,21 @@ export default function NumbersQuizPage() {
                   <div className="text-3xl font-extrabold text-[#F0F0FF] sm:text-4xl">
                     {answerPrimary}
                   </div>
+                  {/* 音声ボタン — 韓国語表示のとき (ja-to-kr) のみ裏面に表示 */}
+                  {mode === "ja-to-kr" ? (
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={() => speakKorean(card.readingKr)}
+                        aria-label="韓国語の発音を再生"
+                        title="韓国語の発音を再生"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-sm font-semibold text-white ring-1 ring-white/30 transition-colors hover:bg-white/25"
+                      >
+                        <PlayGlyph className="h-[1.1rem] w-[1.1rem] shrink-0" />
+                        <span className="text-xs">再生</span>
+                      </button>
+                    </div>
+                  ) : null}
                   {/* Secondary info: always show both Korean reading and digit form */}
                   <div className="mt-1 space-y-1 text-sm">
                     {mode === "ja-to-kr" ? (
