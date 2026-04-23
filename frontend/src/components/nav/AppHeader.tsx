@@ -126,6 +126,7 @@ export function AppHeader() {
           <nav className="hidden items-center gap-1 sm:flex">
             <NavLink href="/vocabularies" label="語彙" tone={tone} />
             <NavLink href="/quiz" label="クイズ" tone={tone} />
+            <NavLink href="/numbers-quiz" label="数字クイズ" tone={tone} />
             <NavLink href="/topik-practice" label="TOPIK問題" tone={tone} />
             <NavLink href="/bookmarks" label="ブックマーク" tone={tone} />
             <NavLink href="/me" label="プロフィール" tone={tone} />
@@ -214,6 +215,16 @@ export function AppHeader() {
             }
           />
           <MobileNavLink
+            href="/numbers-quiz"
+            label="数字"
+            tone={tone}
+            icon={
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M6 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H6zm1 3a1 1 0 0 0 0 2h1v4H7a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-1V7a1 1 0 0 0-1-1H7z" clipRule="evenodd" />
+              </svg>
+            }
+          />
+          <MobileNavLink
             href="/topik-practice"
             label="TOPIK"
             tone={tone}
@@ -231,16 +242,6 @@ export function AppHeader() {
             icon={
               <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path d="M5 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14l-5-2.5L5 18V4z" />
-              </svg>
-            }
-          />
-          <MobileNavLink
-            href="/me"
-            label="プロフィール"
-            tone={tone}
-            icon={
-              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-7 9a7 7 0 1 1 14 0H3z" clipRule="evenodd" />
               </svg>
             }
           />
