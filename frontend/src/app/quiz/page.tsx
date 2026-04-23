@@ -442,16 +442,24 @@ export default function QuizPage() {
             <button
               type="button"
               onClick={() => {
-                setFlipped(true);
-                setCardFlipped((prev) => new Set([...prev, index]));
+                if (!flipped) {
+                  setFlipped(true);
+                  setCardFlipped((prev) => new Set([...prev, index]));
+                } else {
+                  setFlipped(false);
+                  setCardFlipped((prev) => {
+                    const next = new Set(prev);
+                    next.delete(index);
+                    return next;
+                  });
+                }
               }}
-              disabled={flipped}
               aria-pressed={flipped}
-              aria-label={flipped ? "答え表示済み" : "カードをめくって答えを表示"}
+              aria-label={flipped ? "カードを表に戻して問題を表示" : "カードをめくって答えを表示"}
               className={[
                 "group relative block w-full min-h-[14rem] rounded-2xl p-0 text-left",
                 "outline-none focus-visible:ring-2 focus-visible:ring-[rgba(99,102,241,0.7)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#08091A]",
-                flipped ? "cursor-default" : "cursor-pointer",
+                "cursor-pointer",
               ].join(" ")}
             >
               <div
@@ -529,6 +537,10 @@ export default function QuizPage() {
                       ) : null}
                     </div>
                   ) : null}
+                  <div className="mt-1 text-xs text-[#5C6199]">
+                    タップで問題に戻る
+                    <span className="mt-0.5 block text-[#5C6199]">탭하여 앞으로 돌아가기</span>
+                  </div>
                 </div>
               </div>
             </button>
