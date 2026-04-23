@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 
-type NumberCategory = "year" | "month" | "day" | "hour" | "minute" | "won";
+type NumberCategory = "year" | "month" | "day" | "hour" | "minute" | "won" | "native" | "sino";
 type QuizMode = "ja-to-kr" | "kr-to-ja";
 type Phase = "setup" | "playing" | "finished";
 
@@ -27,6 +27,8 @@ type NumberCard = {
 
 const CATEGORY_OPTIONS: { value: NumberCategory | "all"; labelJa: string; labelKr: string }[] = [
   { value: "all", labelJa: "すべて", labelKr: "전체" },
+  { value: "native", labelJa: "固有数詞", labelKr: "고유어" },
+  { value: "sino", labelJa: "漢数詞", labelKr: "한자어" },
   { value: "year", labelJa: "年", labelKr: "년" },
   { value: "month", labelJa: "月", labelKr: "월" },
   { value: "day", labelJa: "日", labelKr: "일" },
@@ -101,6 +103,21 @@ function monthReading(m: number): string {
 
 function formatWithCommas(n: number): string {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+/**
+ * Native Korean reading for counting numbers 1–99 (고유어/固有数詞).
+ * Returns the standalone form (하나, 둘, 스물 …).
+ */
+function nativeKorean(n: number): string {
+  if (n <= 0 || n > 99) return "";
+  const tens = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"];
+  const units = ["", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉"];
+  const t = Math.floor(n / 10);
+  const u = n % 10;
+  if (u === 0) return tens[t];
+  if (t === 0) return units[u];
+  return tens[t] + units[u];
 }
 
 // ── Card pool generation ──────────────────────────────────────────────────────
@@ -195,6 +212,42 @@ function generateCards(): NumberCard[] {
       displayJa: `${formatWithCommas(w)}ウォン`,
       displayKr: `${formatWithCommas(w)}원`,
       readingKr: `${sinoKorean(w)} 원`,
+    });
+  }
+
+  // Native Korean counting numbers (고유어/固有数詞) — 1–20, tens 30–90
+  const nativeNums = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+    30, 40, 50, 60, 70, 80, 90,
+  ];
+  for (const n of nativeNums) {
+    const reading = nativeKorean(n);
+    cards.push({
+      id: `native-${n}`,
+      category: "native",
+      categoryLabelJa: "固有数詞",
+      categoryLabelKr: "고유어",
+      number: n,
+      displayJa: `${n}`,
+      displayKr: reading,
+      readingKr: reading,
+    });
+  }
+
+  // Sino-Korean numbers (한자어/漢数詞) — key values for vocabulary
+  const sinoNums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1000, 10000];
+  for (const n of sinoNums) {
+    const reading = sinoKorean(n);
+    cards.push({
+      id: `sino-${n}`,
+      category: "sino",
+      categoryLabelJa: "漢数詞",
+      categoryLabelKr: "한자어",
+      number: n,
+      displayJa: `${n}`,
+      displayKr: reading,
+      readingKr: reading,
     });
   }
 
