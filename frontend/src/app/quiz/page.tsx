@@ -403,13 +403,13 @@ export default function QuizPage() {
     const answer1 = mode === "kr-to-ja" ? card.meaning_ja : card.term;
 
     return (
-      <div className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-[#08091A] px-4 py-8 text-[#F0F0FF]">
+      <div className="relative flex h-[calc(100vh-56px)] flex-col overflow-hidden bg-[#08091A] px-4 py-4 sm:py-8 text-[#F0F0FF]">
         <div
           aria-hidden
           className="absolute rounded-full pointer-events-none blur-[80px] bg-[rgba(99,102,241,0.12)]"
           style={{ width: 400, height: 300, top: -80, left: "30%", transform: "translateX(-50%)" }}
         />
-        <div className="relative mx-auto w-full max-w-lg space-y-5">
+        <div className="relative mx-auto flex w-full max-w-lg flex-1 flex-col gap-3 sm:gap-5">
           {/* ヘッダー */}
           <div className="flex items-center justify-between">
             <button
@@ -438,7 +438,7 @@ export default function QuizPage() {
           </div>
 
           {/* フラッシュカード（3D めくり） */}
-          <div className="[perspective:1100px]">
+          <div className="flex-1 min-h-0 [perspective:1100px]">
             <button
               type="button"
               onClick={() => {
@@ -457,14 +457,14 @@ export default function QuizPage() {
               aria-pressed={flipped}
               aria-label={flipped ? "カードを表に戻して問題を表示" : "カードをめくって答えを表示"}
               className={[
-                "group relative block w-full min-h-[14rem] rounded-2xl p-0 text-left",
+                "group relative block h-full w-full rounded-2xl p-0 text-left",
                 "outline-none focus-visible:ring-2 focus-visible:ring-[rgba(99,102,241,0.7)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#08091A]",
                 "cursor-pointer",
               ].join(" ")}
             >
               <div
                 key={card.id}
-                className="relative min-h-[14rem] w-full [transform-style:preserve-3d] will-change-transform"
+                className="relative h-full w-full [transform-style:preserve-3d] will-change-transform"
                 style={{
                   transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
                   transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -473,7 +473,7 @@ export default function QuizPage() {
                 {/* 表面（問題） */}
                 <div
                   className={[
-                    "absolute inset-0 flex min-h-[14rem] flex-col items-center justify-center gap-4 overflow-hidden rounded-2xl px-4 py-8 text-center",
+                    "absolute inset-0 flex flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-4 sm:gap-4 sm:py-8 text-center",
                     "border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)]",
                     "shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
                     "backdrop-blur-xl [backface-visibility:hidden] [transform:translateZ(0.1px)]",
@@ -501,7 +501,7 @@ export default function QuizPage() {
                 {/* 裏面（答え） */}
                 <div
                   className={[
-                    "absolute inset-0 flex min-h-[14rem] flex-col items-center justify-center gap-3 overflow-y-auto rounded-2xl px-4 py-8 text-center",
+                    "absolute inset-0 flex flex-col items-center justify-center gap-2 overflow-y-auto rounded-2xl px-4 py-4 sm:gap-3 sm:py-8 text-center",
                     "border border-[rgba(99,102,241,0.25)] backdrop-blur-xl",
                     "[backface-visibility:hidden] [transform:rotateY(180deg)_translateZ(0.1px)]",
                     "shadow-[0_0_24px_rgba(99,102,241,0.2),0_8px_32px_rgba(0,0,0,0.4)]",
