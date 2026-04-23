@@ -13,7 +13,7 @@ const ADMIN_TOKEN_KEY = "topik.admin.token";
 
 // ── Korean number helpers (同じロジックを管理画面でも使用) ──────────────────
 
-type NumberCategory = "year" | "month" | "day" | "hour" | "minute" | "won" | "age" | "item" | "cup";
+type NumberCategory = "year" | "month" | "day" | "hour" | "minute" | "won" | "native" | "sino" | "age" | "item" | "cup";
 
 type NumberCard = {
   id: string;
@@ -83,6 +83,17 @@ function formatWithCommas(n: number): string {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function nativeKorean(n: number): string {
+  if (n <= 0 || n > 99) return "";
+  const tens = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"];
+  const units = ["", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉"];
+  const t = Math.floor(n / 10);
+  const u = n % 10;
+  if (u === 0) return tens[t];
+  if (t === 0) return units[u];
+  return tens[t] + units[u];
+}
+
 function generateCards(): NumberCard[] {
   const cards: NumberCard[] = [];
 
@@ -110,6 +121,20 @@ function generateCards(): NumberCard[] {
   for (const w of wonAmounts) {
     cards.push({ id: `won-${w}`, category: "won", categoryLabelJa: "ウォン", categoryLabelKr: "원", number: w, displayJa: `${formatWithCommas(w)}ウォン`, displayKr: `${formatWithCommas(w)}원`, readingKr: `${sinoKorean(w)} 원` });
   }
+  const nativeNums = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+    30, 40, 50, 60, 70, 80, 90,
+  ];
+  for (const n of nativeNums) {
+    const reading = nativeKorean(n);
+    cards.push({ id: `native-${n}`, category: "native", categoryLabelJa: "固有数詞", categoryLabelKr: "고유어", number: n, displayJa: `${n}`, displayKr: reading, readingKr: reading });
+  }
+  const sinoNums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1000, 10000];
+  for (const n of sinoNums) {
+    const reading = sinoKorean(n);
+    cards.push({ id: `sino-${n}`, category: "sino", categoryLabelJa: "漢数詞", categoryLabelKr: "한자어", number: n, displayJa: `${n}`, displayKr: reading, readingKr: reading });
+  }
   for (let a = 1; a <= 99; a++) {
     cards.push({ id: `age-${a}`, category: "age", categoryLabelJa: "年齢", categoryLabelKr: "살", number: a, displayJa: `${a}歳`, displayKr: `${a}살`, readingKr: `${nativeKoreanCounter(a)} 살` });
   }
@@ -126,6 +151,8 @@ const ALL_CARDS = generateCards();
 
 const CATEGORY_OPTIONS: { value: NumberCategory | "all"; label: string }[] = [
   { value: "all", label: "すべて" },
+  { value: "native", label: "固有数詞 (고유어)" },
+  { value: "sino", label: "漢数詞 (한자어)" },
   { value: "year", label: "年 (년)" },
   { value: "month", label: "月 (월)" },
   { value: "day", label: "日 (일)" },
@@ -290,9 +317,11 @@ export default function AdminNumbersQuizPage() {
         </Card>
 
         {/* 統計 */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5">
-          {(["year", "month", "day", "hour", "minute", "won", "age", "item", "cup"] as NumberCategory[]).map((cat) => {
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          {(["native", "sino", "year", "month", "day", "hour", "minute", "won", "age", "item", "cup"] as NumberCategory[]).map((cat) => {
             const labels: Record<NumberCategory, { ja: string; kr: string }> = {
+              native: { ja: "固有数詞", kr: "고유어" },
+              sino: { ja: "漢数詞", kr: "한자어" },
               year: { ja: "年", kr: "년" },
               month: { ja: "月", kr: "월" },
               day: { ja: "日", kr: "일" },
