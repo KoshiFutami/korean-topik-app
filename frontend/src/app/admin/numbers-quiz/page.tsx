@@ -13,7 +13,7 @@ const ADMIN_TOKEN_KEY = "topik.admin.token";
 
 // ── Korean number helpers (同じロジックを管理画面でも使用) ──────────────────
 
-type NumberCategory = "year" | "month" | "day" | "hour" | "minute" | "won" | "native" | "sino";
+type NumberCategory = "year" | "month" | "day" | "hour" | "minute" | "won" | "native" | "sino" | "age" | "item" | "cup";
 
 type NumberCard = {
   id: string;
@@ -61,6 +61,16 @@ function nativeKoreanHour(n: number): string {
     "여섯", "일곱", "여덟", "아홉", "열", "열한", "열두",
   ];
   return hours[n] ?? "";
+}
+
+function nativeKoreanCounter(n: number): string {
+  if (n <= 0 || n > 99) return "";
+  const ones = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉"];
+  const tens = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"];
+  const t = Math.floor(n / 10);
+  const o = n % 10;
+  const tensStr = t === 2 && o === 0 ? "스무" : (tens[t] ?? "");
+  return tensStr + (ones[o] ?? "");
 }
 
 function monthReading(m: number): string {
@@ -125,6 +135,15 @@ function generateCards(): NumberCard[] {
     const reading = sinoKorean(n);
     cards.push({ id: `sino-${n}`, category: "sino", categoryLabelJa: "漢数詞", categoryLabelKr: "한자어", number: n, displayJa: `${n}`, displayKr: reading, readingKr: reading });
   }
+  for (let a = 1; a <= 99; a++) {
+    cards.push({ id: `age-${a}`, category: "age", categoryLabelJa: "年齢", categoryLabelKr: "살", number: a, displayJa: `${a}歳`, displayKr: `${a}살`, readingKr: `${nativeKoreanCounter(a)} 살` });
+  }
+  for (let i = 1; i <= 30; i++) {
+    cards.push({ id: `item-${i}`, category: "item", categoryLabelJa: "個", categoryLabelKr: "개", number: i, displayJa: `${i}個`, displayKr: `${i}개`, readingKr: `${nativeKoreanCounter(i)} 개` });
+  }
+  for (let c = 1; c <= 20; c++) {
+    cards.push({ id: `cup-${c}`, category: "cup", categoryLabelJa: "杯", categoryLabelKr: "잔", number: c, displayJa: `${c}杯`, displayKr: `${c}잔`, readingKr: `${nativeKoreanCounter(c)} 잔` });
+  }
   return cards;
 }
 
@@ -140,6 +159,9 @@ const CATEGORY_OPTIONS: { value: NumberCategory | "all"; label: string }[] = [
   { value: "hour", label: "時 (시)" },
   { value: "minute", label: "分 (분)" },
   { value: "won", label: "ウォン (원)" },
+  { value: "age", label: "年齢 (살)" },
+  { value: "item", label: "個 (개)" },
+  { value: "cup", label: "杯 (잔)" },
 ];
 
 function isSpeechSupported(): boolean {
@@ -295,8 +317,8 @@ export default function AdminNumbersQuizPage() {
         </Card>
 
         {/* 統計 */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-          {(["native", "sino", "year", "month", "day", "hour", "minute", "won"] as NumberCategory[]).map((cat) => {
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          {(["native", "sino", "year", "month", "day", "hour", "minute", "won", "age", "item", "cup"] as NumberCategory[]).map((cat) => {
             const labels: Record<NumberCategory, { ja: string; kr: string }> = {
               native: { ja: "固有数詞", kr: "고유어" },
               sino: { ja: "漢数詞", kr: "한자어" },
@@ -306,6 +328,9 @@ export default function AdminNumbersQuizPage() {
               hour: { ja: "時", kr: "시" },
               minute: { ja: "分", kr: "분" },
               won: { ja: "ウォン", kr: "원" },
+              age: { ja: "年齢", kr: "살" },
+              item: { ja: "個", kr: "개" },
+              cup: { ja: "杯", kr: "잔" },
             };
             return (
               <div
