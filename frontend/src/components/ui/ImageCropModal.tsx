@@ -15,23 +15,34 @@ const OUTPUT_SIZE = 400;
 const MAX_SCALE = 3;
 
 export function ImageCropModal({ file, onConfirm, onCancel }: Props) {
-  const imgRef = useRef<HTMLImageElement | null>(null);
-  const [imgSrc] = useState<string>(() => URL.createObjectURL(file));
-  const [naturalSize, setNaturalSize] = useState({ w: 0, h: 0 });
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [bitmap, setBitmap] = useState<ImageBitmap | null>(null);
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef<{ mx: number; my: number; ox: number; oy: number } | null>(null);
 
+  // Load image as ImageBitmap, respecting EXIF orientation so that
+  // bitmap.width/height reflect the visually-displayed dimensions.
   useEffect(() => {
-    return () => URL.revokeObjectURL(imgSrc);
-  }, [imgSrc]);
-
-  const getMinScale = useCallback((w: number, h: number) => {
-    if (!w || !h) return 1;
-    return Math.max(CROP_SIZE / w, CROP_SIZE / h);
-  }, []);
+    let bmp: ImageBitmap | null = null;
+    const load = async () => {
+      try {
+        bmp = await createImageBitmap(file, { imageOrientation: "from-image" });
+      } catch {
+        bmp = await createImageBitmap(file);
+      }
+      const minSc = Math.max(CROP_SIZE / bmp.width, CROP_SIZE / bmp.height);
+      setBitmap(bmp);
+      setScale(minSc);
+      setOffset({ x: 0, y: 0 });
+    };
+    load().catch(() => undefined);
+    return () => {
+      bmp?.close();
+    };
+  }, [file]);
 
   const clampOffset = useCallback(
     (ox: number, oy: number, sc: number, w: number, h: number) => {
@@ -45,14 +56,26 @@ export function ImageCropModal({ file, onConfirm, onCancel }: Props) {
     [],
   );
 
-  const handleImgLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const img = e.currentTarget;
-    const w = img.naturalWidth;
-    const h = img.naturalHeight;
-    setNaturalSize({ w, h });
-    setScale(getMinScale(w, h));
-    setOffset({ x: 0, y: 0 });
-  };
+  // Redraw the circular preview canvas whenever bitmap/scale/offset change.
+  useEffect(() => {
+    const canvas = previewCanvasRef.current;
+    if (!canvas || !bitmap) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const displayW = bitmap.width * scale;
+    const displayH = bitmap.height * scale;
+    const drawX = CROP_SIZE / 2 + offset.x - displayW / 2;
+    const drawY = CROP_SIZE / 2 + offset.y - displayH / 2;
+
+    ctx.clearRect(0, 0, CROP_SIZE, CROP_SIZE);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(CROP_SIZE / 2, CROP_SIZE / 2, CROP_SIZE / 2, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(bitmap, drawX, drawY, displayW, displayH);
+    ctx.restore();
+  }, [bitmap, scale, offset]);
 
   const startDrag = (mx: number, my: number) => {
     isDraggingRef.current = true;
@@ -62,7 +85,7 @@ export function ImageCropModal({ file, onConfirm, onCancel }: Props) {
 
   const moveDrag = useCallback(
     (mx: number, my: number) => {
-      if (!isDraggingRef.current || !dragStartRef.current) return;
+      if (!isDraggingRef.current || !dragStartRef.current || !bitmap) return;
       const dx = mx - dragStartRef.current.mx;
       const dy = my - dragStartRef.current.my;
       setOffset(
@@ -70,12 +93,12 @@ export function ImageCropModal({ file, onConfirm, onCancel }: Props) {
           dragStartRef.current.ox + dx,
           dragStartRef.current.oy + dy,
           scale,
-          naturalSize.w,
-          naturalSize.h,
+          bitmap.width,
+          bitmap.height,
         ),
       );
     },
-    [scale, naturalSize, clampOffset],
+    [scale, bitmap, clampOffset],
   );
 
   const endDrag = useCallback(() => {
@@ -118,15 +141,15 @@ export function ImageCropModal({ file, onConfirm, onCancel }: Props) {
 
   const handleScaleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newScale = parseFloat(e.target.value);
+    if (!bitmap) return;
     setScale(newScale);
     setOffset((prev) =>
-      clampOffset(prev.x, prev.y, newScale, naturalSize.w, naturalSize.h),
+      clampOffset(prev.x, prev.y, newScale, bitmap.width, bitmap.height),
     );
   };
 
   const handleConfirm = () => {
-    const img = imgRef.current;
-    if (!img || !naturalSize.w || !naturalSize.h) return;
+    if (!bitmap) return;
 
     const canvas = document.createElement("canvas");
     canvas.width = OUTPUT_SIZE;
@@ -139,14 +162,12 @@ export function ImageCropModal({ file, onConfirm, onCancel }: Props) {
     ctx.clip();
 
     const ratio = OUTPUT_SIZE / CROP_SIZE;
-    const drawW = naturalSize.w * scale * ratio;
-    const drawH = naturalSize.h * scale * ratio;
-    const drawX =
-      (CROP_SIZE / 2 + offset.x - (naturalSize.w * scale) / 2) * ratio;
-    const drawY =
-      (CROP_SIZE / 2 + offset.y - (naturalSize.h * scale) / 2) * ratio;
+    const drawW = bitmap.width * scale * ratio;
+    const drawH = bitmap.height * scale * ratio;
+    const drawX = (CROP_SIZE / 2 + offset.x - (bitmap.width * scale) / 2) * ratio;
+    const drawY = (CROP_SIZE / 2 + offset.y - (bitmap.height * scale) / 2) * ratio;
 
-    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    ctx.drawImage(bitmap, drawX, drawY, drawW, drawH);
 
     canvas.toBlob(
       (blob) => {
@@ -163,9 +184,9 @@ export function ImageCropModal({ file, onConfirm, onCancel }: Props) {
     );
   };
 
-  const minScale = getMinScale(naturalSize.w, naturalSize.h);
-  const displayW = naturalSize.w * scale;
-  const displayH = naturalSize.h * scale;
+  const minScale = bitmap
+    ? Math.max(CROP_SIZE / bitmap.width, CROP_SIZE / bitmap.height)
+    : 1;
 
   return (
     <div
@@ -182,40 +203,22 @@ export function ImageCropModal({ file, onConfirm, onCancel }: Props) {
           ドラッグして位置を調整し、スライダーで拡大縮小できます
         </p>
 
-        {/* Circular crop preview */}
+        {/* Circular crop preview rendered via canvas */}
         <div className="mb-4 flex justify-center">
-          <div
-            className="relative overflow-hidden rounded-full"
+          <canvas
+            ref={previewCanvasRef}
+            width={CROP_SIZE}
+            height={CROP_SIZE}
             style={{
-              width: CROP_SIZE,
-              height: CROP_SIZE,
+              borderRadius: "50%",
               cursor: isDragging ? "grabbing" : "grab",
               boxShadow: "0 0 0 4px rgba(99,102,241,0.5)",
               background: "#1a1b2e",
+              display: "block",
             }}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
-          >
-            {imgSrc && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                ref={imgRef}
-                src={imgSrc}
-                alt="crop preview"
-                onLoad={handleImgLoad}
-                draggable={false}
-                style={{
-                  position: "absolute",
-                  width: displayW,
-                  height: displayH,
-                  left: CROP_SIZE / 2 + offset.x - displayW / 2,
-                  top: CROP_SIZE / 2 + offset.y - displayH / 2,
-                  userSelect: "none",
-                  pointerEvents: "none",
-                }}
-              />
-            )}
-          </div>
+          />
         </div>
 
         {/* Zoom slider */}
@@ -238,7 +241,7 @@ export function ImageCropModal({ file, onConfirm, onCancel }: Props) {
           <Button variant="ghost" type="button" onClick={onCancel}>
             キャンセル
           </Button>
-          <Button type="button" onClick={handleConfirm} disabled={!naturalSize.w}>
+          <Button type="button" onClick={handleConfirm} disabled={!bitmap}>
             適用
           </Button>
         </div>
