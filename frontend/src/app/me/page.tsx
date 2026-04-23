@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { ApiError } from "@/lib/api/http";
-import { compressImage } from "@/lib/compressImage";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ImageCropModal } from "@/components/ui/ImageCropModal";
 import { Input } from "@/components/ui/Input";
 
 function parseApiError(err: unknown): { message: string; fieldErrors?: Record<string, string> } {
@@ -43,6 +43,7 @@ export default function MePage() {
 
   const [imageUploading, setImageUploading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
+  const [cropFile, setCropFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -152,22 +153,30 @@ export default function MePage() {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setImageError(null);
+    setCropFile(file);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
+  const handleCropConfirm = async (croppedFile: File) => {
+    setCropFile(null);
     setImageUploading(true);
     setImageError(null);
 
     try {
-      const compressed = await compressImage(file);
-      await uploadProfileImage(compressed);
+      await uploadProfileImage(croppedFile);
     } catch (err) {
       const { message } = parseApiError(err);
       setImageError(message);
     } finally {
       setImageUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     }
+  };
+
+  const handleCropCancel = () => {
+    setCropFile(null);
   };
 
   // Derive initials/avatar character
@@ -356,6 +365,13 @@ export default function MePage() {
           </Card>
         )}
       </div>
+      {cropFile && (
+        <ImageCropModal
+          file={cropFile}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
     </div>
   );
 }
