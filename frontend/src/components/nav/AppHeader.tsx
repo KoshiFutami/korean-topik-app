@@ -245,16 +245,6 @@ export function AppHeader() {
               </svg>
             }
           />
-          <MobileNavLink
-            href="/me"
-            label="プロフィール"
-            tone={tone}
-            icon={
-              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-7 9a7 7 0 1 1 14 0H3z" clipRule="evenodd" />
-              </svg>
-            }
-          />
         </nav>
       </div>
     </header>
