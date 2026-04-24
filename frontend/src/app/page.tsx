@@ -162,8 +162,17 @@ export default async function Home() {
             文法の空欄補充問題（TOPIK 1 の31〜37番形式）を1問ずつ解いて答えを確認できます。
           </FeatureCard>
           <FeatureCard
-            href="/numbers-quiz"
+            href="/numbers-learn"
             icon="🔢"
+            title="数字の学習"
+            titleKo="숫자 학습"
+            cta="数字を学ぶ"
+          >
+            固有数詞・漢数詞から年月日・時分まで一覧で確認。音声ボタンで発音を聞けます。
+          </FeatureCard>
+          <FeatureCard
+            href="/numbers-quiz"
+            icon="🎯"
             title="数字クイズ"
             titleKo="숫자 퀴즈"
             cta="数字を練習する"
