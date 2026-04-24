@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
@@ -466,11 +467,18 @@ export default function NumbersQuizPage() {
           style={{ width: 500, height: 300, top: -50, left: "50%", transform: "translateX(-50%)" }}
         />
         <div className="relative mx-auto w-full max-w-lg space-y-6">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-3">
             <h1 className="text-lg font-extrabold tracking-tight text-[#F0F0FF]">
               数字クイズ
               <span className="ml-2 text-sm font-semibold text-[#9499C4]">숫자 퀴즈</span>
             </h1>
+            <Link
+              href="/numbers-learn"
+              className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-3 py-1.5 text-xs font-medium text-[#BCC0E8] transition-colors hover:bg-[rgba(99,102,241,0.15)] hover:text-[#F0F0FF]"
+            >
+              <span aria-hidden>📖</span>
+              まず学習する
+            </Link>
           </div>
 
           <Card className="space-y-5 border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] text-[#F0F0FF] backdrop-blur-xl">
